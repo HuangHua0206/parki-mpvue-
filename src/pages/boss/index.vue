@@ -1,6 +1,11 @@
 <template>
   <div class="beat-boss-wrap">
-    <div class="top">
+  	<CommonTop 
+  		:avatar="avatar" 
+  		ctxt="点击屏幕攻击怪兽，一起保护PRAKINLAND"
+  		:leftNum="9999"
+  		:rightNum="9999"></CommonTop>
+    <!-- <div class="top">
       <div class="avatar">
         <img :src="avatar" />
       </div>
@@ -15,7 +20,7 @@
     </div>
     <div class="attention">
       <p>点击屏幕攻击怪兽，一起保护PRAKINLAND.</p>
-    </div>
+    </div> -->
     <div class="main">
       <div class="ellipse"></div>
       <div class="collect-btn"></div>
@@ -57,12 +62,14 @@
 // Use Vuex
 const imgOrigin = 'http://parkiland.isxcxbackend1.cn/'
 const DEFAULT_AVATER = imgOrigin + 'pl2_head@2x.png'
+import CommonTop from 'components/top'
 export default {
 	data () {
 	  return {
 	    avatar: 'http://img5.imgtn.bdimg.com/it/u=3300305952,1328708913&fm=26&gp=0.jpg'
 	  }
-	}
+	},
+	components: { CommonTop }
 }
 </script>
 
@@ -136,7 +143,6 @@ export default {
 		background: url("@{imgOrigin}pl2_tips@2x.png") no-repeat 36px center rgba(0, 0, 0, 0.1);
 		background-size:10px 12px;
 		color:#fff;
-		// text-align:center;
 		font-size:7px;
 		line-height:21px;
 		margin:10px auto 22px;
@@ -149,8 +155,8 @@ export default {
 		.ellipse{
 			position: absolute;
 			width:255px;
-			height: 40px;
-			background:rgba(0, 0, 0, 0.1);
+			height: 30px;
+			background:rgba(135,210,125,0.6);
 			border-radius:50%;
 			left:70px;
 			bottom:0;
