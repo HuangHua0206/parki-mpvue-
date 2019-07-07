@@ -35,7 +35,7 @@
 
 <script>
 import card from '@/components/card'
-
+import { testService } from 'services/test'
 export default {
   data () {
     return {
@@ -50,8 +50,15 @@ export default {
   components: {
     card
   },
-
+  onLoad() {
+    console.log(999)
+    this.getData()
+  },
   methods: {
+    async getData() {
+     const resultData = await testService({ test: 'test999'})
+     console.log(resultData.data, 'resultDataresultDataresultData')
+    },
     bindViewTap () {
       const url = '../logs/main'
       if (mpvuePlatform === 'wx') {
