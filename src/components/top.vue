@@ -43,10 +43,10 @@
 <style lang="less">
 @imgOrigin: "http://parkiland.isxcxbackend1.cn/";
 .bg(@url){
- 	background: url("@{imgOrigin}@{url}.png") center center no-repeat ;
+ 	background: url("@{imgOrigin}@{url}.png") center top no-repeat ;
     background-size: 100% 100%;
 }
-	.common-top{
+.common-top{
 		.top{
     	display: flex;
         .avatar{
@@ -110,5 +110,5 @@
 		font-weight: bold;
 		padding-left: 87px;
 	}
-	}
+}
 </style>
