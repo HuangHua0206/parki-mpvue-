@@ -112,14 +112,15 @@ export default {
 			}
 			.count-down{
 				position: absolute;
+				font-size:9px;
 				left:50px;
 				width:90px;
 				top:23px;
 				background: url("@{imgOrigin}pl2_time@2x.png") no-repeat 0 center;
 				background-size:10px 12px; 
 				height: 13px;
+				line-height:18px;
 				font-size:9px;
-				font-weight: bold;
 				padding-left:16px;
 			}
 		}
@@ -143,7 +144,7 @@ export default {
 				background-size: 17px 16px;
 				padding-left: 26px;
 				font-size:10px;
-				font-weight: bold;
+				// font-weight: bold;
 				height: 20px;
 				line-height:20px;
 				.plus{
@@ -166,7 +167,7 @@ export default {
 				padding-left: 26px;
 				margin-top: 15px;
 				font-size:10px;
-				font-weight: bold;
+				// font-weight: bold;
 				height: 20px;
 				line-height:20px;
 			}

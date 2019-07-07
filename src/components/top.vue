@@ -66,6 +66,8 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
+			font-size:10px;
+
 			.left-num{
 				box-sizing: border-box;
 				padding-right: 4px;
@@ -75,11 +77,11 @@
 				height: 22px;
 				text-align:right;
 				color:rgb(255, 173, 1);
-				font-weight: bold;
-				line-height: 17px;
+				line-height: 20px;
 				padding-bottom:5px; 
 			}
 			.right-num{
+				line-height: 20px;
 				box-sizing: border-box;
 				padding-right: 4px;
 				margin-right: 42px;
@@ -88,9 +90,6 @@
 				height: 22px;
 				text-align:right;
 				color:#fff;
-				font-weight: bold;
-				line-height: 22px;
-				line-height: 17px;
 				padding-bottom:5px;
 			}		
         }
@@ -107,7 +106,6 @@
 		font-size:7px;
 		line-height:21px;
 		margin:10px auto 22px;
-		font-weight: bold;
 		padding-left: 87px;
 	}
 }
