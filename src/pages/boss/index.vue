@@ -35,23 +35,25 @@ export default {
 }
 </script>
 
-<style  >
- 
+<style  lang="less">
+ @imgOrigin: "http://parkiland.isxcxbackend1.cn/";
   .beat-boss-wrap{
     height: 100%;
     position: absolute;
     width:100%;
-    background: url("http://parkiland.isxcxbackend1.cn/pl2_boss-background@2x.png") center center #ffffff no-repeat;
+    background: url("@{imgOrigin}pl2_boss-background@2x.png") center center #ffffff no-repeat;
     background-size: cover;
     padding:5px 20px 0 10px;   
-  }
-  .beat-boss-wrap .top .avatar{
-        height: 50px;
-        width: 50px;
-    }
-  .top .avatar img{
-          height: 100%;
-          width: 100%;
-          border-radius: 50%;
+    .top{
+        .avatar{
+        	height: 50px;
+        	width: 50px;
+        	img{
+	          height: 100%;
+	          width: 100%;
+	          border-radius: 50%;
+	        }
         }
+    }
+  }
 </style>
