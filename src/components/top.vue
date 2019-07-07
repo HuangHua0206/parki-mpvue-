@@ -47,20 +47,20 @@
     background-size: 100% 100%;
 }
 .common-top{
-		.top{
-    	display: flex;
-        .avatar{
-        	margin-left: 15px;
-        	margin-right: 17px;
-        	height: 50px;
-        	width: 50px;
-        	img{
+	.top{
+		display: flex;
+	    .avatar{
+	    	margin-left: 15px;
+	    	margin-right: 17px;
+	    	height: 50px;
+	    	width: 50px;
+	    	img{
 	          height: 100%;
 	          width: 100%;
 	          border-radius: 50%;
 	          border: 3px solid #000;
 	        }
-        }
+	    }
         .nums{
 			flex:1;
 			display: flex;

@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/collect/main",
     "pages/first/main",
     "pages/boss/main",
     "pages/index/main",
