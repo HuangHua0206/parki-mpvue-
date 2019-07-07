@@ -17,6 +17,7 @@
       <p>点击屏幕攻击怪兽，一起保护PRAKINLAND.</p>
     </div>
     <div class="main">
+      <div class="ellipse"></div>
       <div class="collect-btn"></div>
       <div class="blood">
         <div class="blood-avatar"></div>
@@ -26,7 +27,30 @@
         </div>
       </div>
     </div>
-    <div class="info"></div>
+    <div class="info">
+    	<div class="left-info">
+    		<div class="attack">
+    			攻击力 ATTACK: 15
+    			<span class="plus">+5</span>
+    		</div >
+    		<div class="damage">总伤害 DAMAGE: 555</div>
+    	</div>
+    	<div class="right-card">
+    		<img :src="avatar" />
+    		<div class="top">
+    			<div class="left">
+    				<div class="rand green"></div>
+    				<div class="rand orange"></div>
+    				<div class="rand blue"></div>
+    			</div>
+    			<div class="content">小鸡</div>
+    		</div>
+    		<div class="bottom">
+    			<div class="left">LV1</div>
+    			<div class="content">攻击力15</div>
+    		</div>
+    	</div>
+    </div>
   </div>
 </template>
 <script>
@@ -36,7 +60,7 @@ const DEFAULT_AVATER = imgOrigin + 'pl2_head@2x.png'
 export default {
 	data () {
 	  return {
-	    avatar: DEFAULT_AVATER
+	    avatar: 'http://img5.imgtn.bdimg.com/it/u=3300305952,1328708913&fm=26&gp=0.jpg'
 	  }
 	}
 }
@@ -66,7 +90,7 @@ export default {
 	          height: 100%;
 	          width: 100%;
 	          border-radius: 50%;
-	          border: 1px solid #000;
+	          border: 3px solid #000;
 	        }
         }
         .nums{
@@ -75,16 +99,21 @@ export default {
 			align-items: center;
 			justify-content: space-between;
 			.left-num{
+				box-sizing: border-box;
+				padding-right: 4px;
 				margin-left: 5px;
 				.bg('pl2_energy@2x');
 				width:67px;
 				height: 22px;
 				text-align:right;
-				color:yellow;
+				color:rgb(255, 173, 1);
 				font-weight: bold;
-				line-height: 22px;
+				line-height: 17px;
+				padding-bottom:5px; 
 			}
 			.right-num{
+				box-sizing: border-box;
+				padding-right: 4px;
 				margin-right: 42px;
 				.bg('pl2_Ranking@2x');
 				width:67px;
@@ -93,6 +122,8 @@ export default {
 				color:#fff;
 				font-weight: bold;
 				line-height: 22px;
+				line-height: 17px;
+				padding-bottom:5px;
 			}		
         }
     }
@@ -114,6 +145,16 @@ export default {
 	}
 	.main{
 		position: relative;
+		height: 321px;
+		.ellipse{
+			position: absolute;
+			width:255px;
+			height: 40px;
+			background:rgba(0, 0, 0, 0.1);
+			border-radius:50%;
+			left:70px;
+			bottom:0;
+		}
 		.collect-btn{
 			width:67px;
 			height: 62px;
@@ -156,12 +197,121 @@ export default {
 		}
 	}
 	.info{
+		box-sizing: border-box;
 		position: absolute;
-		bottom: 41px;
+		bottom: 30px;
 		left:50px;
 		width:275px;
-		height: 110px;
+		height: 112px;
 		.bg('pl2_excel@2x');
+		padding:0 12px 10px 15px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		.left-info{
+			.attack{
+				box-sizing:border-box;
+				background: url("@{imgOrigin}pl2_attack@2x.png") no-repeat 0 center;
+				background-size: 17px 16px;
+				padding-left: 26px;
+				font-size:10px;
+				font-weight: bold;
+				height: 20px;
+				line-height:20px;
+				.plus{
+					display: inline-block;
+					margin-top: 2px;
+					margin-left: 8px;
+					height: 15px;
+					background: url("@{imgOrigin}pl2_kid@2x.png") no-repeat 0 center;
+					background-size: 15px 15px;
+					color:rgb(255, 186, 0);
+					padding-left: 18px;
+					line-height: 15px;
+				}
+
+			}
+			.damage{
+				box-sizing:border-box;
+				background: url("@{imgOrigin}pl2_damage@2x.png") no-repeat 0 center;
+				background-size: 14px 20px;
+				padding-left: 26px;
+				margin-top: 15px;
+				font-size:10px;
+				font-weight: bold;
+				height: 20px;
+				line-height:20px;
+			}
+		}
+		.right-card{
+			box-sizing: border-box;
+			width:63px;
+			height: 85px;
+			border:1px solid #000;
+			border-radius: 6px;
+			padding:1px;
+			position: relative;
+			img{
+				width:100%;
+				height: 100%;
+			}
+			.top, .bottom{
+				position: absolute;
+				width: 59px;
+				background: rgb(8, 132, 192);
+				height: 12px;
+				display: flex;
+				padding: 0 3px;
+				box-sizing: border-box;
+				justify-content: space-between;
+			}
+			.top{
+				top:1px;
+				border-top-left-radius: 6px;
+				border-top-right-radius: 6px;
+				.content{
+					font-size:8px;
+					color:#fff;
+					line-height:12px;
+				}
+				.left{
+					display: flex;
+					align-items: center;
+					.rand{
+						width:6px;
+						height: 6px;
+						border-radius:50%;
+						border: 1px solid #000;
+						&.green{
+							.bg('pl2_ball_green@2x');
+						}
+						&.orange{
+							.bg('pl2_ball_orange@2x');
+						}
+						&.blue{
+							.bg('pl2_ball_blue@2x');
+						}
+					}
+				}
+			}
+			.bottom{ 
+				padding: 0 3px;
+				bottom:1px;
+				.left{
+					line-height:12px;
+					font-size: 10px;
+					color:#fff;
+				}
+				.content{
+					font-size:6px;
+					color:#fff;
+					background: url("@{imgOrigin}pl2_attack@2x.png") no-repeat 0 center;
+					background-size: 6px 6px;
+					padding-left: 7px;
+					line-height:12px;
+				}
+			}
+		}
 	}
 }
 </style>
