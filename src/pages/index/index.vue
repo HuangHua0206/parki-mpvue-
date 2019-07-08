@@ -36,6 +36,7 @@
 <script>
 import card from '@/components/card'
 import { testService } from 'services/test'
+import { loginService } from 'services/login'
 export default {
   data () {
     return {
@@ -57,7 +58,7 @@ export default {
   methods: {
     async getData() {
      const resultData = await testService({ test: 'test999'})
-     console.log(resultData.data, 'resultDataresultDataresultData')
+    console.log(resultData.data, 'resultDataresultDataresultData')
     },
     bindViewTap () {
       const url = '../logs/main'

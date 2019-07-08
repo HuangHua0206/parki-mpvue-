@@ -16,6 +16,7 @@
 	</div>
 </template>
 <script>
+	import { loginService } from 'services/login'
 	export default{
 		data() {
 		    return {
@@ -29,20 +30,21 @@
 		  },
 		methods: {
 			getUserInfo() {
-				console.log(777777)
+				this.$tip.toast('888')
 				const _this = this;
-			      if (_this.status == 1) {
-			        return;
-			      }
-			      _this.status = 1;
+			      // if (_this.status == 1) {
+			      //   return;
+			      // }
+			      // _this.status = 1;
 				 wx.login({
-			        success: res => {
-			          _this.code = res.code;
+			        success: res1 => {
+			        	console.log(res1, 'res1')
 			          wx.getUserInfo({
-			            success: res => {
-			              _this.userInfo = res.userInfo;
-			              console.log(res, 'resres')
-			              wx.setStorageSync("userinfo", res.userInfo);
+			            success: res2 => {
+			            	console.log(res2, 'res2')
+			              wx.setStorageSync("userinfo", res2.userInfo)
+			              console.log(999)
+			              this.login(res2.userInfo, res1.code)
 			              // http.post("/game/manager/access", {
 			              //     nickName: res.userInfo.nickName,
 			              //     imgUrl: res.userInfo.avatarUrl,
@@ -77,12 +79,23 @@
 			          });
 			        },
 			        fail: () => {
-			          _this.status = 0;
+			          // _this.status = 0;
 			        },
 			        complete: () => {
 			          wx.hideLoading();
 			        }
 			      });
+			},
+			async login(userInfo, code) {
+				console.log(userInfo, 'userInfo')
+				this.$tip.toast('userInfo')
+				const resultData = await loginService({
+					nickname: userInfo.nickName,
+					avatarurl: userInfo.avatarUrl,
+					gender: userInfo.gender,
+					code
+				})
+				this.$tip.toast(JSON.stringify(resultData.data));
 			}
 		}
 	}
