@@ -6,7 +6,7 @@
   		:leftNum="9999"
   		:rightNum="9999">
   	</CommonTop>
-    <div class="main">
+<!--     <div class="main"> -->
       <div class="ellipse"></div>
       <div class="collect-btn"></div>
       <div class="blood">
@@ -16,7 +16,7 @@
         	倒计时 04:22
         </div>
       </div>
-    </div>
+<!--     </div> -->
     <div class="info">
     	<div class="left-info">
     		<div class="attack">
@@ -71,26 +71,32 @@ export default {
     width:100%;
     .bg('pl2_boss-background@2x');
     padding:15px 20px 0 0;   
-	.main{
-		position: relative;
-		height: 321px;
+	// .main{
+	// 	top:127px;
+	// 	position: absolute;
+	// 	height: 321px;
 		.ellipse{
 			position: absolute;
 			width:255px;
 			height: 30px;
-			background:rgba(135,210,125,0.6);
-			border-radius:50%;
-			left:70px;
-			bottom:0;
+			// background:rgba(135,210,125,0.6);
+			// border-radius:50%;
+			left:50%;
+			transform:translateX(-50%);
+			bottom:198px;
+			.bg('pl2_monster_shadow@2x')
 		}
 		.collect-btn{
+			position: absolute;
+			top:127px;
+			left:0;
 			width:67px;
 			height: 62px;
 			.bg('pl2_collection@2x');
 		}
 		.blood{
 			position: absolute;
-			top:12px;
+			top:140px;
 			left:125px;
 			// transform: translateX(-50%);
 			.blood-avatar{
@@ -124,14 +130,14 @@ export default {
 				padding-left:16px;
 			}
 		}
-	}
+	// }
 	.info{
 		box-sizing: border-box;
 		position: absolute;
-		bottom: 30px;
+		bottom: 23px;
 		left:50px;
-		width:275px;
-		height: 112px;
+		width:276px;
+		height: 113px;
 		.bg('pl2_excel@2x');
 		padding:0 12px 10px 15px;
 		display: flex;
