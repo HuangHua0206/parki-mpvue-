@@ -23,7 +23,7 @@
 			</div>
 			<div class="plus"></div>
 		</div>
-		<div v-if="false" class="energy-wrap">
+		<div v-if="true" class="energy-wrap">
 			<div class="boll ">
 				<div class="round yellow"></div>
 				<div class="num">99</div>
@@ -89,7 +89,7 @@
 		}
 		&.email-button{
 			left:0;
-			top:180px;
+			top:179px;
 			.bg("pl2_mail@2x");
 		}
 		&.animal-button{
@@ -99,7 +99,7 @@
 		}
 		&.online-button{
 			right:0;
-			top:180px;
+			top:179px;
 			.bg("pl2_on line@2x");
 			.bracelet{
 				// font-size:13px;
@@ -127,11 +127,11 @@
 		position:absolute;
 		left:50%;
 		transform:translateX(-50%);
-		bottom:210px;
+		bottom:229px;
 	}
 	.nums-wrap{
 		position:absolute;
-		bottom:132px;
+		bottom:143px;
 		left:0;
 		width:100%;
 		height:65px;
@@ -145,7 +145,7 @@
 			transform:translateX(-50%);
 			.num{
 				width: 58px;
-				height:66px;
+				height:67px;
 				&.one{
 					.bg("pl2_1@2x");
 				}
@@ -175,7 +175,7 @@
 		left:50%;
 		transform:translateX(-50%);
 		width:356px;
-		height:132px;
+		height:137px;
 		.bg("pl2_bag@2x");
 		display:flex;
 		justify-content:space-between;

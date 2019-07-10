@@ -54,14 +54,14 @@
 	left:0;
 	.top{
 		position:absolute;
-		top:15px;
+		top:16px;
 		width:100%;
 		display: flex;
 	    .avatar{
 	    	margin-left: 15px;
 	    	margin-right: 17px;
-	    	height: 50px;
-	    	width: 50px;
+	    	height: 49px;
+	    	width: 49px;
 	    	img{
 	          height: 100%;
 	          width: 100%;
@@ -82,7 +82,7 @@
 				margin-left: 5px;
 				.bg('pl2_energy@2x');
 				width:67px;
-				height: 22px;
+				height: 23px;
 				text-align:right;
 				color:rgb(255, 173, 1);
 				line-height: 20px;
@@ -110,8 +110,8 @@
 		height: 21px;
 		background: ;
 		border-radius: 6px;
-		background: url("@{imgOrigin}pl2_tips@2x.png") no-repeat 36px 5px rgba(0, 0, 0, 0.1);
-		background-size:10px 12px;
+		background: url("@{imgOrigin}pl2_tips@2x.png") no-repeat 35px 3px rgba(0, 0, 0, 0.1);
+		background-size:12px 15px;
 		color:#fff;
 		font-size:7px;
 		line-height:21px;
