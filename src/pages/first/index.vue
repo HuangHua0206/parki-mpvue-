@@ -101,11 +101,12 @@
 	}
 </script>
 <style lang="less">
-@imgOrigin: "http://parkiland.isxcxbackend1.cn/";
-.bg(@url, @vertical){
- 	background: url("@{imgOrigin}@{url}.png") center @vertical no-repeat;
-    background-size: 100% 100%;
-}
+@import "~less/mixin.less";
+// @imgOrigin: "http://parkiland.isxcxbackend1.cn/";
+// .bg(@url, @vertical){
+//  	background: url("@{cdn}@{url}.png") center @vertical no-repeat;
+//     background-size: 100% 100%;
+// }
 	.first-wrap{
 		position: absolute;
 		height: 100%;
@@ -113,7 +114,7 @@
 		.bg('图层2', top);
 		.title{
 
-			background: url("@{imgOrigin}资源1.png") center center no-repeat;
+			background: url("@{cdn}资源1.png") center center no-repeat;
 			  text-align: center;
 			  padding-top: 250px;
 			  font-size: 35px;
@@ -145,7 +146,7 @@
 		    height: 67px;
 		    line-height: 62px;
 		    opacity: 1;
-		    background: url(http://parkiland.isxcxbackend1.cn/start-gif2.gif) center center
+		    background: url("@{cdn}/start-gif2.gif") center center
 		      no-repeat;
 		    background-size: cover;
 		    &::after{

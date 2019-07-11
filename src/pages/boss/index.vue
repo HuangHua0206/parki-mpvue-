@@ -59,11 +59,12 @@ export default {
 </script>
 
 <style  lang="less">
-@imgOrigin: "http://parkiland.isxcxbackend1.cn/";
-.bg(@url){
- 	background: url("@{imgOrigin}@{url}.png") center center no-repeat ;
-    background-size: 100% 100%;
-}
+@import "~less/mixin.less";
+// @imgOrigin: @cdn;
+// .bg(@url){
+//  	background: url("@{imgOrigin}@{url}.png") center center no-repeat ;
+//     background-size: 100% 100%;
+// }
   .beat-boss-wrap{
   	box-sizing: border-box;
     height: 100%;
@@ -116,7 +117,7 @@ export default {
 				left:50px;
 				width:90px;
 				top:23px;
-				background: url("@{imgOrigin}pl2_time@2x.png") no-repeat 0 center;
+				background: url("@{cdn}pl2_time@2x.png") no-repeat 0 center;
 				background-size:10px 12px; 
 				height: 13px;
 				line-height:18px;
@@ -140,7 +141,7 @@ export default {
 		.left-info{
 			.attack{
 				box-sizing:border-box;
-				background: url("@{imgOrigin}pl2_attack@2x.png") no-repeat 0 center;
+				background: url("@{cdn}pl2_attack@2x.png") no-repeat 0 center;
 				background-size: 17px 16px;
 				padding-left: 26px;
 				font-size:10px;
@@ -152,7 +153,7 @@ export default {
 					margin-top: 2px;
 					margin-left: 8px;
 					height: 15px;
-					background: url("@{imgOrigin}pl2_kid@2x.png") no-repeat 0 center;
+					background: url("@{cdn}pl2_kid@2x.png") no-repeat 0 center;
 					background-size: 15px 15px;
 					color:rgb(255, 186, 0);
 					padding-left: 18px;
@@ -162,7 +163,7 @@ export default {
 			}
 			.damage{
 				box-sizing:border-box;
-				background: url("@{imgOrigin}pl2_damage@2x.png") no-repeat 0 center;
+				background: url("@{cdn}pl2_damage@2x.png") no-repeat 0 center;
 				background-size: 14px 20px;
 				padding-left: 26px;
 				margin-top: 15px;
@@ -234,7 +235,7 @@ export default {
 				.content{
 					font-size:6px;
 					color:#fff;
-					background: url("@{imgOrigin}pl2_attack@2x.png") no-repeat 0 center;
+					background: url("@{cdn}pl2_attack@2x.png") no-repeat 0 center;
 					background-size: 6px 6px;
 					padding-left: 7px;
 					line-height:12px;
