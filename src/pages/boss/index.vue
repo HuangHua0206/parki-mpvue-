@@ -85,7 +85,7 @@ export default {
 			left:50%;
 			transform:translateX(-50%);
 			bottom:198px;
-			.bg('pl2_monster_shadow@2x')
+			.bg('pl2_shadow@2x')
 		}
 		.collect-btn{
 			position: absolute;

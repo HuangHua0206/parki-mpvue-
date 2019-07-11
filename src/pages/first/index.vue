@@ -17,6 +17,7 @@
 </template>
 <script>
 	import { loginService } from 'services/login'
+	import storage from 'utils/storage'
 	export default{
 		data() {
 		    return {
@@ -38,12 +39,8 @@
 			      // _this.status = 1;
 				 wx.login({
 			        success: res1 => {
-			        	console.log(res1, 'res1')
 			          wx.getUserInfo({
 			            success: res2 => {
-			            	console.log(res2, 'res2')
-			              wx.setStorageSync("userinfo", res2.userInfo)
-			              console.log(999)
 			              this.login(res2.userInfo, res1.code)
 			              // http.post("/game/manager/access", {
 			              //     nickName: res.userInfo.nickName,
@@ -87,15 +84,21 @@
 			      });
 			},
 			async login(userInfo, code) {
-				console.log(userInfo, 'userInfo')
-				this.$tip.toast('userInfo')
 				const resultData = await loginService({
 					nickname: userInfo.nickName,
 					avatarurl: userInfo.avatarUrl,
 					gender: userInfo.gender,
 					code
 				})
-				this.$tip.toast(JSON.stringify(resultData.data));
+				storage.setStorage('userinfo', {
+					openid: resultData.openid,
+					...userInfo
+				});
+				console.log(333);
+				wx.redirectTo({
+					url: '/pages/collect/main'
+				});
+				this.$tip.toast(resultData.openid);
 			}
 		}
 	}

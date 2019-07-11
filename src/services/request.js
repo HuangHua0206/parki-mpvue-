@@ -11,7 +11,7 @@ fly.interceptors.response.use(
     res => {
         //只将请求结果的data字段返回
         // Tip.toast(JSON.stringify(response.data) + 'res')
-        return response.data
+        return res.data
     },
     err => {
         // Tip.toast(JSON.stringify(err) + 'err')
