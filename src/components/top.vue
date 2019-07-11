@@ -14,7 +14,7 @@
 	      </div>
 	    </div>
 	    <div class="attention">
-	      <p>{{ ctxt }}</p>
+	       {{ctxt}}
 	    </div>
 	</div>
 </template>
@@ -47,13 +47,21 @@
     background-size: 100% 100%;
 }
 .common-top{
+	position:absolute;
+	z-index:5;
+	width:100%;
+	top:0;
+	left:0;
 	.top{
+		position:absolute;
+		top:16px;
+		width:100%;
 		display: flex;
 	    .avatar{
 	    	margin-left: 15px;
 	    	margin-right: 17px;
-	    	height: 50px;
-	    	width: 50px;
+	    	height: 49px;
+	    	width: 49px;
 	    	img{
 	          height: 100%;
 	          width: 100%;
@@ -74,7 +82,7 @@
 				margin-left: 5px;
 				.bg('pl2_energy@2x');
 				width:67px;
-				height: 22px;
+				height: 23px;
 				text-align:right;
 				color:rgb(255, 173, 1);
 				line-height: 20px;
@@ -86,7 +94,7 @@
 				padding-right: 4px;
 				margin-right: 42px;
 				.bg('pl2_Ranking@2x');
-				width:67px;
+				width:72px;
 				height: 22px;
 				text-align:right;
 				color:#fff;
@@ -95,18 +103,23 @@
         }
     }
     .attention{
+    	position:absolute;
+    	top:77px;
     	box-sizing: border-box;
 		width:295px;
 		height: 21px;
 		background: ;
 		border-radius: 6px;
-		background: url("@{imgOrigin}pl2_tips@2x.png") no-repeat 36px center rgba(0, 0, 0, 0.1);
-		background-size:10px 12px;
+		background: url("@{imgOrigin}pl2_tips@2x.png") no-repeat 35px 3px rgba(0, 0, 0, 0.1);
+		background-size:12px 15px;
 		color:#fff;
 		font-size:7px;
 		line-height:21px;
-		margin:10px auto 22px;
-		padding-left: 87px;
+		text-align:center;
+
+		padding-left: 35px;
+		left:50%;
+		transform:translateX(-50%);
 	}
 }
 </style>
