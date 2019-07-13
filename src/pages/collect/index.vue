@@ -8,22 +8,29 @@
 	  		:rightNum="9999">
 	  	</CommonTop>
 		<div class="button task-button"></div>
-		<div class="button email-button"></div>
+		<div class="button email-button" @click="emailIn = true"></div>
 		<div class="button animal-button"></div>
-		<div v-if="online" class="button online-button">
+		<div v-if="!online" class="button online-button">
+			<div class="progress-mask">
+				
+			</div>
+			<div class="progress" :class="{hasBracelet: hasBracelet}"></div>
 			<div class="bracelet">+2</div>
 		</div>
 		<div v-else class="button offline-button"></div>
-		<div class="line"></div>
+		<div class="line">
+			<div class="mask"> </div>
+			<div class="progress"> </div>
+		</div>
 		<div class="nums-wrap">
 			<div class="one-three">
 				<div class="num one"></div>
 				<div class="num two"></div>
 				<div class="num three"></div>
 			</div>
-			<div class="plus"></div>
+			<div class="plus"  @click="energyIn = !energyIn"></div>
 		</div>
-		<div v-if="true" class="energy-wrap">
+		<div   class="energy-wrap" :class="{fadeUp: energyIn, fadeHidden: !energyIn}">
 			<div class="boll ">
 				<div class="round yellow"></div>
 				<div class="num">99</div>
@@ -45,19 +52,32 @@
 				<div class="little-round"></div>
 			</div>
 		</div>
-		<div v-else class="my-home"></div>
+		<div   class="my-home" :class="{fadeUp: energyIn, fadeHidden: !energyIn}"></div>
+		<div class="pop-up-left" :class="{fadeUp: emailIn, fadeHidden: !emailIn}">
+			<Email @closeEmial="closeEmial"/>
+		</div>
 	</div>
+	
 </template>
 <script>
 	import CommonTop from 'components/top'
+	import Email from './email'
 	export default{
 		data () {
 		  return {
 		  	online: false,
+		  	energyIn: false, // 能量背包是否显示
+		  	emailIn: false, // 邮箱弹窗是否显示
+		  	hasBracelet: true, //是否绑定手环
 		    avatar: 'http://img5.imgtn.bdimg.com/it/u=3300305952,1328708913&fm=26&gp=0.jpg'
 		  }
 		},
-		components: { CommonTop }
+		methods: {
+			closeEmial() {
+				this.emailIn = false
+			}
+		},
+		components: { CommonTop, Email }
 	}
 </script>
 <style lang="less">
@@ -66,6 +86,11 @@
  	background: url("@{cdn}@{url}.png") center @vertical no-repeat ;
     background-size: 100% 100%;
 }
+@keyframes progressBraceletOnline {
+  from {width: 10px;}
+  to {width: 48px;}
+}
+
 .collect-wrap{
 	height:100%;
 	width:100%;
@@ -113,6 +138,29 @@
 				// transform:translateY(-50%);
 
 			}
+			.progress-mask{
+				position: absolute;
+				width:48px;
+				height: 10px;
+				bottom:15px;
+				left:14px;
+				.bg("pl2_line_schedule_mask@2x");
+				
+				
+			}
+			.progress{
+					position: absolute;
+					width:30px;
+					height: 10px;
+					bottom:15px;
+					left:14px;
+					// .bg("pl2_line_schedule@2x");
+					background: url("@{cdn}pl2_line_schedule@2x.png") no-repeat 0 0;
+					background-size:100% 100%;
+					&.hasBracelet{
+						animation: progressBraceletOnline 2s infinite ease-in-out;
+					}
+				}
 		}
 		&.offline-button{
 			right:0;
@@ -128,6 +176,24 @@
 		left:50%;
 		transform:translateX(-50%);
 		bottom:229px;
+		.mask{
+			position: absolute;
+			top:0;
+			width:100%;
+			height: 15px;
+			right:0;
+			.bg("pl2_mask@2x");
+		}
+		.progress{
+			position: absolute;
+			top:0;
+			width:60%;
+			height: 15px;
+			left:0;
+			// .bg("pl2_blue@2x");
+			background: url("@{cdn}pl2_blue@2x.png") top left no-repeat ;
+			background-size: 100% 100%;
+		}
 	}
 	.nums-wrap{
 		position:absolute;
@@ -169,9 +235,12 @@
 	}
 	
 	.energy-wrap{
+		transition-timing-function: ease-in;
+		transition: 0.5s;
+		z-index:2;
 		box-sizing:border-box;
 		position:absolute;
-		bottom:0;
+		bottom:-100%;
 		left:50%;
 		transform:translateX(-50%);
 		width:356px;
@@ -180,6 +249,12 @@
 		display:flex;
 		justify-content:space-between;
 		padding:45px 22px 0 20px;
+		&.fadeUp{
+			bottom:0;
+		}
+		&.fadeHidden{
+			bottom:-100%;
+		}
 		.boll{
 			width:72px;
 			height:72px;
@@ -225,6 +300,8 @@
 		}
 	}
 	.my-home{
+		transition: 0.8s;
+		transition-timing-function: ease;
 		position:absolute;
 		left:50%;
 		bottom:15px;
@@ -232,6 +309,23 @@
 		height:110px;
 		.bg("pl2_Parkiland@2x");
 		transform:translateX(-50%);
+		&.fadeUp{
+			bottom: 0;
+		}
+		&.fadeHidden{
+			bottom:15px;
+		}
+	}
+	.pop-up-left{
+		transition: 0.5s;
+		position: absolute;
+		top:0;
+		left:-100%;
+		height: 100%;
+		width:100%;
+		&.fadeUp{
+			left:0;
+		}
 	}
 }
 </style>

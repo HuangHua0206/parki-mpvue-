@@ -40,6 +40,10 @@ export default {
 .page{
   font-family: textfont !important;
 }
+page{
+  height: 100%;
+  overflow: hidden;
+}
 view,text,label,page,[class]{
   font-family: textfont !important;
   font-style: normal;

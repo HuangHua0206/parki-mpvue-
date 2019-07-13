@@ -10,7 +10,7 @@
      
         ></button>
         <van-transition :show="warning"  custom-style="position:absolute;z-index:10001;height:100%;top:0;width:100%;animation-delay: 1s;" name="fade" duration="200" >
-    <span class="common-msg" v-if="warning" @click="warning=false">！游戏尚未开始</span>
+<!--     <span class="common-msg" v-if="warning" @click="warning=false">！游戏尚未开始</span> -->
     </van-transition>
 		 
 	</div>
