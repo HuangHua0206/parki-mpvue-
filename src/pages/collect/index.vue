@@ -76,10 +76,9 @@
 		data () {
 		  return {
 		  	online: false,
-		  	which: 'range',
+		  	blueStatus: false, // 蓝牙是否开启
+		  	which: '',
 		  	energyIn: false, // 能量背包是否显示
-		  	// emailIn: false, // 邮箱弹窗是否显示
-		  	// taskIn: false, // 任务弹窗是否显示
 		  	hasBracelet: true, //是否绑定手环
 		  }
 		},
@@ -96,7 +95,30 @@
 				// 		this.taskIn = false
 				// 		break
 				// }
-			}
+			},
+			openBlueTooth() {
+				console.log(888);
+		      const _this = this;
+		      wx.openBluetoothAdapter({
+		        success(res) {
+		        	console.log(99999);
+		          _this.blueStatus = true;
+		          _this.searchBlueTooth();
+		        },
+		        fail(res) {
+		          wx.onBluetoothAdapterStateChange(function(res) {
+		            if (res.available) {
+		              _this.blueStatus = true;
+		              _this.searchBlueTooth();
+		            }
+		          });
+		        }
+		      });
+		    },
+		},
+		onShow() {
+			console.log(44444);
+			this.openBlueTooth()
 		},
 		components: { CommonTop, Email, Task, Range }
 	}
@@ -182,6 +204,7 @@
 					width:30px;
 					height: 10px;
 					bottom:15px;
+					border-radius:12px;
 					left:14px;
 					// .bg("pl2_line_schedule@2x");
 					background: url("@{cdn}pl2_line_schedule@2x.png") no-repeat 0 0;
