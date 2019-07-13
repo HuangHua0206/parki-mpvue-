@@ -1,6 +1,6 @@
 <template>
 	<div class="email-pop-wrap">
-		<div class="mask" @click="close"></div>
+		<div class="mask" @click="$emit('closePop')"></div>
 		<div class="email-bg">
 			<div class="logo"></div>
 			<ul class="email-list">
@@ -14,7 +14,7 @@
 					<div class="get-btn">领取</div>
 				</li>
 			</ul>
-			<div class="close-btn" @click="close"> </div>
+			<div class="close-btn" @click="$emit('closePop')"> </div>
 		</div>
 		
 	</div>
@@ -22,9 +22,6 @@
 <script>
 	export default{
 		methods: {
-			close() {
-				this.$emit('closePop')
-			}
 		}
 	}
 </script>

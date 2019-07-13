@@ -2,10 +2,11 @@
 	<div class="collect-wrap">
 		<div class="cloud"></div>
 		<CommonTop 
-	  		:avatar="avatar" 
 	  		ctxt="搜集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
 	  		:leftNum="9999"
-	  		:rightNum="9999">
+	  		:rightNum="9999"
+	  		@openRange="which = 'range'"
+	  		>
 	  	</CommonTop>
 		<div class="button task-button" @click="which = 'task'"></div>
 		<div class="button email-button" @click="which = 'email'"></div>
@@ -53,11 +54,15 @@
 			</div>
 		</div>
 		<div   class="my-home" :class="{fadeUp: energyIn}"></div>
+		<!-- 弹窗部分 -->
 		<div class="pop-up-left" :class="{fadeUp: which === 'email'}"> 
-			<Email v-show="true" @closePop="close"  />
+			<Email   @closePop="close"  />
 		</div>
 		<div class="pop-up-left" :class="{fadeUp: which === 'task'}">
-			<Task  v-show="false"  @closePop="close"   />
+			<Task    @closePop="close"   />
+		</div>
+		<div class="pop-up-bottom" :class="{fadeUp: which === 'range'}">
+			<Range   @closePop="close"   />
 		</div>
 	</div>
 	
@@ -66,11 +71,12 @@
 	import CommonTop from 'components/top'
 	import Email from './email'
 	import Task from './task'
+	import Range from './range'
 	export default{
 		data () {
 		  return {
 		  	online: false,
-		  	which: 'task',
+		  	which: 'range',
 		  	energyIn: false, // 能量背包是否显示
 		  	// emailIn: false, // 邮箱弹窗是否显示
 		  	// taskIn: false, // 任务弹窗是否显示
@@ -92,7 +98,7 @@
 				// }
 			}
 		},
-		components: { CommonTop, Email, Task }
+		components: { CommonTop, Email, Task, Range }
 	}
 </script>
 <style lang="less">
@@ -343,8 +349,16 @@
 		&.fadeUp{
 			left:0;
 		}
-		.hidden{
-			opacity: 0;
+	}
+	.pop-up-bottom{
+		transition: 0.5s;
+		position: absolute;
+		bottom:-100%;
+		left:0;
+		height: 100%;
+		width:100%;
+		&.fadeUp{
+			bottom:0;
 		}
 	}
 }

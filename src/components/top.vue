@@ -8,7 +8,7 @@
 	        <div class="left-num">
 	        	{{ leftNum }}
 	        </div>
-	        <div class="right-num">
+	        <div class="right-num" @click="$emit('openRange')">
 	        	{{ rightNum }}
 	        </div>
 	      </div>
