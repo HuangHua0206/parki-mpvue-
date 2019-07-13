@@ -7,11 +7,11 @@
 	  		:leftNum="9999"
 	  		:rightNum="9999">
 	  	</CommonTop>
-		<div class="button task-button"></div>
-		<div class="button email-button" @click="emailIn = true"></div>
-		<div class="button animal-button"></div>
+		<div class="button task-button" @click="which = 'task'"></div>
+		<div class="button email-button" @click="which = 'email'"></div>
+		<div class="button animal-button" ></div>
 		<div v-if="!online" class="button online-button">
-			<div class="progress-mask">
+			<div class="progress-mask" >
 				
 			</div>
 			<div class="progress" :class="{hasBracelet: hasBracelet}"></div>
@@ -30,7 +30,7 @@
 			</div>
 			<div class="plus"  @click="energyIn = !energyIn"></div>
 		</div>
-		<div   class="energy-wrap" :class="{fadeUp: energyIn, fadeHidden: !energyIn}">
+		<div   class="energy-wrap" :class="{fadeUp: energyIn}">
 			<div class="boll ">
 				<div class="round yellow"></div>
 				<div class="num">99</div>
@@ -52,9 +52,12 @@
 				<div class="little-round"></div>
 			</div>
 		</div>
-		<div   class="my-home" :class="{fadeUp: energyIn, fadeHidden: !energyIn}"></div>
-		<div class="pop-up-left" :class="{fadeUp: emailIn, fadeHidden: !emailIn}">
-			<Email @closeEmial="closeEmial"/>
+		<div   class="my-home" :class="{fadeUp: energyIn}"></div>
+		<div class="pop-up-left" :class="{fadeUp: which === 'email'}"> 
+			<Email v-show="true" @closePop="close"  />
+		</div>
+		<div class="pop-up-left" :class="{fadeUp: which === 'task'}">
+			<Task  v-show="false"  @closePop="close"   />
 		</div>
 	</div>
 	
@@ -62,22 +65,34 @@
 <script>
 	import CommonTop from 'components/top'
 	import Email from './email'
+	import Task from './task'
 	export default{
 		data () {
 		  return {
 		  	online: false,
+		  	which: 'task',
 		  	energyIn: false, // 能量背包是否显示
-		  	emailIn: false, // 邮箱弹窗是否显示
+		  	// emailIn: false, // 邮箱弹窗是否显示
+		  	// taskIn: false, // 任务弹窗是否显示
 		  	hasBracelet: true, //是否绑定手环
-		    avatar: 'http://img5.imgtn.bdimg.com/it/u=3300305952,1328708913&fm=26&gp=0.jpg'
 		  }
 		},
 		methods: {
-			closeEmial() {
-				this.emailIn = false
+			close(which) {
+				this.which = ''
+				// switch(which) {
+				// 	case 'email':
+				// 		this.emailIn = false
+				// 		this.which = which
+				// 		break
+				// 	case 'task':
+				// 		this.which = which
+				// 		this.taskIn = false
+				// 		break
+				// }
 			}
 		},
-		components: { CommonTop, Email }
+		components: { CommonTop, Email, Task }
 	}
 </script>
 <style lang="less">
@@ -97,6 +112,14 @@
 	position:absolute;
 	.bg("pl2_background@2x");
 	background-size: 100% 100%;
+	.mask{
+		left:0;
+		top:0;
+		position: absolute;
+		.bg("pl2_blackhalf@2x");
+		width:100%;
+		height: 100%;
+	}
 	.cloud{
 		height:100%;
 		width:100%;
@@ -240,7 +263,7 @@
 		z-index:2;
 		box-sizing:border-box;
 		position:absolute;
-		bottom:-100%;
+		bottom:-200px;
 		left:50%;
 		transform:translateX(-50%);
 		width:356px;
@@ -251,9 +274,6 @@
 		padding:45px 22px 0 20px;
 		&.fadeUp{
 			bottom:0;
-		}
-		&.fadeHidden{
-			bottom:-100%;
 		}
 		.boll{
 			width:72px;
@@ -312,9 +332,6 @@
 		&.fadeUp{
 			bottom: 0;
 		}
-		&.fadeHidden{
-			bottom:15px;
-		}
 	}
 	.pop-up-left{
 		transition: 0.5s;
@@ -325,6 +342,9 @@
 		width:100%;
 		&.fadeUp{
 			left:0;
+		}
+		.hidden{
+			opacity: 0;
 		}
 	}
 }
