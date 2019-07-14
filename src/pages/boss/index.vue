@@ -79,12 +79,13 @@ export default {
 		.ellipse{
 			position: absolute;
 			width:255px;
-			height: 30px;
+			height: 20px;
 			// background:rgba(135,210,125,0.6);
 			// border-radius:50%;
-			left:50%;
-			transform:translateX(-50%);
-			bottom:198px;
+			left:70px;
+			// transform:translateX(-50%);
+
+			bottom:168px;
 			.bg('pl2_shadow@2x')
 		}
 		.collect-btn{
