@@ -2,13 +2,13 @@
 	<div class="common-top">
 		<div class="top">
 	      <div class="avatar">
-	        <img :src="avatar" />
+	        <img :src="userAvatar" />
 	      </div>
 	      <div class="nums">
 	        <div class="left-num">
 	        	{{ leftNum }}
 	        </div>
-	        <div class="right-num">
+	        <div class="right-num" @click="$emit('openRange')">
 	        	{{ rightNum }}
 	        </div>
 	      </div>
@@ -19,12 +19,14 @@
 	</div>
 </template>
 <script>
+	import storage from 'utils/storage'
 	export default{
+		computed: {
+			userAvatar() {
+				return storage.getStorage('userinfo') ? storage.getStorage('userinfo').avatarUrl : ''
+			}
+		},
 		props: {
-			avatar: {
-				type: String,
-				rquired: true
-			},
 			ctxt: {
 				type: String,
 				rquired: true

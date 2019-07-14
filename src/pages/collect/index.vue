@@ -1,29 +1,54 @@
 <template>
 	<div class="collect-wrap">
+
+		
+		<div class="collect-bg"></div>
 		<div class="cloud"></div>
+		<div class="stars">
+			<!-- <img :src="starBg">  -->
+		</div>
 		<CommonTop 
-	  		:avatar="avatar" 
 	  		ctxt="搜集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
 	  		:leftNum="9999"
-	  		:rightNum="9999">
+	  		:rightNum="9999"
+	  		@openRange="which = 'range'"
+	  		>
 	  	</CommonTop>
-		<div class="button task-button"></div>
-		<div class="button email-button"></div>
-		<div class="button animal-button"></div>
-		<div v-if="online" class="button online-button">
+		<div class="button task-button" @click="which = 'task'"></div>
+		<div class="button email-button" @click="which = 'email'"></div>
+		<div class="button animal-button" ></div>
+		<div v-if="!online" class="button online-button">
+			<div class="progress-mask" >
+				
+			</div>
+			<div class="progress" :class="{hasBracelet: hasBracelet}"></div>
 			<div class="bracelet">+2</div>
 		</div>
 		<div v-else class="button offline-button"></div>
-		<div class="line"></div>
+		<div class="line">
+			<div class="mask"> </div>
+			<div 
+				class="progress" 
+				:class="{
+					'green-action': video.energyType === 'green', 
+					'blue-action': video.energyType === 'blue',
+					'orange-action': video.energyType === 'orange',
+					'yellow-action': video.energyType === 'yellow',
+					'green-finish': video.energyType === 'green-finish', 
+					'blue-finish': video.energyType === 'blue-finish',
+					'orange-finish': video.energyType === 'orange-finish',
+					'yellow-finish': video.energyType === 'yellow-finish',
+				}"> </div>
+		</div>
 		<div class="nums-wrap">
 			<div class="one-three">
 				<div class="num one"></div>
 				<div class="num two"></div>
 				<div class="num three"></div>
 			</div>
-			<div class="plus"></div>
+			<div class="plus"  @click="plus"></div>
 		</div>
-		<div v-if="true" class="energy-wrap">
+		<div   class="energy-wrap" :class="{fadeUp: energyIn}">
 			<div class="boll ">
 				<div class="round yellow"></div>
 				<div class="num">99</div>
@@ -45,19 +70,203 @@
 				<div class="little-round"></div>
 			</div>
 		</div>
-		<div v-else class="my-home"></div>
+		<div   class="my-home" :class="{fadeUp: energyIn}"></div>
+		<!-- 弹窗部分 -->
+		<div class="pop-up-left" :class="{fadeUp: which === 'email'}"> 
+			<Email   @closePop="close"  />
+		</div>
+		<div class="pop-up-left" :class="{fadeUp: which === 'task'}">
+			<Task    @closePop="close"   />
+		</div>
+		<div class="pop-up-bottom" :class="{fadeUp: which === 'range'}">
+			<Range   @closePop="close"   />
+		</div>
+		<div 
+			class="collect-sunny"
+	 		v-if="video.play"
+		>
+			<video 
+				 
+				:src="videoSrc"
+				autoplay
+				:show-fullscreen-btn="false"
+				:vslide-gesture-in-fullscreen="false"
+				:enable-progress-gesture="false"
+				:controls="false"
+				:show-center-play-btn="false"
+				object-fit="fill"
+			/>
+			
+		</div>
+		<div class="energy" :class="{
+			'blue': video.energyType === 'blue' || video.energyType === 'blue-finish',
+			'yellow': video.energyType === 'yellow' || video.energyType === 'yellow-finish',
+			'green': video.energyType === 'green' || video.energyType === 'green-finish',
+			'orange': video.energyType === 'orange' | video.energyType === 'orange-finish',
+			'show': video.energyShow
+		}"></div>
 	</div>
+	
 </template>
 <script>
 	import CommonTop from 'components/top'
+	import Email from './email'
+	import Task from './task'
+	import Range from './range'
 	export default{
 		data () {
 		  return {
+		  	star: 39,
+		  	video: {
+		  		play: false,
+		  		energyType: '',
+		  		energyShow: false
+		  	},
+		  	collects: [],	  	
 		  	online: false,
-		    avatar: 'http://img5.imgtn.bdimg.com/it/u=3300305952,1328708913&fm=26&gp=0.jpg'
+		  	blueStatus: false, // 蓝牙是否开启
+		  	which: '',
+		  	energyIn: false, // 能量背包是否显示
+		  	hasBracelet: true, //是否绑定手环
+		  	ISSAME: false, // 发现重复颜色能量
+		  	IS_SENDING: false, // 正在发送能量
 		  }
 		},
-		components: { CommonTop }
+		computed: {
+			starBg() {
+				return `http://parkiland.isxcxbackend1.cn/star${this.star}.gif`
+			},
+			videoSrc() {
+				return `http://parkiland.isxcxbackend1.cn/${this.video.energyType}.mp4`
+			}
+		},
+		methods: {
+			plus() {
+				this.energyIn = !this.energyIn; 
+				// this.play = true;
+ 
+			},
+			close(which) {
+				this.which = ''
+				// switch(which) {
+				// 	case 'email':
+				// 		this.emailIn = false
+				// 		this.which = which
+				// 		break
+				// 	case 'task':
+				// 		this.which = which
+				// 		this.taskIn = false
+				// 		break
+				// }
+			},
+			openBlueTooth() {
+		      const _this = this;
+		      wx.openBluetoothAdapter({
+		        success(res) {
+		        	console.log(99999, res);
+		          _this.blueStatus = true;
+		          _this.searchBlueTooth();
+		        },
+		        fail(res) {
+		        		console.log('fail', res)
+		          wx.onBluetoothAdapterStateChange(function(res) {
+		          	console.log(res)
+		            if (res.available) {
+		              _this.blueStatus = true;
+		              _this.searchBlueTooth();
+		            }
+		          });
+		        }
+		      });
+		    },
+		    searchBlueTooth() {
+		      //搜索设备
+ 
+		      // if (!this.blueStatus) {
+		      //   // _this.warning = true;
+		      //   // _this.warningText = "! 请打开蓝牙设备";
+		      //   setTimeout(() => {
+		      //     // _this.warning = false;
+		      //   }, 1000);
+		      //   return;
+		      // }
+		      wx.startBeaconDiscovery({
+		        uuids: ["FDA50693-A4E2-4FB1-AFCF-C6EB07647825"],
+		        success: res => {
+		        	console.info(res, 'res');
+
+		          wx.onBeaconUpdate(res => {
+		           console.info("beacons", res.beacons);
+
+		           	 if (this.ISSAME) return
+		           	 	console.log('magor', res.beacons[0].major)
+		             if (this.collects.includes(res.beacons[0].major)) {
+		             	this.ISSAME = true
+		             	setTimeout(() => {
+		             		this.$tip.toast('不能收集重复能量')
+		             		this.ISSAME = false
+		             	}, 5000);
+		             } else {
+		             	this.handleFindDevs(res.beacons);
+		             }
+		             
+		          });
+		        },
+		        fail: function(err) {
+		        	console.log(err, 'err')
+		        }
+		      });
+		    },
+		    handleFindDevs(beacons) {
+		       if (this.ISENDING) return
+		       this.ISENDING = true
+		       console.log('发送能量请求');
+		       this.video.play = true;
+		       const major = beacons[0].major
+		       switch (major) {
+		       	  case 100:
+		       	    this.video.energyType = 'orange'
+		       	    break
+		       	  case 101:
+		       	    this.video.energyType = 'yellow'
+		       	    break
+		       	  case 102:
+		       	    this.video.energyType = 'blue'
+		       	    break
+		       	  case 103:
+		       	    this.video.energyType = 'green'
+		       	    break
+		       }
+		       setTimeout(() => {
+		       	this.video.play = false
+		       	this.video.energyType += '-finish'
+		      // 	this.video.energyShow = false
+		       }, 3000);
+		        setTimeout(() => {
+		       	this.video.energyShow = true
+		       }, 2300);
+		       this.collects.push(major)
+		       console.log(this.collects, 'collects')
+		       this.ISENDING = false
+
+		    },
+		    stars() {
+		    	if (this.star >=60 ) {
+		    		this.star = 0
+		    	} else {
+		    		this.star += 1
+		    	}	 
+		    },
+		},
+		created() {
+			setInterval(() => this.stars, 100);
+		},
+		onShow() {
+			
+			console.log(44444);
+			this.openBlueTooth()
+		},
+		components: { CommonTop, Email, Task, Range }
 	}
 </script>
 <style lang="less">
@@ -66,17 +275,39 @@
  	background: url("@{cdn}@{url}.png") center @vertical no-repeat ;
     background-size: 100% 100%;
 }
+@keyframes progressBraceletOnline {
+  from {width: 10px;}
+  to {width: 48px;}
+}
+
 .collect-wrap{
+	overflow:hidden;
 	height:100%;
 	width:100%;
 	position:absolute;
-	.bg("pl2_background@2x");
-	background-size: 100% 100%;
+ 
+	.collect-bg{
+		height:100%;
+		width:100%;
+		position:absolute;
+		.bg("pl2_background@2x");
+		background-size: 100% 100%;
+	}
 	.cloud{
 		height:100%;
 		width:100%;
 		position:absolute;
 		.bg("pl2_cloud@2x");
+	}
+	.stars{
+		height:100%;
+		width:100%;
+		position:absolute;
+		left:0;
+		top:0;
+		background: url("http://parkiland.isxcxbackend1.cn/star39.gif")  center center no-repeat;
+    	background-size: 100% 100%;
+ 
 	}
 	.button{
 		position:absolute;
@@ -113,6 +344,30 @@
 				// transform:translateY(-50%);
 
 			}
+			.progress-mask{
+				position: absolute;
+				width:48px;
+				height: 10px;
+				bottom:15px;
+				left:14px;
+				.bg("pl2_line_schedule_mask@2x");
+				
+				
+			}
+			.progress{
+					position: absolute;
+					width:30px;
+					height: 10px;
+					bottom:15px;
+					border-radius:12px;
+					left:14px;
+					// .bg("pl2_line_schedule@2x");
+					background: url("@{cdn}pl2_line_schedule@2x.png") no-repeat 0 0;
+					background-size:100% 100%;
+					&.hasBracelet{
+						animation: progressBraceletOnline 2s infinite ease-in-out;
+					}
+				}
 		}
 		&.offline-button{
 			right:0;
@@ -121,13 +376,66 @@
 		}
 	}
 	.line{
+		z-index:30;
 		width: 236px;
 		height:19px;
-		.bg("pl2_yellow@2x");
+		.bg("pl2_mask@2x");
 		position:absolute;
 		left:50%;
 		transform:translateX(-50%);
 		bottom:229px;
+		.mask{
+	 
+			position: absolute;
+			top:0;
+			width:100%;
+			height: 15px;
+			right:0;
+			
+		}
+		.progress{
+			transition:width 3s;
+			position: absolute;
+			top:0;
+			width:0;
+			height: 19px;
+			left:0;
+			border-radius: 6px;
+			background-size: 100% 100%;
+			&.green-action{
+				width:100%;
+				background: url("@{cdn}pl2_green@2x.png") top left no-repeat ;
+			}
+			&.yellow-action{
+				width:100%;
+				background: url("@{cdn}pl2_yellow@2x.png") top left no-repeat ;
+			}
+			&.blue-action{
+				width:100%;
+				background: url("@{cdn}pl2_blue@2x.png") top left no-repeat ;
+			}
+			&.orange-action{
+				width:100%;
+				background: url("@{cdn}pl2_orange@2x.png") top left no-repeat ;
+			}
+			&.green-finish{
+				transition:width 0.5s;
+				background: url("@{cdn}pl2_green@2x.png") top left no-repeat ;
+			}
+			&.yellow-finish{
+				transition:width 0.5s;
+				background: url("@{cdn}pl2_yellow@2x.png") top left no-repeat ;
+			}
+			&.blue-finish{
+				transition:width 0.5s;
+				background: url("@{cdn}pl2_blue@2x.png") top left no-repeat ;
+			}
+			&.orange-finish{
+				transition:width 0.5s;
+				background: url("@{cdn}pl2_orange@2x.png") top left no-repeat ;
+			}
+
+		}
 	}
 	.nums-wrap{
 		position:absolute;
@@ -169,9 +477,12 @@
 	}
 	
 	.energy-wrap{
+		transition-timing-function: ease-in;
+		transition: 0.5s;
+		z-index:2;
 		box-sizing:border-box;
 		position:absolute;
-		bottom:0;
+		bottom:-200px;
 		left:50%;
 		transform:translateX(-50%);
 		width:356px;
@@ -180,6 +491,9 @@
 		display:flex;
 		justify-content:space-between;
 		padding:45px 22px 0 20px;
+		&.fadeUp{
+			bottom:0;
+		}
 		.boll{
 			width:72px;
 			height:72px;
@@ -225,6 +539,8 @@
 		}
 	}
 	.my-home{
+		transition: 0.8s;
+		transition-timing-function: ease;
 		position:absolute;
 		left:50%;
 		bottom:15px;
@@ -232,6 +548,72 @@
 		height:110px;
 		.bg("pl2_Parkiland@2x");
 		transform:translateX(-50%);
+		&.fadeUp{
+			bottom: 0;
+		}
 	}
+	.pop-up-left{
+		transition: 0.5s;
+		position: absolute;
+		top:0;
+		left:-100%;
+		height: 100%;
+		width:100%;
+		&.fadeUp{
+			left:0;
+		}
+	}
+	.pop-up-bottom{
+		transition: 0.5s;
+		position: absolute;
+		bottom:-100%;
+		left:0;
+		height: 100%;
+		width:100%;
+		&.fadeUp{
+			bottom:0;
+		}
+	}
+	.collect-sunny{
+		position: absolute;
+		left:0;
+		top:0;
+		height: 100%;
+		width:100%;
+		z-index:20;
+		video{
+			height: 100%;
+			width:100%;
+		}
+		
+	}
+	.energy{
+		z-index:88;
+		position: absolute;
+		top: 100px;
+		left: 50%;
+		height: 118px;
+		width:118px;
+
+		display: none;
+		transform: translateX(-50%);
+		&.blue{
+
+			.bg("pl2_ball_blue@2x");
+		}
+		&.green{
+			.bg("pl2_ball_green@2x");
+		}
+		&.yellow{
+			.bg("pl2_ball_yellow@2x");
+		}
+		&.orange{
+			.bg("pl2_ball_orange@2x");
+		}
+		&.show{
+			display: block;
+		}
+
+	} 
 }
 </style>
