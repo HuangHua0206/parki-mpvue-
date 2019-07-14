@@ -1,6 +1,12 @@
 <template>
 	<div class="collect-wrap">
+
+		
+		<div class="collect-bg"></div>
 		<div class="cloud"></div>
+		<div class="stars">
+			<!-- <img :src="starBg">  -->
+		</div>
 		<CommonTop 
 	  		ctxt="搜集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
 	  		:leftNum="9999"
@@ -21,7 +27,18 @@
 		<div v-else class="button offline-button"></div>
 		<div class="line">
 			<div class="mask"> </div>
-			<div class="progress"> </div>
+			<div 
+				class="progress" 
+				:class="{
+					'green-action': video.energyType === 'green', 
+					'blue-action': video.energyType === 'blue',
+					'orange-action': video.energyType === 'blue',
+					'yellow-action': video.energyType === 'yellow',
+					'green-finish': video.energyType === 'green-finish', 
+					'blue-action': video.energyType === 'blue-action',
+					'orange-action': video.energyType === 'orange-action',
+					'yellow-action': video.energyType === 'yellow-action',
+				}"> </div>
 		</div>
 		<div class="nums-wrap">
 			<div class="one-three">
@@ -29,7 +46,7 @@
 				<div class="num two"></div>
 				<div class="num three"></div>
 			</div>
-			<div class="plus"  @click="energyIn = !energyIn"></div>
+			<div class="plus"  @click="plus"></div>
 		</div>
 		<div   class="energy-wrap" :class="{fadeUp: energyIn}">
 			<div class="boll ">
@@ -64,6 +81,22 @@
 		<div class="pop-up-bottom" :class="{fadeUp: which === 'range'}">
 			<Range   @closePop="close"   />
 		</div>
+		<div 
+			class="collect-sunny"
+	 		v-if="video.play"
+		>
+			<video 
+				 
+				:src="videoSrc"
+				autoplay
+				:show-fullscreen-btn="false"
+				:vslide-gesture-in-fullscreen="false"
+				:enable-progress-gesture="false"
+				:controls="false"
+				:show-center-play-btn="false"
+				object-fit="fill"
+			/>
+		</div>
 	</div>
 	
 </template>
@@ -75,14 +108,35 @@
 	export default{
 		data () {
 		  return {
+		  	star: 39,
+		  	video: {
+		  		play: false,
+		  		energyType: ''
+		  	},
+		  	collects: [],	  	
 		  	online: false,
 		  	blueStatus: false, // 蓝牙是否开启
 		  	which: '',
 		  	energyIn: false, // 能量背包是否显示
 		  	hasBracelet: true, //是否绑定手环
+		  	ISSAME: false, // 发现重复颜色能量
+		  	IS_SENDING: false, // 正在发送能量
 		  }
 		},
+		computed: {
+			starBg() {
+				return `http://parkiland.isxcxbackend1.cn/star${this.star}.gif`
+			},
+			videoSrc() {
+				return `http://parkiland.isxcxbackend1.cn/${this.video.energyType}.mp4`
+			}
+		},
 		methods: {
+			plus() {
+				this.energyIn = !this.energyIn; 
+				// this.play = true;
+ 
+			},
 			close(which) {
 				this.which = ''
 				// switch(which) {
@@ -97,16 +151,17 @@
 				// }
 			},
 			openBlueTooth() {
-				console.log(888);
 		      const _this = this;
 		      wx.openBluetoothAdapter({
 		        success(res) {
-		        	console.log(99999);
+		        	console.log(99999, res);
 		          _this.blueStatus = true;
 		          _this.searchBlueTooth();
 		        },
 		        fail(res) {
+		        		console.log('fail', res)
 		          wx.onBluetoothAdapterStateChange(function(res) {
+		          	console.log(res)
 		            if (res.available) {
 		              _this.blueStatus = true;
 		              _this.searchBlueTooth();
@@ -115,8 +170,85 @@
 		        }
 		      });
 		    },
+		    searchBlueTooth() {
+		      //搜索设备
+ 
+		      // if (!this.blueStatus) {
+		      //   // _this.warning = true;
+		      //   // _this.warningText = "! 请打开蓝牙设备";
+		      //   setTimeout(() => {
+		      //     // _this.warning = false;
+		      //   }, 1000);
+		      //   return;
+		      // }
+		      wx.startBeaconDiscovery({
+		        uuids: ["FDA50693-A4E2-4FB1-AFCF-C6EB07647825"],
+		        success: res => {
+		        	console.info(res, 'res');
+
+		          wx.onBeaconUpdate(res => {
+		           console.info("beacons", res.beacons);
+
+		           	 if (this.ISSAME) return
+		           	 	console.log('magor', res.beacons[0].major)
+		             if (this.collects.includes(res.beacons[0].major)) {
+		             	this.ISSAME = true
+		             	setTimeout(() => {
+		             		this.$tip.toast('不能收集重复能量')
+		             		this.ISSAME = false
+		             	}, 5000);
+		             } else {
+		             	this.handleFindDevs(res.beacons);
+		             }
+		             
+		          });
+		        },
+		        fail: function(err) {
+		        	console.log(err, 'err')
+		        }
+		      });
+		    },
+		    handleFindDevs(beacons) {
+		       if (this.ISENDING) return
+		       this.ISENDING = true
+		       console.log('发送能量请求');
+		       this.video.play = true;
+		       const major = beacons[0].major
+		       switch (major) {
+		       	  case 100:
+		       	    this.video.energyType = 'orange'
+		       	    break
+		       	  case 101:
+		       	    this.video.energyType = 'yellow'
+		       	    break
+		       	  case 102:
+		       	    this.video.energyType = 'blue'
+		       	    break
+		       	  case 103:
+		       	    this.video.energyType = 'green'
+		       	    break
+		       }
+		       setTimeout(() => {
+		       	this.video.play = false
+		       	this.video.energyType += '-finish'
+		       }, 3000);
+		       this.collects.push(major)
+		       this.ISENDING = false
+
+		    },
+		    stars() {
+		    	if (this.star >=60 ) {
+		    		this.star = 0
+		    	} else {
+		    		this.star += 1
+		    	}	 
+		    },
+		},
+		created() {
+			setInterval(() => this.stars, 100);
 		},
 		onShow() {
+			
 			console.log(44444);
 			this.openBlueTooth()
 		},
@@ -135,24 +267,33 @@
 }
 
 .collect-wrap{
+	overflow:hidden;
 	height:100%;
 	width:100%;
 	position:absolute;
-	.bg("pl2_background@2x");
-	background-size: 100% 100%;
-	.mask{
-		left:0;
-		top:0;
-		position: absolute;
-		.bg("pl2_blackhalf@2x");
+ 
+	.collect-bg{
+		height:100%;
 		width:100%;
-		height: 100%;
+		position:absolute;
+		.bg("pl2_background@2x");
+		background-size: 100% 100%;
 	}
 	.cloud{
 		height:100%;
 		width:100%;
 		position:absolute;
 		.bg("pl2_cloud@2x");
+	}
+	.stars{
+		height:100%;
+		width:100%;
+		position:absolute;
+		left:0;
+		top:0;
+		background: url("http://parkiland.isxcxbackend1.cn/star39.gif")  center center no-repeat;
+    	background-size: 100% 100%;
+ 
 	}
 	.button{
 		position:absolute;
@@ -221,9 +362,10 @@
 		}
 	}
 	.line{
+		z-index:30;
 		width: 236px;
 		height:19px;
-		.bg("pl2_yellow@2x");
+		.bg("pl2_mask@2x");
 		position:absolute;
 		left:50%;
 		transform:translateX(-50%);
@@ -234,17 +376,50 @@
 			width:100%;
 			height: 15px;
 			right:0;
-			.bg("pl2_mask@2x");
+			
 		}
 		.progress{
+			transition:width 3s;
 			position: absolute;
 			top:0;
-			width:60%;
-			height: 15px;
+			width:0;
+			height: 19px;
 			left:0;
-			// .bg("pl2_blue@2x");
-			background: url("@{cdn}pl2_blue@2x.png") top left no-repeat ;
+			border-radius: 6px;
 			background-size: 100% 100%;
+			&.green-action{
+				width:100%;
+				background: url("@{cdn}pl2_green@2x.png") top left no-repeat ;
+			}
+			&.yellow-action{
+				width:100%;
+				background: url("@{cdn}pl2_yellow@2x.png") top left no-repeat ;
+			}
+			&.blue-action{
+				width:100%;
+				background: url("@{cdn}pl2_blue@2x.png") top left no-repeat ;
+			}
+			&.orange-action{
+				width:100%;
+				background: url("@{cdn}pl2_orange@2x.png") top left no-repeat ;
+			}
+			&.green-finish{
+				transition:width 0.5s;
+				background: url("@{cdn}pl2_green@2x.png") top left no-repeat ;
+			}
+			&.yellow-finish{
+				width:100%;
+				background: url("@{cdn}pl2_yellow@2x.png") top left no-repeat ;
+			}
+			&.blue-finish{
+				width:100%;
+				background: url("@{cdn}pl2_blue@2x.png") top left no-repeat ;
+			}
+			&.orange-finish{
+				width:100%;
+				background: url("@{cdn}pl2_orange@2x.png") top left no-repeat ;
+			}
+
 		}
 	}
 	.nums-wrap{
@@ -382,6 +557,21 @@
 		width:100%;
 		&.fadeUp{
 			bottom:0;
+		}
+	}
+	.collect-sunny{
+		position: absolute;
+		left:0;
+		top:0;
+		height: 100%;
+		width:100%;
+		z-index:20;
+		video{
+			height: 100%;
+			width:100%;
+		}
+		&.hidden{
+			opacity: 0
 		}
 	}
 }
