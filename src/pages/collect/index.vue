@@ -32,12 +32,12 @@
 				:class="{
 					'green-action': video.energyType === 'green', 
 					'blue-action': video.energyType === 'blue',
-					'orange-action': video.energyType === 'blue',
+					'orange-action': video.energyType === 'orange',
 					'yellow-action': video.energyType === 'yellow',
 					'green-finish': video.energyType === 'green-finish', 
-					'blue-action': video.energyType === 'blue-action',
-					'orange-action': video.energyType === 'orange-action',
-					'yellow-action': video.energyType === 'yellow-action',
+					'blue-finish': video.energyType === 'blue-finish',
+					'orange-finish': video.energyType === 'orange-finish',
+					'yellow-finish': video.energyType === 'yellow-finish',
 				}"> </div>
 		</div>
 		<div class="nums-wrap">
@@ -96,7 +96,15 @@
 				:show-center-play-btn="false"
 				object-fit="fill"
 			/>
+			
 		</div>
+		<div class="energy" :class="{
+			'blue': video.energyType === 'blue' || video.energyType === 'blue-finish',
+			'yellow': video.energyType === 'yellow' || video.energyType === 'yellow-finish',
+			'green': video.energyType === 'green' || video.energyType === 'green-finish',
+			'orange': video.energyType === 'orange' | video.energyType === 'orange-finish',
+			'show': video.energyShow
+		}"></div>
 	</div>
 	
 </template>
@@ -111,7 +119,8 @@
 		  	star: 39,
 		  	video: {
 		  		play: false,
-		  		energyType: ''
+		  		energyType: '',
+		  		energyShow: false
 		  	},
 		  	collects: [],	  	
 		  	online: false,
@@ -231,8 +240,13 @@
 		       setTimeout(() => {
 		       	this.video.play = false
 		       	this.video.energyType += '-finish'
+		      // 	this.video.energyShow = false
 		       }, 3000);
+		        setTimeout(() => {
+		       	this.video.energyShow = true
+		       }, 2300);
 		       this.collects.push(major)
+		       console.log(this.collects, 'collects')
 		       this.ISENDING = false
 
 		    },
@@ -371,6 +385,7 @@
 		transform:translateX(-50%);
 		bottom:229px;
 		.mask{
+	 
 			position: absolute;
 			top:0;
 			width:100%;
@@ -408,15 +423,15 @@
 				background: url("@{cdn}pl2_green@2x.png") top left no-repeat ;
 			}
 			&.yellow-finish{
-				width:100%;
+				transition:width 0.5s;
 				background: url("@{cdn}pl2_yellow@2x.png") top left no-repeat ;
 			}
 			&.blue-finish{
-				width:100%;
+				transition:width 0.5s;
 				background: url("@{cdn}pl2_blue@2x.png") top left no-repeat ;
 			}
 			&.orange-finish{
-				width:100%;
+				transition:width 0.5s;
 				background: url("@{cdn}pl2_orange@2x.png") top left no-repeat ;
 			}
 
@@ -570,9 +585,35 @@
 			height: 100%;
 			width:100%;
 		}
-		&.hidden{
-			opacity: 0
-		}
+		
 	}
+	.energy{
+		z-index:88;
+		position: absolute;
+		top: 100px;
+		left: 50%;
+		height: 118px;
+		width:118px;
+
+		display: none;
+		transform: translateX(-50%);
+		&.blue{
+
+			.bg("pl2_ball_blue@2x");
+		}
+		&.green{
+			.bg("pl2_ball_green@2x");
+		}
+		&.yellow{
+			.bg("pl2_ball_yellow@2x");
+		}
+		&.orange{
+			.bg("pl2_ball_orange@2x");
+		}
+		&.show{
+			display: block;
+		}
+
+	} 
 }
 </style>
