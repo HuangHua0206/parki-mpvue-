@@ -19,26 +19,32 @@
 		<div class="button animal-button" ></div>
 		<div v-if="!online" class="button online-button">
 			<div class="progress-mask" >
-				
+				<div class="progress" :class="{hasBracelet: hasBracelet}">
+					<div class="sunny"  :class="{hasBracelet: hasBracelet}"></div>
+				</div>
 			</div>
-			<div class="progress" :class="{hasBracelet: hasBracelet}"></div>
+			
 			<div class="bracelet">+2</div>
 		</div>
 		<div v-else class="button offline-button"></div>
 		<div class="line">
-			<div class="mask"> </div>
-			<div 
-				class="progress" 
-				:class="{
-					'green-action': video.energyType === 'green', 
-					'blue-action': video.energyType === 'blue',
-					'orange-action': video.energyType === 'orange',
-					'yellow-action': video.energyType === 'yellow',
-					'green-finish': video.energyType === 'green-finish', 
-					'blue-finish': video.energyType === 'blue-finish',
-					'orange-finish': video.energyType === 'orange-finish',
-					'yellow-finish': video.energyType === 'yellow-finish',
-				}"> </div>
+			<div class="mask"> 
+				<div 
+					class="progress" 
+					:class="{
+						'green-action': video.energyType === 'green', 
+						'blue-action': video.energyType === 'blue',
+						'orange-action': video.energyType === 'orange',
+						'yellow-action': video.energyType === 'yellow',
+						'green-finish': video.energyType === 'green-finish', 
+						'blue-finish': video.energyType === 'blue-finish',
+						'orange-finish': video.energyType === 'orange-finish',
+						'yellow-finish': video.energyType === 'yellow-finish',
+					}"> 
+					
+				</div>
+			</div>
+			
 		</div>
 		<div class="nums-wrap">
 			<div class="one-three">
@@ -133,9 +139,6 @@
 		  }
 		},
 		computed: {
-			starBg() {
-				return `http://parkiland.isxcxbackend1.cn/star${this.star}.gif`
-			},
 			videoSrc() {
 				return `http://parkiland.isxcxbackend1.cn/${this.video.energyType}.mp4`
 			}
@@ -250,16 +253,6 @@
 		       this.ISENDING = false
 
 		    },
-		    stars() {
-		    	if (this.star >=60 ) {
-		    		this.star = 0
-		    	} else {
-		    		this.star += 1
-		    	}	 
-		    },
-		},
-		created() {
-			setInterval(() => this.stars, 100);
 		},
 		onShow() {
 			
@@ -276,10 +269,94 @@
     background-size: 100% 100%;
 }
 @keyframes progressBraceletOnline {
-  from {width: 10px;}
-  to {width: 48px;}
+  from {width: 2px;}
+  to {width: 45px;}
 }
+@keyframes progressSunny {
+  from {width: 0px;}
+  to {width: 38px;}
+}
+// .for(@list){  
+//     .loop(@index:1) when ( @index<=length(@list) ){  
+//         @item:extract(@list, @index);  
+//         .each(@item);//这里的each相当于一个抽象方法，谁调用for谁来实现  
+//         .loop( @index + 1 );  
+//     }  
+//     .loop();  
+// }
+// .loop(@i) when (@i < length(@bgcardList)+1){    
+// 	.backgroundcard(extract(@bgcardList, @i),extract(@bgcardList, @i));    
+// 	.loop(@i+1);
+// }.loop(1);
+// .ml-loop(@max,@i:1) when (length(@max)>=@i){
+//     @{i}% { background-image: url("@{cdn}star@{i}.gif")); }
+//     .ml-loop(@max,(@i+1));
+// }
 
+@keyframes starsAnimation {
+	// .ml-loop(60);
+  0% {background-image: url("@{cdn}star00.png")}
+  1% {background-image: url("@{cdn}star01.png")}
+  2% {background-image: url("@{cdn}star02.png")}
+  3% {background-image: url("@{cdn}star03.png")}
+  4% {background-image: url("@{cdn}star04.png")}
+  5% {background-image: url("@{cdn}star05.png")}
+  6% {background-image: url("@{cdn}star06.png")}
+  7% {background-image: url("@{cdn}star07.png")}
+  8% {background-image: url("@{cdn}star08.png")}
+  9% {background-image: url("@{cdn}star09.png")}
+  10% {background-image: url("@{cdn}star10.png")}
+  11% {background-image: url("@{cdn}star11.png")}
+  12% {background-image: url("@{cdn}star12.png")}
+  13% {background-image: url("@{cdn}star13.png")}
+  14% {background-image: url("@{cdn}star14.png")}
+  15% {background-image: url("@{cdn}star15.png")}
+  16% {background-image: url("@{cdn}star16.png")}
+  17% {background-image: url("@{cdn}star17.png")}
+  18% {background-image: url("@{cdn}star18.png")}
+  19% {background-image: url("@{cdn}star19.png")}
+  20% {background-image: url("@{cdn}star20.png")}
+  21% {background-image: url("@{cdn}star21.png")}
+  22% {background-image: url("@{cdn}star22.png")}
+  23% {background-image: url("@{cdn}star23.png")}
+  24% {background-image: url("@{cdn}star24.png")}
+  25% {background-image: url("@{cdn}star25.png")}
+  26% {background-image: url("@{cdn}star26.png")}
+  27% {background-image: url("@{cdn}star27.png")}
+  28% {background-image: url("@{cdn}star28.png")}
+  29% {background-image: url("@{cdn}star29.png")}
+  30% {background-image: url("@{cdn}star30.png")}
+  31% {background-image: url("@{cdn}star31.png")}
+  32% {background-image: url("@{cdn}star32.png")}
+  33% {background-image: url("@{cdn}star33.png")}
+  34% {background-image: url("@{cdn}star34.png")}
+  35% {background-image: url("@{cdn}star35.png")}
+  36% {background-image: url("@{cdn}star36.png")}
+  37% {background-image: url("@{cdn}star37.png")}
+  38% {background-image: url("@{cdn}star38.png")}
+  39% {background-image: url("@{cdn}star39.png")}
+  40% {background-image: url("@{cdn}star40.png")}
+  41% {background-image: url("@{cdn}star41.png")}
+  42% {background-image: url("@{cdn}star42.png")}
+  43% {background-image: url("@{cdn}star43.png")}
+  44% {background-image: url("@{cdn}star44.png")}
+  45% {background-image: url("@{cdn}star45.png")}
+  46% {background-image: url("@{cdn}star46.png")}
+  47% {background-image: url("@{cdn}star47.png")}
+  48% {background-image: url("@{cdn}star48.png")}
+  // 49% {background-image: url("@{cdn}star49.gif")}
+  // 50% {background-image: url("@{cdn}star50.gif")}
+  // 51% {background-image: url("@{cdn}star51.gif")}
+  // 52% {background-image: url("@{cdn}star52.gif")}
+  // 53% {background-image: url("@{cdn}star53.gif")}
+  // 54% {background-image: url("@{cdn}star54.gif")}
+  // 55% {background-image: url("@{cdn}star55.gif")}
+  // 56% {background-image: url("@{cdn}star56.gif")}
+  // 57% {background-image: url("@{cdn}star57.gif")}
+  // 58% {background-image: url("@{cdn}star58.gif")}
+  // 59% {background-image: url("@{cdn}star59.gif")}
+  // 60% {background-image: url("@{cdn}star60.gif")}
+}
 .collect-wrap{
 	overflow:hidden;
 	height:100%;
@@ -300,12 +377,16 @@
 		.bg("pl2_cloud@2x");
 	}
 	.stars{
-		height:100%;
-		width:100%;
+		animation: starsAnimation 2s infinite;
+		// height:100%;
+		// width:100%;
+		width:150px;
+		height: 150px;
 		position:absolute;
-		left:0;
-		top:0;
-		background: url("http://parkiland.isxcxbackend1.cn/star39.gif")  center center no-repeat;
+		left:50%;
+		transform: translateX(-45%);
+		top:110px;
+		// background: url("http://parkiland.isxcxbackend1.cn/star39.gif")  center center no-repeat;
     	background-size: 100% 100%;
  
 	}
@@ -345,29 +426,46 @@
 
 			}
 			.progress-mask{
+				border-radius:12px;
 				position: absolute;
 				width:48px;
 				height: 10px;
 				bottom:15px;
 				left:14px;
+				overflow:hidden;
+				box-sizing: border-box;
+				padding:2px;
 				.bg("pl2_line_schedule_mask@2x");
-				
-				
-			}
-			.progress{
-					position: absolute;
-					width:30px;
-					height: 10px;
-					bottom:15px;
+				.progress{
+					box-sizing: border-box;
 					border-radius:12px;
-					left:14px;
+					width:0px;
+					height: 6px;
+					background:#fffb7d;
+					// bottom:15px;
+					border-radius:12px;
+					// left:14px;
 					// .bg("pl2_line_schedule@2x");
-					background: url("@{cdn}pl2_line_schedule@2x.png") no-repeat 0 0;
-					background-size:100% 100%;
+					// background: url("@{cdn}pl2_line_schedule@2x.png") no-repeat 0 0;
+					// background-size:100% 100%;
 					&.hasBracelet{
-						animation: progressBraceletOnline 2s infinite ease-in-out;
+						animation: progressBraceletOnline 2s infinite ease;
+					}
+					.sunny{
+						position: absolute;
+						top:3px;
+						left:3px;
+						width: 0px;
+						height: 1px; 
+						background: #fff;
+					 	&.hasBracelet{
+							animation: progressSunny 2s infinite ease;
+						}
 					}
 				}
+				
+			}
+			
 		}
 		&.offline-button{
 			right:0;
@@ -379,63 +477,67 @@
 		z-index:30;
 		width: 236px;
 		height:19px;
-		.bg("pl2_mask@2x");
+		.bg("pl2_green@2x");
 		position:absolute;
 		left:50%;
 		transform:translateX(-50%);
 		bottom:229px;
 		.mask{
-	 
+	 		// .bg("pl2_mask@2x");
 			position: absolute;
+			border-radius:12px;
+			border:2px solid #000;
+			box-sizing: border-box;
+			background: #fff;
 			top:0;
 			width:100%;
 			height: 15px;
 			right:0;
-			
-		}
-		.progress{
-			transition:width 3s;
-			position: absolute;
-			top:0;
-			width:0;
-			height: 19px;
-			left:0;
-			border-radius: 6px;
-			background-size: 100% 100%;
-			&.green-action{
-				width:100%;
-				background: url("@{cdn}pl2_green@2x.png") top left no-repeat ;
-			}
-			&.yellow-action{
-				width:100%;
-				background: url("@{cdn}pl2_yellow@2x.png") top left no-repeat ;
-			}
-			&.blue-action{
-				width:100%;
-				background: url("@{cdn}pl2_blue@2x.png") top left no-repeat ;
-			}
-			&.orange-action{
-				width:100%;
-				background: url("@{cdn}pl2_orange@2x.png") top left no-repeat ;
-			}
-			&.green-finish{
-				transition:width 0.5s;
-				background: url("@{cdn}pl2_green@2x.png") top left no-repeat ;
-			}
-			&.yellow-finish{
-				transition:width 0.5s;
-				background: url("@{cdn}pl2_yellow@2x.png") top left no-repeat ;
-			}
-			&.blue-finish{
-				transition:width 0.5s;
-				background: url("@{cdn}pl2_blue@2x.png") top left no-repeat ;
-			}
-			&.orange-finish{
-				transition:width 0.5s;
-				background: url("@{cdn}pl2_orange@2x.png") top left no-repeat ;
-			}
+			overflow:hidden;
+		 
+			.progress{
+				// border-radius:12px;
+				transition:width 3s ease;
+				height: 100%;
+				width:0;
+				background: #23ff03;
+			 
+				&.green-action{
+					width:100%;
+					background: #23ff03;
+				}
+				&.yellow-action{
+					width:100%;
+					background: #ffe504 ;
+				}
+				&.blue-action{
+					width:100%;
+					background: #04b8ff;
+				}
+				&.orange-action{
+					width:100%;
+					background: #ff7603 ;
+				}
+				&.green-finish{
+					transition:width 0.5s;
+					background: #23ff03;;
+				}
+				&.yellow-finish{
+					transition:width 0.5s;
+					background: #ffe504 ;
+				}
+				&.blue-finish{
+					transition:width 0.5s;
+					background: #04b8ff;
+				}
+				&.orange-finish{
+					transition:width 0.5s;
+					background:#ff7603 ;
+				}
 
+			}
 		}
+		
 	}
 	.nums-wrap{
 		position:absolute;
