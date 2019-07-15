@@ -292,8 +292,6 @@
 		       console.log('发送能量请求');
 		       this.video.play = true;
 		       const major = beacons[0].major
-		     //  const _collects = this.collects
-		     //  console.log(_collects, '_collects_collects')
 		       switch (major) {
 		       	  case 100:
 		       	    this.video.energyType = 'orange'
@@ -323,33 +321,11 @@
 		       	this.video.play = false
 		       	this.video.energyType += '-finish'
 		       	this.video[`energyDown${this.index + 1}`] = true
-		       	console.log(this.video, 'vedio')
-		       // 	console.log('down', _collects, _collects[0])
-		      	// if (!_collects[0]) {
-		      	// 	this.video.energyDown1 = true
-		      	// } else if (!!_collects[0] && !_collects[1]) {
-		      	// 	this.video.energyDown2 = true
-		      	// } else {
-		      	// 	this.video.energyDown3 = true
-		      	// }
 		       }, 3000);
 		        setTimeout(() => {
 		         	console.log(this.index, 'index');
 		        	this.video[`energyShow${this.index + 1}`] = true
-		        // 	 if (!_collects[0]) {
-		        // 	 	console.log(0)
-			      	// 	this.video.energyShow1 = true
-			      	// } else if (!!_collects[0] && !_collects[1]) {
-			      	// 	console.log(1)
-			      	// 	this.video.energyShow2 = true
-			      	// } else {
-			      	// 	console.log(2)
-			      	// 	this.video.energyShow3 = true
-			      	// }
-	 
 		       }, 2300);
-		      
-		       console.log(this.collects, 'collects', this.video)
 		       this.ISENDING = false
 
 		    },
@@ -385,7 +361,6 @@
 		      		this.collects[2] = major
 		      		this.bags.bagShow3 = true
 		      	}
-		      	console.log(this.collects, this.bags)
 		    }
 		},
 		onShow() {
