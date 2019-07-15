@@ -168,6 +168,9 @@
 	import Range from './range'
 	import Bracelet from './bracelet'
 	import Animal from './animal'
+	import storage from 'utils/storage'
+	import { collectService } from 'services/collect'
+	
 	export default{
 		data () {
 		  return {
@@ -286,10 +289,18 @@
 		        }
 		      });
 		    },
-		    handleFindDevs(beacons) {
+		    async handleFindDevs(beacons) {
 		       if (this.ISENDING) return
 		       this.ISENDING = true
-		       console.log('发送能量请求');
+		   console.log('发送能量请求')
+		       console.log( storage.getStorage('userinfo'));
+		       const userinfo = storage.getStorage('userinfo') || {}
+		       const resultData = await collectService({
+		    		openid: userinfo.openid,
+		    		color:'4'
+		    	})
+		       console.log(resultData, 'resultData')
+		       this.ISENDING = false
 		       this.video.play = true;
 		       const major = beacons[0].major
 		       switch (major) {
@@ -329,6 +340,11 @@
 		       this.ISENDING = false
 
 		    },
+		    requestCollect() {
+ 
+		    	
+		    	console.log(resultData)
+		    },
 		    getBagEnergy(color) {
 		    	console.log(color)
 		    	let major = null
@@ -365,7 +381,7 @@
 		},
 		onShow() {
 			this.openBlueTooth()
-			
+			console.log(storage.getStorage('userinfo'))
 		},
 		mounted() {
 			this.fadeIn = true
