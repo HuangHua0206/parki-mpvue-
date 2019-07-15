@@ -291,16 +291,7 @@
 		    },
 		    async handleFindDevs(beacons) {
 		       if (this.ISENDING) return
-		       this.ISENDING = true
-		   console.log('发送能量请求')
-		       console.log( storage.getStorage('userinfo'));
-		       const userinfo = storage.getStorage('userinfo') || {}
-		       const resultData = await collectService({
-		    		openid: userinfo.openid,
-		    		color:'4'
-		    	})
-		       console.log(resultData, 'resultData')
-		       this.ISENDING = false
+
 		       this.video.play = true;
 		       const major = beacons[0].major
 		       switch (major) {
@@ -340,10 +331,27 @@
 		       this.ISENDING = false
 
 		    },
-		    requestCollect() {
+		    async requestCollect() {
  
-		    	
-		    	console.log(resultData)
+		    	  this.ISENDING = true
+		   			console.log('发送能量请求')
+		       console.log( storage.getStorage('userinfo'));
+		       const userinfo = storage.getStorage('userinfo') || {}
+		       const resultData = await collectService({
+		    		openid: userinfo.openid,
+		    		color:'4'
+		    	})
+		       console.log(resultData, 'resultData')
+		       switch (resultData.code) {
+		       		case 101:
+		       			console.log('没宠物，一轮完毕')
+		       			break
+		       		case 102:
+		       			console.log('宠物')
+		       			break
+		       }
+		       
+		       this.ISENDING = false
 		    },
 		    getBagEnergy(color) {
 		    	console.log(color)
