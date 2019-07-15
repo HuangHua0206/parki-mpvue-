@@ -14,10 +14,10 @@
 	  		@openRange="which = 'range'"
 	  		>
 	  	</CommonTop>
-		<div class="button task-button" @click="which = 'task'"></div>
-		<div class="button email-button" @click="which = 'email'"></div>
-		<div class="button animal-button" ></div>
-		<div v-if="!online" class="button online-button">
+		<div class="button task-button" :class="{'fade-left-in': fadeIn}" @click="which = 'task'"></div>
+		<div class="button email-button" :class="{'fade-left-in': fadeIn}" @click="which = 'email'"></div>
+		<div class="button animal-button" :class="{'fade-right-in': fadeIn}" ></div>
+		<div v-if="!online" class="button online-button"  :class="{'fade-right-in': fadeIn}">
 			<div class="progress-mask" >
 				<div class="progress" :class="{hasBracelet: hasBracelet}">
 					<div class="sunny"  :class="{hasBracelet: hasBracelet}"></div>
@@ -26,7 +26,7 @@
 			
 			<div class="bracelet">+2</div>
 		</div>
-		<div v-else class="button offline-button"></div>
+		<div v-else class="button offline-button" :class="{'fade-right-in': fadeIn}"></div>
 		<div class="line">
 			<div class="mask"> 
 				<div 
@@ -122,16 +122,16 @@
 	export default{
 		data () {
 		  return {
-		  	star: 39,
-		  	video: {
-		  		play: false,
-		  		energyType: '',
-		  		energyShow: false
+		  	fadeIn: false, // 界面加载完时四个弹窗按钮动画效果进入
+		  	video: { // 收集能量时视频相关参数
+		  		play: false, // 检测到能量时播放视频
+		  		energyType: '', // 能量类型（4种，blue，orange，yellow，green）
+		  		energyShow: false // 视频将播放完时显示生成的能力球
 		  	},
-		  	collects: [],	  	
-		  	online: false,
+		  	collects: [], // 当前收集能量集  	
+		  	online: false, // 是否绑定手环
 		  	blueStatus: false, // 蓝牙是否开启
-		  	which: '',
+		  	which: '', // 界面显示某一个弹窗
 		  	energyIn: false, // 能量背包是否显示
 		  	hasBracelet: true, //是否绑定手环
 		  	ISSAME: false, // 发现重复颜色能量
@@ -255,9 +255,14 @@
 		    },
 		},
 		onShow() {
-			
-			console.log(44444);
 			this.openBlueTooth()
+			
+		},
+		mounted() {
+			this.fadeIn = true
+		},
+		onUnload() {
+			this.fadeIn = false
 		},
 		components: { CommonTop, Email, Task, Range }
 	}
@@ -344,18 +349,6 @@
   46% {background-image: url("@{cdn}star46.png")}
   47% {background-image: url("@{cdn}star47.png")}
   48% {background-image: url("@{cdn}star48.png")}
-  // 49% {background-image: url("@{cdn}star49.gif")}
-  // 50% {background-image: url("@{cdn}star50.gif")}
-  // 51% {background-image: url("@{cdn}star51.gif")}
-  // 52% {background-image: url("@{cdn}star52.gif")}
-  // 53% {background-image: url("@{cdn}star53.gif")}
-  // 54% {background-image: url("@{cdn}star54.gif")}
-  // 55% {background-image: url("@{cdn}star55.gif")}
-  // 56% {background-image: url("@{cdn}star56.gif")}
-  // 57% {background-image: url("@{cdn}star57.gif")}
-  // 58% {background-image: url("@{cdn}star58.gif")}
-  // 59% {background-image: url("@{cdn}star59.gif")}
-  // 60% {background-image: url("@{cdn}star60.gif")}
 }
 .collect-wrap{
 	overflow:hidden;
@@ -391,26 +384,28 @@
  
 	}
 	.button{
+		transition: 1s;
 		position:absolute;
 		width:67px;
 		height:57px;
+		
 		&.task-button{
-			left:0;
+			left:-70px;
 			top:108px;
 			.bg("pl2_task@2x");
 		}
 		&.email-button{
-			left:0;
+			left:-70px;
 			top:179px;
 			.bg("pl2_mail@2x");
 		}
 		&.animal-button{
-			right:0;
+			right:-70px;
 			top:108px;
 			.bg("pl2_PetCard@2x");
 		}
 		&.online-button{
-			right:0;
+			right:-70px;
 			top:179px;
 			.bg("pl2_on line@2x");
 			.bracelet{
@@ -468,9 +463,15 @@
 			
 		}
 		&.offline-button{
-			right:0;
+			right:-70px;
 			top:180px;
 			.bg("pl2_off line@2x");
+		}
+		&.fade-left-in{
+			left:0;
+		}
+		&.fade-right-in{
+			right:0;
 		}
 	}
 	.line{

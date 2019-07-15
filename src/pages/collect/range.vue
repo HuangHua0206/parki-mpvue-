@@ -59,8 +59,17 @@
 <style lang="less">
 @import "~less/mixin.less";
 	.range-pop-wrap{
+		.mask{
+			left:0;
+			top:0;
+			position: absolute;
+			.bg("pl2_blackhalf@2x");
+			width:100%;
+			height: 100%;
+		}
+		
 		.rang-bg{
-			z-index:12;
+			z-index:30;
 			.bg("pl2_list@2x");
 			width:347px;
 			height: 506px;

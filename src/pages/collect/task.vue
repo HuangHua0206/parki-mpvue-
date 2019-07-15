@@ -48,7 +48,7 @@
 <style lang="less">
 @import "~less/mixin.less";
 	.task-pop-wrap{
-		z-index:8;
+		z-index:30;
 		position: absolute;
 		width:100%;
 	    height: 100%;
