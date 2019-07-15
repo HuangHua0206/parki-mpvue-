@@ -17,7 +17,7 @@
 		<div class="button task-button" :class="{'fade-left-in': fadeIn}" @click="which = 'task'"></div>
 		<div class="button email-button" :class="{'fade-left-in': fadeIn}" @click="which = 'email'"></div>
 		<div class="button animal-button" :class="{'fade-right-in': fadeIn}" ></div>
-		<div v-if="!online" class="button online-button"  :class="{'fade-right-in': fadeIn}">
+		<div v-if="!online" class="button online-button"  :class="{'fade-right-in': fadeIn}" @click="which = 'bracelet'"> 
 			<div class="progress-mask" >
 				<div class="progress" :class="{hasBracelet: hasBracelet}">
 					<div class="sunny"  :class="{hasBracelet: hasBracelet}"></div>
@@ -87,6 +87,9 @@
 		<div class="pop-up-bottom" :class="{fadeUp: which === 'range'}">
 			<Range   @closePop="close"   />
 		</div>
+		<div class="pop-up-right" :class="{fadeUp: which === 'bracelet'}">
+			<Bracelet   @closePop="close"   />
+		</div>
 		<div 
 			class="collect-sunny"
 	 		v-if="video.play"
@@ -109,7 +112,7 @@
 			'yellow': video.energyType === 'yellow' || video.energyType === 'yellow-finish',
 			'green': video.energyType === 'green' || video.energyType === 'green-finish',
 			'orange': video.energyType === 'orange' | video.energyType === 'orange-finish',
-			'show': video.energyShow
+			'show': true
 		}"></div>
 	</div>
 	
@@ -119,6 +122,7 @@
 	import Email from './email'
 	import Task from './task'
 	import Range from './range'
+	import Bracelet from './bracelet'
 	export default{
 		data () {
 		  return {
@@ -264,7 +268,7 @@
 		onUnload() {
 			this.fadeIn = false
 		},
-		components: { CommonTop, Email, Task, Range }
+		components: { CommonTop, Email, Task, Range, Bracelet }
 	}
 </script>
 <style lang="less">
@@ -677,6 +681,17 @@
 			bottom:0;
 		}
 	}
+	.pop-up-right{
+		transition: 0.5s;
+		position: absolute;
+		top:0;
+		right:-100%;
+		height: 100%;
+		width:100%;
+		&.fadeUp{
+			right:0;
+		}
+	}
 	.collect-sunny{
 		position: absolute;
 		left:0;
@@ -693,15 +708,16 @@
 	.energy{
 		z-index:88;
 		position: absolute;
-		top: 100px;
+		bottom: 84%;
 		left: 50%;
 		height: 118px;
 		width:118px;
-
-		display: none;
+		transition: 0.5s;
+		opacity: 0;
+		// display: none;
 		transform: translateX(-50%);
 		&.blue{
-
+			
 			.bg("pl2_ball_blue@2x");
 		}
 		&.green{
@@ -714,7 +730,8 @@
 			.bg("pl2_ball_orange@2x");
 		}
 		&.show{
-			display: block;
+			opacity: 1;
+			// display: block;
 		}
 
 	} 
