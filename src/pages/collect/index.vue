@@ -123,7 +123,7 @@
 			'down1': video.energyDown1,
 			'together': together
 		}"></div>
-		<div class="energy energy-2 " :class="{
+		<div class="energy energy-2" :class="{
 			'blue': collects[1] === '3' ,
 			'yellow': collects[1] === '2',
 			'green': collects[1] === '4',
@@ -296,29 +296,25 @@
 		    async handleFindDevs(beacons) {
 		       if (this.ISENDING) return
 		       const major = beacons[0].major
-		   console.log(ENERGY_CONFIG)
 		       const item = ENERGY_CONFIG.filter(item => item.major === major)[0]
 	           const key = item.key
 		       // 发送请求
-		       await this.requestCollect(key)
+		      // await this.requestCollect(key)
 		       // 请求完成之后 播放视频动画
 		       this.video.play = true;
 		       this.video.energyType = item.color
-		       if (!this.collects[0]) {
-		      
+		       if (!this.collects[0]) {		      
 		      		this.collects[0] = key
 		      		this.index = 0
-		      		 	console.log(0)
 		      	} else if (!!this.collects[0] && !this.collects[1]) {
-		      			
 		      		this.collects[1] = key
 		      		this.index = 1
 		      		console.log(1)
 		      	} else {
-		      		
 		      		this.collects[2] = key
 		      		console.log(2)
 		      		this.index = 2
+		      		//this.video.together
 		      	}
 		      	console.log(this.index, 'this.index')
 		       setTimeout(() => {
@@ -825,8 +821,8 @@
 		position: absolute;
 		bottom: 64%;
 		left: 50%;
-		height: 20%;
-		width:30%;
+		height: 118px;
+		width:118px;
 		transition: 0.5s;
 		opacity: 0;
 	
@@ -850,22 +846,22 @@
 			// display: block;
 		}
 		&.down1{
-			bottom: 27%;
-			width:12%;
-			height:7%;
+			bottom: 26.5%;
+			width:45px;
+			height:45px;
 			left:26%;
 			z-index:7;
 		}
 		&.down2{
-			bottom: 27%;
-			width:12%;
-			height:7%;
+			bottom: 26.5%;
+			width:45px;
+			height:45px;
 			z-index:7;
 		}
 		&.down3{
-			bottom: 27%;
-			width:12%;
-			height:7%;
+			bottom: 26.5%;
+			width:45px;
+			height:45px;
 			left:74%;
 			z-index:7;
 		}
