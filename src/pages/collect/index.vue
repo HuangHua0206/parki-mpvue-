@@ -45,29 +45,43 @@
 		</div>
 		<div class="nums-wrap">
 			<div class="one-three">
-				<div class="num one">
-					<!-- <div v-if="collects.length === 3" class="energy-earn" :class="{
-						'blue':collects[0] === '3',
+				<div class="num one"></div>
+				<div class="num two"></div>
+				<div  class="num three"></div>
+			</div>
+			<div class="plus"  @click="energyIn = !energyIn"></div>
+		</div>
+		<div class="nums-wrap" style="z-index: 45;">
+			<div class="one-three">
+				<div class="num  ">
+					<div @click="deleteEnergy(0)" class="bag-energy address1" :class="{
+						'show': bags.bagShow1,
+						'blue': collects[0] === '3' ,
 						'yellow': collects[0] === '2',
 						'green': collects[0] === '4',
 						'orange': collects[0] === '1',
-					}"></div> -->
+						'together': together
+					}"></div>
 				</div>
-				<div class="num two">
-				<!-- 	<div v-if="collects.length === 3"  class="energy-earn" :class="{
-						'blue': collects[1] === '3',
+				<div class="num ">
+				 	<div @click="deleteEnergy(1)" class="bag-energy address2" :class="{
+						'show': bags.bagShow2,
+						'blue': collects[1] === '3' ,
 						'yellow': collects[1] === '2',
 						'green': collects[1] === '4',
 						'orange': collects[1] === '1',
-					}"></div> -->
+						'together': together
+					}"></div>
 				</div>
-				<div  class="num three">
-			<!-- 		<div v-if="collects.length === 3" class="energy-earn" :class="{
-						'blue': collects[2] === '3',
+				<div  class="num  ">
+			 		<div @click="deleteEnergy(1)" class="bag-energy address3" :class="{
+						'show': bags.bagShow3,
+						'blue': collects[2] === '3' ,
 						'yellow': collects[2] === '2',
 						'green': collects[2] === '4',
 						'orange': collects[2] === '1',
-					}"></div> -->
+						'together': together
+					}"></div>
 				</div>
 			</div>
 			<div class="plus"  @click="energyIn = !energyIn"></div>
@@ -166,15 +180,15 @@
 			'together': together
 		}"></div>
 		<!-- 背包获取能量 -->
-		<div @click="deleteEnergy(0)" class="bag-energy address1" :class="{
+	<!-- 	<div @click="deleteEnergy(0)" class="bag-energy address1" :class="{
 			'show': bags.bagShow1,
 			'blue': collects[0] === '3' ,
 			'yellow': collects[0] === '2',
 			'green': collects[0] === '4',
 			'orange': collects[0] === '1',
 			'together': together
-		}"></div>
-		<div @click="deleteEnergy(1)" class="bag-energy address2" :class="{
+		}"></div> -->
+<!-- 		<div @click="deleteEnergy(1)" class="bag-energy address2" :class="{
 			'show': bags.bagShow2,
 			'blue': collects[1] === '3' ,
 			'yellow': collects[1] === '2',
@@ -189,7 +203,7 @@
 			'green': collects[2] === '4',
 			'orange': collects[2] === '1',
 			'together': together
-		}"></div>
+		}"></div> -->
 	</div>
 	
 </template>
@@ -708,6 +722,7 @@
 		left:0;
 		width:100%;
 		height:65px;
+
 		.one-three{
 			position:absolute;
 			bottom:0;
@@ -729,25 +744,39 @@
 				&.three{
 					.bg("pl2_3@2x");
 				}
-				.energy-earn{
-					position:absolute;
-					width: 45px;
-					height:45px;
+				.bag-energy{
+					transition: 1s;
+					opacity:0;
+					position: absolute;
+					height: 90px;
+					border-radius:50%;
+					width:90px;
+					z-index:45;
 					left:50%;
-					transform:translateX(-50%);
-					top:7px;
-					animation: energyIn 0 ease 4s;
-					&.yellow{
-					.bg("pl2_ball_yellow@2x");
-					}
+					transform:translate(-50%, -60%);
+					top:50%;
 					&.blue{
 						.bg("pl2_ball_blue@2x");
 					}
 					&.green{
 						.bg("pl2_ball_green@2x");
 					}
+					&.yellow{
+						.bg("pl2_ball_yellow@2x");
+					}
 					&.orange{
 						.bg("pl2_ball_orange@2x");
+					}
+					&.show{
+						opacity: 1;
+						height:45px;
+						width:45px;
+					}
+					&.address1.together{
+						left: 110%;
+					}
+					&.address3.together{
+						left:-20%;
 					}
 				}
 			}
@@ -935,7 +964,7 @@
 		}
 		&.energy-1.together{
 			z-index:88;
-			left: 38%;
+			left: 37%;
 			// .bg("pl2_ball_green@2x");
 		}
 		&.energy-2.together{
@@ -949,64 +978,6 @@
 			// .bg("pl2_ball_green@2x");
 		}
 	} 
-	.bag-energy{
-		z-index:31;
-		transition: 1s;
-		opacity:0;
-		position: absolute;
-		height: 45px;
-		width:45px;
-		z-index:45;
-		bottom: 26.5%;
-		left:50%;
-		transform:translateX(-50%);
-		// .bg("pl2_ball_blue@2x");
-		&.blue{
-			.bg("pl2_ball_blue@2x");
-		}
-		&.green{
-			.bg("pl2_ball_green@2x");
-		}
-		&.yellow{
-			.bg("pl2_ball_yellow@2x");
-		}
-		&.orange{
-			.bg("pl2_ball_orange@2x");
-		}
-		&.show{
-			opacity: 1;
-			bottom: 26.5%;
-		}
-		&.address1{
-			height:45px;
-			width:45px;
-			left: 26%
-		}
-		&.address2{
-			height:45px;
-			width:45px;
-		 
-		}
-		&.address3{
-			height:45px;
-			width:45px;
-			left:74%;
-		}
-		&.address1.together{
-			z-index:45;
-			left: 38%;
-			// .bg("pl2_ball_green@2x");
-		}
-		&.address2.together{
-			z-index:45;
-			// left: 38%;
-			// .bg("pl2_ball_green@2x");
-		}
-		&.address3.together{
-			z-index:45;
-			left: 62%;
-			// .bg("pl2_ball_green@2x");
-		}
-	}
+	
 }
 </style>
