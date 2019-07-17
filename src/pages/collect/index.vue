@@ -70,7 +70,7 @@
 					}"></div> -->
 				</div>
 			</div>
-			<div class="plus"  @click="plus"></div>
+			<div class="plus"  @click="energyIn = !energyIn"></div>
 		</div>
 		<!-- 能量背包-->
 		<div   class="energy-wrap" :class="{fadeUp: energyIn}">
@@ -247,11 +247,6 @@
 			}
 		},
 		methods: {
-			plus() {
-				this.energyIn = !this.energyIn; 
-				// this.play = true;
- 
-			},
 			deleteEnergy(index) {
 				this.collects[index] = ''
 				this.bags[`bagShow${index+1}`] = false
@@ -260,12 +255,10 @@
 		      const _this = this;
 		      wx.openBluetoothAdapter({
 		        success(res) {
-		        	console.log(99999, res);
 		          _this.blueStatus = true;
 		          _this.searchBlueTooth();
 		        },
 		        fail(res) {
-		        		console.log('fail', res)
 		          wx.onBluetoothAdapterStateChange(function(res) {
 		          	console.log(res)
 		            if (res.available) {
@@ -332,21 +325,12 @@
 		      	} else if (!!this.collects[0] && !this.collects[1]) {
 		      		this.collects[1] = key
 		      		this.index = 1
-		      		console.log(1)
 		      	} else {
 		      		this.collects[2] = key
-		      		console.log(2)
 		      		this.index = 2
-		      		
-		      		// 重置处理
-		      		setTimeout(()=>{
-		      			this.together = true
-					      		}, 5000)
-		      		//this.video.together
+		      		setTimeout(()=>{ this.together = true }, 5000)
 		      	}
-		      	console.log(this.index, 'this.index')
 		       setTimeout(() => {
-		       	console.log(this.index, 'index');
 		       	this.video.play = false
 		       	this.video.energyType += '-finish'
 		       	this.video[`energyDown${this.index + 1}`] = true
@@ -385,16 +369,13 @@
 		    },
 		    async requestCollect(key) {
  
-		    	  this.ISENDING = true
-		   			console.log('发送能量请求', key)
-		       console.log( storage.getStorage('userinfo'));
-		       const userinfo = storage.getStorage('userinfo') || {}
-		       const resultData = await collectService({
+		    	this.ISENDING = true
+		        const userinfo = storage.getStorage('userinfo') || {}
+		        const resultData = await collectService({
 		    		openid: userinfo.openid,
 		    		color: key
 		    	})
-		       console.log(resultData, 'resultData')
-		       switch (resultData.code) {
+		        switch (resultData.code) {
 		       		case 101:
 		       			console.log('没宠物，一轮完毕')
 		       			break
@@ -419,17 +400,12 @@
 		      	} else {
 		      		this.collects[2] = color
 		      		this.bags.bagShow3 = true
-		      		
-		      		// 重置处理
-		      		setTimeout(()=>{
-		      			this.together = true
-					      		}, 1000)
+		      		setTimeout(()=>{ this.together = true }, 1000)
 		      	}
 		    }
 		},
 		onShow() {
 			this.openBlueTooth()
-			console.log(storage.getStorage('userinfo'))
 		},
 		mounted() {
 			this.fadeIn = true
