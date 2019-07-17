@@ -69,7 +69,7 @@
 		}
 		
 		.rang-bg{
-			z-index:30;
+			z-index:55;
 			.bg("pl2_list@2x");
 			width:347px;
 			height: 506px;

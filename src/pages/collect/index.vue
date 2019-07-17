@@ -247,6 +247,9 @@
 			}
 		},
 		methods: {
+			close() {
+				this.which = ''
+			},
 			deleteEnergy(index) {
 				this.collects[index] = ''
 				this.bags[`bagShow${index+1}`] = false
@@ -328,7 +331,7 @@
 		      	} else {
 		      		this.collects[2] = key
 		      		this.index = 2
-		      		setTimeout(()=>{ this.together = true }, 5000)
+		      		setTimeout(()=>{ this.together = true }, 3500)
 		      	}
 		       setTimeout(() => {
 		       	this.video.play = false
@@ -433,6 +436,10 @@
 @keyframes energyIn{
 	from {display: none;}
     to {display: block;}
+}
+@keyframes onlineAnimation{
+	from { left:0; opacity:0}
+    to {left:-45px; opacity:1}
 }
 // .for(@list){  
 //     .loop(@index:1) when ( @index<=length(@list) ){  
@@ -562,16 +569,18 @@
 			top:179px;
 			.bg("pl2_on line@2x");
 			.bracelet{
-				// font-size:13px;
-				// background: url("@{cdn}pl2_time@2x.png") no-repeat 0 center;
-				// background-size:10px 12px;
-				// font-family:'textfont';
-				// position:absolute;
-				// top:50%;
-				// left:-100%;
-				// color:rgb(255,173,0);
-				// transform:translateY(-50%);
-
+				position:absolute;
+				animation:onlineAnimation 2s infinite ease;
+				padding-left:15px;
+			 
+				box-sizing:border-box;
+				font-size:13px;
+				background: url("@{cdn}pl2_energy_2@2x.png") no-repeat 0 0;
+				background-size:10px 100%;
+				height:15px;
+				top:10px;
+				
+				color:rgb(255,173,0);
 			}
 			.progress-mask{
 				border-radius:12px;
@@ -868,7 +877,7 @@
 		top:0;
 		height: 100%;
 		width:100%;
-		z-index:20;
+		z-index:50;
 		video{
 			height: 100%;
 			width:100%;
@@ -876,7 +885,7 @@
 		
 	}
 	.energy{
-		z-index:88;
+		z-index:45;
 		position: absolute;
 		bottom: 64%;
 		left: 50%;
@@ -909,20 +918,20 @@
 			width:45px;
 			height:45px;
 			left:26%;
-			z-index:7;
+			// z-index:7;
 		}
 		&.down2{
 			bottom: 26.5%;
 			width:45px;
 			height:45px;
-			z-index:7;
+			// z-index:7;
 		}
 		&.down3{
 			bottom: 26.5%;
 			width:45px;
 			height:45px;
 			left:74%;
-			z-index:7;
+			// z-index:7;
 		}
 		&.energy-1.together{
 			z-index:88;
@@ -945,17 +954,10 @@
 		transition: 1s;
 		opacity:0;
 		position: absolute;
-<<<<<<< HEAD
 		height: 45px;
 		width:45px;
-		z-index:7;
+		z-index:45;
 		bottom: 26.5%;
-=======
-		height: 118px;
-		width:118px;
-		z-index:7;
-		bottom: 20%;
->>>>>>> 2f9968d203d62cbff43b6fea5b1ff1771123094d
 		left:50%;
 		transform:translateX(-50%);
 		// .bg("pl2_ball_blue@2x");
@@ -991,17 +993,17 @@
 			left:74%;
 		}
 		&.address1.together{
-			z-index:88;
+			z-index:45;
 			left: 38%;
 			// .bg("pl2_ball_green@2x");
 		}
 		&.address2.together{
-			z-index:88;
+			z-index:45;
 			// left: 38%;
 			// .bg("pl2_ball_green@2x");
 		}
 		&.address3.together{
-			z-index:88;
+			z-index:45;
 			left: 62%;
 			// .bg("pl2_ball_green@2x");
 		}
