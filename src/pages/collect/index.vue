@@ -1,12 +1,8 @@
 <template>
 	<div class="collect-wrap">
-
-		
 		<div class="collect-bg"></div>
 		<div class="cloud"></div>
-		<div class="stars">
-			<!-- <img :src="starBg">  -->
-		</div>
+		<div class="stars"></div>
 		<CommonTop 
 	  		ctxt="搜集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
 	  		:leftNum="9999"
@@ -420,54 +416,54 @@
 @keyframes starsAnimation {
 	// .ml-loop(60);
   0% {background-image: url("@{cdn}star00.png")}
-  1% {background-image: url("@{cdn}star01.png")}
-  2% {background-image: url("@{cdn}star02.png")}
-  3% {background-image: url("@{cdn}star03.png")}
-  4% {background-image: url("@{cdn}star04.png")}
-  5% {background-image: url("@{cdn}star05.png")}
-  6% {background-image: url("@{cdn}star06.png")}
-  7% {background-image: url("@{cdn}star07.png")}
-  8% {background-image: url("@{cdn}star08.png")}
-  9% {background-image: url("@{cdn}star09.png")}
-  10% {background-image: url("@{cdn}star10.png")}
-  11% {background-image: url("@{cdn}star11.png")}
-  12% {background-image: url("@{cdn}star12.png")}
-  13% {background-image: url("@{cdn}star13.png")}
-  14% {background-image: url("@{cdn}star14.png")}
-  15% {background-image: url("@{cdn}star15.png")}
-  16% {background-image: url("@{cdn}star16.png")}
-  17% {background-image: url("@{cdn}star17.png")}
-  18% {background-image: url("@{cdn}star18.png")}
-  19% {background-image: url("@{cdn}star19.png")}
-  20% {background-image: url("@{cdn}star20.png")}
-  21% {background-image: url("@{cdn}star21.png")}
-  22% {background-image: url("@{cdn}star22.png")}
-  23% {background-image: url("@{cdn}star23.png")}
-  24% {background-image: url("@{cdn}star24.png")}
-  25% {background-image: url("@{cdn}star25.png")}
-  26% {background-image: url("@{cdn}star26.png")}
-  27% {background-image: url("@{cdn}star27.png")}
-  28% {background-image: url("@{cdn}star28.png")}
-  29% {background-image: url("@{cdn}star29.png")}
-  30% {background-image: url("@{cdn}star30.png")}
-  31% {background-image: url("@{cdn}star31.png")}
-  32% {background-image: url("@{cdn}star32.png")}
-  33% {background-image: url("@{cdn}star33.png")}
-  34% {background-image: url("@{cdn}star34.png")}
-  35% {background-image: url("@{cdn}star35.png")}
-  36% {background-image: url("@{cdn}star36.png")}
-  37% {background-image: url("@{cdn}star37.png")}
-  38% {background-image: url("@{cdn}star38.png")}
-  39% {background-image: url("@{cdn}star39.png")}
-  40% {background-image: url("@{cdn}star40.png")}
-  41% {background-image: url("@{cdn}star41.png")}
-  42% {background-image: url("@{cdn}star42.png")}
-  43% {background-image: url("@{cdn}star43.png")}
-  44% {background-image: url("@{cdn}star44.png")}
-  45% {background-image: url("@{cdn}star45.png")}
-  46% {background-image: url("@{cdn}star46.png")}
-  47% {background-image: url("@{cdn}star47.png")}
-  48% {background-image: url("@{cdn}star48.png")}
+  2% {background-image: url("@{cdn}star01.png")}
+  4% {background-image: url("@{cdn}star02.png")}
+  6% {background-image: url("@{cdn}star03.png")}
+  8% {background-image: url("@{cdn}star04.png")}
+  10% {background-image: url("@{cdn}star05.png")}
+  12% {background-image: url("@{cdn}star06.png")}
+  14% {background-image: url("@{cdn}star07.png")}
+  16% {background-image: url("@{cdn}star08.png")}
+  18% {background-image: url("@{cdn}star09.png")}
+  20% {background-image: url("@{cdn}star10.png")}
+  22% {background-image: url("@{cdn}star11.png")}
+  24% {background-image: url("@{cdn}star12.png")}
+  26% {background-image: url("@{cdn}star13.png")}
+  28% {background-image: url("@{cdn}star14.png")}
+  30% {background-image: url("@{cdn}star15.png")}
+  32% {background-image: url("@{cdn}star16.png")}
+  34% {background-image: url("@{cdn}star17.png")}
+  36% {background-image: url("@{cdn}star18.png")}
+  38% {background-image: url("@{cdn}star19.png")}
+  40% {background-image: url("@{cdn}star20.png")}
+  42% {background-image: url("@{cdn}star21.png")}
+  44% {background-image: url("@{cdn}star22.png")}
+  46% {background-image: url("@{cdn}star23.png")}
+  48% {background-image: url("@{cdn}star24.png")}
+  50% {background-image: url("@{cdn}star25.png")}
+  52% {background-image: url("@{cdn}star26.png")}
+  54% {background-image: url("@{cdn}star27.png")}
+  56% {background-image: url("@{cdn}star28.png")}
+  58% {background-image: url("@{cdn}star29.png")}
+  60% {background-image: url("@{cdn}star30.png")}
+  62% {background-image: url("@{cdn}star31.png")}
+  64% {background-image: url("@{cdn}star32.png")}
+  66% {background-image: url("@{cdn}star33.png")}
+  68% {background-image: url("@{cdn}star34.png")}
+  70% {background-image: url("@{cdn}star35.png")}
+  72% {background-image: url("@{cdn}star36.png")}
+  74% {background-image: url("@{cdn}star37.png")}
+  76% {background-image: url("@{cdn}star38.png")}
+  78% {background-image: url("@{cdn}star39.png")}
+  80% {background-image: url("@{cdn}star40.png")}
+  82% {background-image: url("@{cdn}star41.png")}
+  84% {background-image: url("@{cdn}star42.png")}
+  86% {background-image: url("@{cdn}star43.png")}
+  88% {background-image: url("@{cdn}star44.png")}
+  90% {background-image: url("@{cdn}star45.png")}
+  92% {background-image: url("@{cdn}star46.png")}
+  94% {background-image: url("@{cdn}star47.png")}
+  96% {background-image: url("@{cdn}star48.png")}
 }
 .collect-wrap{
 	overflow:hidden;
@@ -889,10 +885,10 @@
 		transition: 2s;
 		opacity: 0;
 		position: absolute;
-		height: 7%;
-		width:12%;
+		height: 45px;
+		width:45px;
 		z-index:7;
-		bottom: 27%;
+		bottom: 26.5%;
 		left:50%;
 		transform:translateX(-50%);
 		// .bg("pl2_ball_blue@2x");
