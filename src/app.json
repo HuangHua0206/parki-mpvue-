@@ -1,9 +1,9 @@
 {
   "pages": [
     "pages/first/main",
-    "pages/index/main",
-    "pages/logs/main",
     "pages/collect/main",
+    "pages/earth/main",
+    "pages/energy/main",
     "pages/boss/main",
     "pages/counter/main"
   ],

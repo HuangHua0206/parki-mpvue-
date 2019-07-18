@@ -3,6 +3,7 @@
 		<div class="collect-bg"></div>
 		<div class="cloud"></div>
 		<div class="stars"></div>
+		<div class="toast"  :class="{show: toast==='repeat'}"></div>
 		<Success @resetData="resetData" v-if="together"></Success>
 		<CommonTop 
 	  		ctxt="搜集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
@@ -222,6 +223,7 @@
 	export default{
 		data () {
 		  return {
+		  	toast: '',
 		  	together: false,
 		  	index: 0, // 第index个位置发生能量变化
 		  	fadeIn: false, // 界面加载完时四个弹窗按钮动画效果进入
@@ -312,9 +314,12 @@
 		             	console.log('重复')
 		             	this.ISSAME = true
 		             	setTimeout(() => {
-		             		this.$tip.toast('不能收集重复能量')
+		             		// this.$tip.toast('不能收集重复能量')
+		             		this.toast = 'repeat'
 		             		this.ISSAME = false
+
 		             	}, 5000);
+		             	setTimeout(() => { this.toast = '' }, 6000)
 		             } else {
 		             	this.handleFindDevs(res.beacons);
 		             }
@@ -328,6 +333,7 @@
 		    },
 		    async handleFindDevs(beacons) {
 		       if (this.ISENDING) return
+		       this.ISENDING = true
 		       const major = beacons[0].major
 		       const item = ENERGY_CONFIG.filter(item => item.major === major)[0]
 	           const key = item.key
@@ -385,8 +391,7 @@
 			  	this.collects = ['', '', ''] // 当前收集能量集  	
 		    },
 		    async requestCollect(key) {
- 
-		    	this.ISENDING = true
+		    	
 		        const userinfo = storage.getStorage('userinfo') || {}
 		        const resultData = await collectService({
 		    		openid: userinfo.openid,
@@ -400,10 +405,10 @@
 		       			console.log('宠物')
 		       			break
 		       }
-		       
-		       this.ISENDING = false
 		    },
 		    getBagEnergy(color) {
+		    	if (this.ISENDING) return
+		    	this.ISENDING = true
 		       if (this.collects.includes(color)) {
 		       	this.$tip.toast('不能选择重复颜色')
 		       	return
@@ -411,14 +416,20 @@
 		    	if (!this.collects[0]) {
 		    		this.collects[0] = color
 		      		this.bags.bagShow1 = true
+		      		this.ISENDING = false
 		      	} else if (!!this.collects[0] && !this.collects[1]) {
 		      		this.collects[1] = color
 		      		this.bags.bagShow2 = true
+		      		this.ISENDING = false
 		      	} else {
 		      		this.collects[2] = color
 		      		this.bags.bagShow3 = true
-		      		setTimeout(()=>{ this.together = true }, 1000)
+		      		setTimeout(()=>{ 
+		      			this.together = true
+		      			this.ISENDING = false
+		      		}, 1000)
 		      	}
+
 		    }
 		},
 		onShow() {
@@ -524,12 +535,28 @@
   94% {background-image: url("@{cdn}star47.png")}
   96% {background-image: url("@{cdn}star48.png")}
 }
+@keyframes toast{
+	from{ opacity: 1}
+	to{ opacity: 0;}
+}
 .collect-wrap{
 	overflow:hidden;
 	height:100%;
 	width:100%;
 	position:absolute;
- 
+    .toast{
+    	opacity:0;
+    	position:fixed;
+    	width:250px;
+    	height:68px;
+    	left:50%;
+    	top:30%;
+    	transform:translateX(-50%);
+    	.bg("tip-not-pl2-same-energy");
+    	&.show{
+    		animation: toast 1s;
+    	}
+    }
 	.collect-bg{
 		height:100%;
 		width:100%;
