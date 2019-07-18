@@ -411,6 +411,7 @@
 		    	this.ISENDING = true
 		       if (this.collects.includes(color)) {
 		       	this.$tip.toast('不能选择重复颜色')
+		       	this.ISENDING = false
 		       	return
 		       }
 		    	if (!this.collects[0]) {
