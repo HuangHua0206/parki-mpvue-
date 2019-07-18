@@ -59,7 +59,10 @@
 <style lang="less">
 @import "~less/mixin.less";
 	.range-pop-wrap{
+ 
+		
 		.mask{
+				z-index:55;
 			left:0;
 			top:0;
 			position: absolute;
@@ -69,7 +72,7 @@
 		}
 		
 		.rang-bg{
-			z-index:55;
+				z-index:55;
 			.bg("pl2_list@2x");
 			width:347px;
 			height: 506px;
