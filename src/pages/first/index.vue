@@ -31,7 +31,6 @@
 		  },
 		methods: {
 			getUserInfo() {
-				this.$tip.toast('888')
 				const _this = this;
 			      // if (_this.status == 1) {
 			      //   return;
@@ -98,7 +97,6 @@
 				wx.redirectTo({
 					url: '/pages/collect/main'
 				});
-				this.$tip.toast(resultData.openid);
 			}
 		}
 	}

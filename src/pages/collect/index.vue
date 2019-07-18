@@ -17,15 +17,15 @@
 		<div class="button animal-button" :class="{'fade-right-in': fadeIn}" ></div>
 		<div v-if="!online" class="button online-button"  :class="{'fade-right-in': fadeIn}" @click="which = 'bracelet'"> 
 			<div class="progress-mask" >
-				<div class="progress" :class="{hasBracelet: hasBracelet}">
-					<div class="sunny"  :class="{hasBracelet: hasBracelet}"></div>
+				<div class="progress hasBracelet"  >
+					<div class="sunny hasBracelet"   ></div>
 				</div>
 			</div>
 			
 			<div class="bracelet">+2</div>
 		</div>
 		<div v-else class="button offline-button" :class="{'fade-right-in': fadeIn}"></div>
-		<div class="line">
+		<div class="line" :class="{finish: together}">
 			<div class="mask"> 
 				<div 
 					class="progress" 
@@ -50,7 +50,7 @@
 				<div class="num two"></div>
 				<div  class="num three"></div>
 			</div>
-			<div class="plus"  @click="energyIn = !energyIn"></div>
+			<div class="plus has-bg"  @click="energyIn = !energyIn"></div>
 		</div>
 		<div class="nums-wrap" style="z-index: 45;">
 			<div class="one-three">
@@ -451,7 +451,7 @@
     background-size: 100% 100%;
 }
 @keyframes progressBraceletOnline {
-  from {width: 2px;}
+  from {width: 0px;}
   to {width: 45px;}
 }
 @keyframes progressSunny {
@@ -463,8 +463,9 @@
     to {display: block;}
 }
 @keyframes onlineAnimation{
-	from { left:0; opacity:0}
-    to {left:-45px; opacity:1}
+	0% { left:0; opacity:0}
+    80% { left:0; opacity:0}
+    100% {left:-45px; opacity:1}
 }
 // .for(@list){  
 //     .loop(@index:1) when ( @index<=length(@list) ){  
@@ -611,7 +612,7 @@
 			.bg("pl2_on line@2x");
 			.bracelet{
 				position:absolute;
-				animation:onlineAnimation 2s infinite ease;
+				animation:onlineAnimation 5s infinite ease;
 				padding-left:15px;
 			 
 				box-sizing:border-box;
@@ -629,11 +630,13 @@
 				width:48px;
 				height: 10px;
 				bottom:15px;
+				border:2px solid #000;
+				box-sizing:border-box;
+				background: #fff;
 				left:14px;
 				overflow:hidden;
-				box-sizing: border-box;
-				padding:2px;
-				.bg("pl2_line_schedule_mask@2x");
+			
+				// .bg("pl2_line_schedule_mask@2x");
 				.progress{
 					box-sizing: border-box;
 					border-radius:12px;
@@ -647,17 +650,17 @@
 					// background: url("@{cdn}pl2_line_schedule@2x.png") no-repeat 0 0;
 					// background-size:100% 100%;
 					&.hasBracelet{
-						animation: progressBraceletOnline 2s infinite ease;
+						animation: progressBraceletOnline 5s infinite ease;
 					}
 					.sunny{
 						position: absolute;
-						top:3px;
+						top:1px;
 						left:3px;
 						width: 0px;
 						height: 1px; 
 						background: #fff;
 					 	&.hasBracelet{
-							animation: progressSunny 2s infinite ease;
+							animation: progressSunny 5s infinite ease;
 						}
 					}
 				}
@@ -678,7 +681,7 @@
 		}
 	}
 	.line{
-		z-index:30;
+		z-index:55;
 		width: 236px;
 		height:19px;
 		.bg("pl2_green@2x");
@@ -686,6 +689,9 @@
 		left:50%;
 		transform:translateX(-50%);
 		bottom:37%;
+		&.finish{
+			z-index:7;
+		}
 		.mask{
 	 		// .bg("pl2_mask@2x");
 			position: absolute;
@@ -724,7 +730,7 @@
 				}
 				&.green-finish{
 					transition:width 0.5s;
-					background: #23ff03;;
+					background: #23ff03;
 				}
 				&.yellow-finish{
 					transition:width 0.5s;
@@ -814,7 +820,10 @@
 			bottom:5px;
 			width:32px;
 			height:32px;
-			.bg("pl2_+@2x");
+			&.has-bg{
+				.bg("pl2_+@2x");
+			}
+
 		}
 	}
 	
@@ -941,7 +950,7 @@
 		
 	}
 	.energy{
-		z-index:45;
+		z-index:55;
 		position: absolute;
 		bottom: 64%;
 		left: 50%;
@@ -974,20 +983,20 @@
 			width:45px;
 			height:45px;
 			left:26%;
-			// z-index:7;
+			z-index:7;
 		}
 		&.down2{
 			bottom: 26.5%;
 			width:45px;
 			height:45px;
-			// z-index:7;
+			z-index:7;
 		}
 		&.down3{
 			bottom: 26.5%;
 			width:45px;
 			height:45px;
 			left:74%;
-			// z-index:7;
+			z-index:7;
 		}
 		&.energy-1.together{
 			z-index:88;

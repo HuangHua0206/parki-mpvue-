@@ -34,7 +34,7 @@
 <style lang="less">
 @import "~less/mixin.less";
 	.bracelet-pop-wrap{
-		z-index:30;
+		z-index:55;
 		position: absolute;
 		width:100%;
 	    height: 100%;
