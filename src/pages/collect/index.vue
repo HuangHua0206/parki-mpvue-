@@ -55,7 +55,7 @@
 		<div class="nums-wrap" style="z-index: 45;">
 			<div class="one-three">
 				<div class="num  ">
-					<div @click="deleteEnergy(0)" class="bag-energy address1" :class="{
+					<div v-if="!video.energyShow1" @click="deleteEnergy(0)" class="bag-energy address1" :class="{
 						'show': bags.bagShow1,
 						'blue': collects[0] === '3' ,
 						'yellow': collects[0] === '2',
@@ -65,7 +65,7 @@
 					}"></div>
 				</div>
 				<div class="num ">
-				 	<div @click="deleteEnergy(1)" class="bag-energy address2" :class="{
+				 	<div v-if="!video.energyShow2" @click="deleteEnergy(1)" class="bag-energy address2" :class="{
 						'show': bags.bagShow2,
 						'blue': collects[1] === '3' ,
 						'yellow': collects[1] === '2',
@@ -75,7 +75,7 @@
 					}"></div>
 				</div>
 				<div  class="num  ">
-			 		<div @click="deleteEnergy(1)" class="bag-energy address3" :class="{
+			 		<div v-if="!video.energyShow3" @click="deleteEnergy(1)" class="bag-energy address3" :class="{
 						'show': bags.bagShow3,
 						'blue': collects[2] === '3' ,
 						'yellow': collects[2] === '2',
@@ -752,7 +752,7 @@
 	}
 	.nums-wrap{
 		position:absolute;
-		bottom:24%;
+		bottom:143px;
 		left:0;
 		width:100%;
 		height:65px;
@@ -787,8 +787,10 @@
 					width:90px;
 					z-index:45;
 					left:50%;
-					transform:translate(-50%, -60%);
-					top:50%;
+					bottom:-14px;
+					// bottom: 20%;
+					transform:translateX(-50%);
+					// top:50%;
 					&.blue{
 						.bg("pl2_ball_blue@2x");
 					}
@@ -805,6 +807,7 @@
 						opacity: 1;
 						height:45px;
 						width:45px;
+						bottom:16px;
 					}
 					&.address1.together{
 						left: 110%;
@@ -980,20 +983,20 @@
 			// display: block;
 		}
 		&.down1{
-			bottom: 26.5%;
+			bottom: 159px;
 			width:45px;
 			height:45px;
 			left:26%;
 			z-index:7;
 		}
 		&.down2{
-			bottom: 26.5%;
+			bottom: 159px;
 			width:45px;
 			height:45px;
 			z-index:7;
 		}
 		&.down3{
-			bottom: 26.5%;
+			bottom: 159px;
 			width:45px;
 			height:45px;
 			left:74%;
