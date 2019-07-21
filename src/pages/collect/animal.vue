@@ -17,33 +17,18 @@
 			/>
 			<div class="card-list-wrap">
 				<CommonCard
-					text="2/4"
-					isok
-					level="2级"
-					eng="战斗力：22"
-					className="card-list"
+					:key="$index"
 					progress="other"
-					url="http://parkiland.isxcxbackend1.cn/3%E6%98%9F-%E5%B0%8F%E7%86%8A-no.6.png"
+				    v-for="(item, $index) in animalList"
+					:text="item.experience + ' / ' + Math.pow(2, item.level)"
+					:level="item.level+'级'"
+					:eng="'战斗力：' + item.power"
+					className="card-list"
+					:url="'http://parkiland.isxcxbackend1.cn/pl2_'+item.petname+'.png'"
 				/>
 				<CommonCard
 					text="2/4"
 					isnew
-					level="2级"
-					eng="战斗力：22"
-					className="card-list"
-					progress="other"
-					url="http://parkiland.isxcxbackend1.cn/3%E6%98%9F-%E5%B0%8F%E7%86%8A-no.6.png"
-				/>
-				<CommonCard
-					text="2/4"
-					level="2级"
-					eng="战斗力：22"
-					className="card-list"
-					progress="other"
-					url="http://parkiland.isxcxbackend1.cn/3%E6%98%9F-%E5%B0%8F%E7%86%8A-no.6.png"
-				/>
-				<CommonCard
-					text="2/4"
 					level="2级"
 					eng="战斗力：22"
 					className="card-list"
@@ -57,21 +42,28 @@
 	</div>
 </template>
 <script>
+	import { animalListService } from 'services/collect'
 	import CommonCard from 'components/animalCard'
+	import storage from 'utils/storage'
 	export default{
+		props: {
+			animalList: {
+				type: Array
+			}
+		},
 		components: { CommonCard },
-		methods: {
-		}
 	}
 </script>
 <style lang="less">
 @import "~less/mixin.less";
 	.animal-pop-wrap{
+
 		z-index:55;
 		position: absolute;
 		width:100%;
 	    height: 100%;
 		.mask{
+
 			left:0;
 			top:0;
 			position: absolute;
@@ -85,6 +77,7 @@
 			.bg("petcard background");
 			width:365px;
 			height: 586px;
+			overflow-y:auto;
 			position: absolute;
 			right:0;
 			bottom:14px;

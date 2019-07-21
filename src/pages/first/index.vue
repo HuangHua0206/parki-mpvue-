@@ -47,36 +47,6 @@
 			          wx.getUserInfo({
 			            success: res2 => {
 			              this.login(res2.userInfo, res1.code)
-			              // http.post("/game/manager/access", {
-			              //     nickName: res.userInfo.nickName,
-			              //     imgUrl: res.userInfo.avatarUrl,
-			              //     wxCode: _this.code
-			              //   }).then(
-			              //     res => {
-			              //       wx.setStorageSync("openId", res.data.openId);
-			              //       wx.setStorageSync("gameId", res.data.gameId);
-			              //       const listOptions = {};
-			              //       res.data.list.forEach(element => {
-			              //         listOptions[element.deviceId] = element.color;
-			              //       });
-			              //       _this.changeState({
-			              //         devOptions: listOptions
-			              //       });
-			              //       const url = "../index/main";
-			              //       // switchTab navigateTo
-			              //       wx.redirectTo({ url });
-			              //       setTimeout(() => {
-			              //         _this.status = 0;
-			              //       }, 1200);
-			              //     },
-			              //     res => {
-			              //       _this.warning = true;
-			              //       setTimeout(() => {
-			              //         _this.warning = false;
-			              //         _this.status = 0;
-			              //       }, 1500);
-			              //     }
-			              //   );
 			            }
 			          });
 			        },

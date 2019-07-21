@@ -1,7 +1,7 @@
 <template>
 	<div :class="className" class="animalCard-wrap">
 		<image :src="url" class="animalCard-img" />
-        <div :class="progress"><div>{{text}}</div></div>
+        <div :class="progress" v-if="progress"><div>{{text}}</div></div>
         <div class="animalCard-level">{{level}}</div>
         <div class="animalCard-eng">{{eng}}</div>
         <div class="animalCard-new" v-if="isnew"></div>
@@ -85,7 +85,7 @@
         text-shadow:5px 2px 10px #000;
     }
     .other {
-        width: 114px;
+        width: 114px !important;
         height: 22px;
         .bg("gray bot@2x");
         line-height: 22px;
@@ -94,7 +94,7 @@
         font-size: 10px;
         text-shadow:5px 2px 10px #000;
         div {
-            width: 20px;
+            // width: 20px;
             height: 22px;
             text-align: center;
             display: inline-block;
@@ -113,6 +113,7 @@
         right: 8px;
         color: #fff;
         font-size:9px;
+        text-align:center;
     }
     .animalCard-new {
         width: 37px;

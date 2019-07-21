@@ -4,7 +4,7 @@
 		<div class="cloud"></div>
 		<div class="stars"></div>
 		<div class="toast"  :class="{show: toast==='repeat'}"></div>
-		<Success @resetData="resetData" v-if="together" :integral="finish.integral" :pet="pet"></Success>
+		<Success @resetData="resetData" v-if="together" :integral="finish.integral" :pet="finish.pet"></Success>
 		<CommonTop 
 	  		ctxt="搜集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
 	  		:leftNum="9999"
@@ -14,7 +14,7 @@
 	  	</CommonTop>
 		<div class="button task-button" :class="{'fade-left-in': fadeIn}" @click="which = 'task'"></div>
 		<div class="button email-button" :class="{'fade-left-in': fadeIn}" @click="which = 'email'"></div>
-		<div class="button animal-button" :class="{'fade-right-in': fadeIn}" @click="which = 'animal'"></div>
+		<div class="button animal-button" :class="{'fade-right-in': fadeIn}" @click="getAnimaList"></div>
 		<div v-if="!online" class="button online-button"  :class="{'fade-right-in': fadeIn}" @click="which = 'bracelet'"> 
 			<div class="progress-mask" >
 				<div class="progress hasBracelet"  >
@@ -128,7 +128,7 @@
 			<Bracelet   @closePop="close"   />
 		</div>
 		<div class="pop-up-right" :class="{fadeUp: which === 'animal'}">
-			<Animal   @closePop="close"   />
+			<Animal   @closePop="close"   :animalList="animalList"/>
 		</div>
 		<div 
 			class="collect-sunny"
@@ -186,31 +186,6 @@
 			'down3': video.energyDown3,
 			'together': together
 		}"></div>
-		<!-- 背包获取能量 -->
-	<!-- 	<div @click="deleteEnergy(0)" class="bag-energy address1" :class="{
-			'show': bags.bagShow1,
-			'blue': collects[0] === '3' ,
-			'yellow': collects[0] === '2',
-			'green': collects[0] === '4',
-			'orange': collects[0] === '1',
-			'together': together
-		}"></div> -->
-<!-- 		<div @click="deleteEnergy(1)" class="bag-energy address2" :class="{
-			'show': bags.bagShow2,
-			'blue': collects[1] === '3' ,
-			'yellow': collects[1] === '2',
-			'green': collects[1] === '4',
-			'orange': collects[1] === '1',
-			'together': together
-		}"></div>
-		<div @click="deleteEnergy(2)" class="bag-energy address3" :class="{
-			'show': bags.bagShow3,
-			'blue': collects[2] === '3' ,
-			'yellow': collects[2] === '2',
-			'green': collects[2] === '4',
-			'orange': collects[2] === '1',
-			'together': together
-		}"></div> -->
 	</div>
 	
 </template>
@@ -223,7 +198,7 @@
 	import Animal from './animal'
 	import Success from './success'
 	import storage from 'utils/storage'
-	import { collectService, getCollectService } from 'services/collect'
+	import { collectService, getCollectService, animalListService } from 'services/collect'
 	import ENERGY_CONFIG from './energy.js'
 	
 	export default{
@@ -282,8 +257,20 @@
 			close() {
 				this.which = ''
 			},
+			async getAnimaList() {
+				const userinfo = storage.getStorage('userinfo') || {}
+				const resultData = await animalListService({
+					openid: userinfo.openid
+				})
+				if (resultData.data) {
+					this.animalList = resultData.data
+					this.which = 'animal'
+				}
+				console.log(resultData)
+
+			},
 			async deleteEnergy(index) {
-				await this.requestCollect(this.collects[index], null, 2)
+				await this.requestCollect(this.collects[index], 1, 2, index + 1)
 				this.collects[index] = ''
 				this.bags[`bagShow${index+1}`] = false
 			},
@@ -418,16 +405,17 @@
 			  	}
 			  	this.collects = ['', '', ''] // 当前收集能量集  	
 		    },
-		    async requestCollect(key, type, operation) {
+		    async requestCollect(key, type, operation, position) {
 		    	console.log(key, type, operation, 'params')
-		    	let position = -1
+		    	let _position = -1
 		       if (!this.collects[0]) {	
-		       		position = 1 
+		       		_position = 1 
 		       } else if (!!this.collects[0] && !this.collects[1]) {
-		       	    position = 2
+		       	    _position = 2
 		       } else {
-		       		position = 3
+		       		_position = 3
 		       }
+		       if (position) _position = position
 		        const userinfo = storage.getStorage('userinfo') || {}
 		        console.log('userinfo', userinfo)
 		        const resultData = await collectService({
@@ -435,7 +423,7 @@
 		    		color: key,
 		    		operation,
 		    		type,
-		    		position
+		    		position: _position
 		    	})
 		        switch (resultData.code) {
 		        	case 100:
@@ -451,6 +439,7 @@
 		       }
 		    },
 		    async getBagEnergy(color) {
+		    	console.log(this.ISENDING, 'this.ISENDINGthis.ISENDINGthis.ISENDING')
 		    	if (this.ISENDING) return
 		    	this.ISENDING = true
 		       if (this.collects.includes(color)) {

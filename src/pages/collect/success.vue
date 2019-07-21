@@ -2,16 +2,27 @@
 	<div class="success-pop-wrap">
 		<div class="mask" >
 			<div class="title">恭喜您获得了</div>
-			<div class="no-animal" v-if="!pet">
-				<div class="num">{{integral}}</div>
-				<div class="card"></div>
-			</div>
-			<div class="animal" v-else>
+			
+			<div class="animal" v-if="!!pet">
 				<div class="bg1">
 					<div class="bg2"></div>
-					<div class="card"></div>
+			 		<div class="card">
+			 			<CommonCard
+						text="2/4"
+						:level="pet.level+'级'"
+						:eng="'战斗力：' + pet.power"
+						className="card-list"
+						:url="'http://parkiland.isxcxbackend1.cn/pl2_'+pet.petname+'.png'"
+					/>
+			 		</div>
+					
 				</div>
 				<div class="num">{{integral}}</div>
+			</div>
+			<div class="no-animal" v-else>
+				<div class="num">{{integral}}</div>
+			 
+				<div class="card"></div>
 			</div>
 			<div class="btn" @click="$emit('resetData')">确认</div>
 		</div>
@@ -19,7 +30,9 @@
 	</div>
 </template>
 <script>
+	import CommonCard from 'components/animalCard'
 	export default{
+		components: { CommonCard }, 
 		props: {
 			integral: {
 				type: Number
@@ -103,7 +116,7 @@
 						left:50%;
 						top:50%;
 						transform:translate(-50%, -50%);
-						.bg("pl2-1星-松鼠-no.2");
+						// .bg("pl2-1星-松鼠-no.2");
 						width: 115px;
 						height:155px;
 					}
