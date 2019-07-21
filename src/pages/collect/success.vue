@@ -2,8 +2,8 @@
 	<div class="success-pop-wrap">
 		<div class="mask" >
 			<div class="title">恭喜您获得了</div>
-			<div class="no-animal" v-if="!animal">
-				<div class="num">150</div>
+			<div class="no-animal" v-if="!pet">
+				<div class="num">{{integral}}</div>
 				<div class="card"></div>
 			</div>
 			<div class="animal" v-else>
@@ -11,7 +11,7 @@
 					<div class="bg2"></div>
 					<div class="card"></div>
 				</div>
-				<div class="num">150</div>
+				<div class="num">{{integral}}</div>
 			</div>
 			<div class="btn" @click="$emit('resetData')">确认</div>
 		</div>
@@ -20,6 +20,14 @@
 </template>
 <script>
 	export default{
+		props: {
+			integral: {
+				type: Number
+			},
+			pet: {
+				type: Object
+			}
+		},
 		data() {
 			return {
 				animal: true

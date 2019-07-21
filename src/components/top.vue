@@ -8,7 +8,8 @@
 	        <div class="left-num">
 	        	{{ leftNum }}
 	        </div>
-	        <div class="right-num" @click="$emit('openRange')">
+	        <div v-if="share" class="right-num share" ></div>
+	        <div v-else class="right-num" @click="$emit('openRange')">
 	        	{{ rightNum }}
 	        </div>
 	      </div>
@@ -36,8 +37,10 @@
 				rquired: true
 			},
 			rightNum: {
-				type: Number,
-				rquired: true
+				type: Number
+			},
+			share: {
+				type: Boolean
 			}
 		}
 	}
@@ -89,6 +92,7 @@
 				color:rgb(255, 173, 1);
 				line-height: 20px;
 				padding-bottom:5px; 
+
 			}
 			.right-num{
 				line-height: 20px;
@@ -101,6 +105,13 @@
 				text-align:right;
 				color:#fff;
 				padding-bottom:5px;
+				&.share{
+					transform:translateY(-9rpx);
+					color:rgb(255, 173, 1);
+					.bg("pl2_share@2x");
+					width:81px;
+					height: 31px;
+				}
 			}		
         }
     }

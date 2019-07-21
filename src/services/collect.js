@@ -8,3 +8,12 @@ export function collectService(data) {
 		data
 	})
 }
+
+export function getCollectService(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/parki/collect/query',
+		method: 'post',
+		data
+	})
+}

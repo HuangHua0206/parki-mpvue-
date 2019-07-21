@@ -4,7 +4,7 @@
 		<div class="cloud"></div>
 		<div class="stars"></div>
 		<div class="toast"  :class="{show: toast==='repeat'}"></div>
-		<Success @resetData="resetData" v-if="together"></Success>
+		<Success @resetData="resetData" v-if="together" :integral="finish.integral" :pet="pet"></Success>
 		<CommonTop 
 	  		ctxt="搜集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
 	  		:leftNum="9999"
@@ -14,7 +14,7 @@
 	  	</CommonTop>
 		<div class="button task-button" :class="{'fade-left-in': fadeIn}" @click="which = 'task'"></div>
 		<div class="button email-button" :class="{'fade-left-in': fadeIn}" @click="which = 'email'"></div>
-		<div class="button animal-button" :class="{'fade-right-in': fadeIn}" ></div>
+		<div class="button animal-button" :class="{'fade-right-in': fadeIn}" @click="which = 'animal'"></div>
 		<div v-if="!online" class="button online-button"  :class="{'fade-right-in': fadeIn}" @click="which = 'bracelet'"> 
 			<div class="progress-mask" >
 				<div class="progress hasBracelet"  >
@@ -57,6 +57,7 @@
 				<div class="num  ">
 					<div v-if="!video.energyShow1" @click="deleteEnergy(0)" class="bag-energy address1" :class="{
 						'show': bags.bagShow1,
+						'initshow': bags.initshow1,
 						'blue': collects[0] === '3' ,
 						'yellow': collects[0] === '2',
 						'green': collects[0] === '4',
@@ -67,6 +68,7 @@
 				<div class="num ">
 				 	<div v-if="!video.energyShow2" @click="deleteEnergy(1)" class="bag-energy address2" :class="{
 						'show': bags.bagShow2,
+						'initshow': bags.initshow2,
 						'blue': collects[1] === '3' ,
 						'yellow': collects[1] === '2',
 						'green': collects[1] === '4',
@@ -77,6 +79,7 @@
 				<div  class="num  ">
 			 		<div v-if="!video.energyShow3" @click="deleteEnergy(1)" class="bag-energy address3" :class="{
 						'show': bags.bagShow3,
+						'initshow': bags.initshow3,
 						'blue': collects[2] === '3' ,
 						'yellow': collects[2] === '2',
 						'green': collects[2] === '4',
@@ -110,7 +113,7 @@
 				<div class="little-round"></div>
 			</div>
 		</div>
-		<div   class="my-home" :class="{fadeUp: energyIn}"></div>
+		<div   class="my-home" @click="goBulid" :class="{fadeUp: energyIn}"></div>
 		<!-- 弹窗部分 -->
 		<div class="pop-up-left" :class="{fadeUp: which === 'email'}"> 
 			<Email   @closePop="close"  />
@@ -124,9 +127,9 @@
 		<div class="pop-up-right" :class="{fadeUp: which === 'bracelet'}">
 			<Bracelet   @closePop="close"   />
 		</div>
-	<!-- 	<div class="pop-up-right" :class="{fadeUp: which === 'animal'}">
+		<div class="pop-up-right" :class="{fadeUp: which === 'animal'}">
 			<Animal   @closePop="close"   />
-		</div> -->
+		</div>
 		<div 
 			class="collect-sunny"
 	 		v-if="video.play"
@@ -152,6 +155,7 @@
 			// 'show': true,
 			// 'down1': true,
 			// 'together': true
+			'initshow1': video.initshow1,
 			'show': video.energyShow1,
 			'down1': video.energyDown1,
 			'together': together
@@ -161,6 +165,7 @@
 			'yellow': collects[1] === '2',
 			'green': collects[1] === '4',
 			'orange': collects[1] === '1',
+			'initshow2': video.initshow2,
 			// 'show': true,
 			// 'down2': true,
 			// 'together': true
@@ -173,6 +178,7 @@
 			'yellow': collects[2] === '2',
 			'green': collects[2] === '4',
 			'orange': collects[2] === '1',
+			'initshow3': video.initshow3,
 			// 'show': true,
 			// 'down3': true,
 			// 'together': true
@@ -217,8 +223,8 @@
 	import Animal from './animal'
 	import Success from './success'
 	import storage from 'utils/storage'
-	import { collectService } from 'services/collect'
-	import ENERGY_CONFIG from './energy'
+	import { collectService, getCollectService } from 'services/collect'
+	import ENERGY_CONFIG from './energy.js'
 	
 	export default{
 		data () {
@@ -230,6 +236,9 @@
 		  	video: { // 收集能量时视频相关参数
 		  		play: false, // 检测到能量时播放视频
 		  		address: 0, // 能量当前放置位置
+		  		initshow1: false,
+		  		initshow2: false,
+		  		initshow3: false,
 		  		energyType: '', // 能量类型（4种，blue，orange，yellow，green）
 		  		energyShow1: false, // 视频将播放完时显示生成的能力球
 		  		energyDown1: false,
@@ -239,6 +248,9 @@
 		  		energyDown3: false
 		  	},
 		  	bags: {
+		  		initshow1: false,
+		  		initshow2: false,
+		  		initshow3: false,
 		  		yellow: 0,
 		  		blue:2,
 		  		green:4,
@@ -247,10 +259,14 @@
 		  		bagShow2: false,
 		  		bagShow3: false
 		  	},
+		  	finish: {
+		  		integral: 0,
+		  		pet:null
+		  	},
 		  	collects: ['', '', ''], // 当前收集能量集  	
 		  	online: false, // 是否绑定手环
 		  	blueStatus: false, // 蓝牙是否开启
-		  	which: 'animal', // 界面显示某一个弹窗
+		  	which: '', // 界面显示某一个弹窗
 		  	energyIn: false, // 能量背包是否显示
 		  	hasBracelet: true, //是否绑定手环
 		  	ISSAME: false, // 发现重复颜色能量
@@ -266,7 +282,8 @@
 			close() {
 				this.which = ''
 			},
-			deleteEnergy(index) {
+			async deleteEnergy(index) {
+				await this.requestCollect(this.collects[index], null, 2)
 				this.collects[index] = ''
 				this.bags[`bagShow${index+1}`] = false
 			},
@@ -308,8 +325,9 @@
 		           console.info("beacons", res.beacons);
 
 		           	 if (this.ISSAME) return
-		           	 	console.log('magor', res.beacons[0].major)
+		           	 	console.log('magor', res.beacons[0].major, ENERGY_CONFIG)
 		           	 const item = ENERGY_CONFIG.filter(item => item.major === res.beacons[0].major)[0]
+		           	 console.log('item', item)
 		             if (this.collects.includes(item.key)) {
 		             	console.log('重复')
 		             	this.ISSAME = true
@@ -338,7 +356,7 @@
 		       const item = ENERGY_CONFIG.filter(item => item.major === major)[0]
 	           const key = item.key
 		       // 发送请求
-		      // await this.requestCollect(key)
+		      await this.requestCollect(key, 0, 1)
 		       // 请求完成之后 播放视频动画
 		       this.video.play = true;
 		       this.video.energyType = item.color
@@ -377,43 +395,72 @@
 			  		energyShow2: false, // 视频将播放完时显示生成的能力球
 			  		energyDown2: false,
 			  		energyShow3: false, // 视频将播放完时显示生成的能力球
-			  		energyDown3: false
+			  		energyDown3: false,
+			  		initshow1: false,
+		  			initshow2: false,
+		  			initshow3: false,
+			  	}
+			  	this.finish = {
+			  		integral: 0,
+		  			pet:null
 			  	}
 			  	this.bags = {
 			  		yellow: 0,
 			  		blue:2,
 			  		green:4,
 			  		orange:8,
+			  		initshow1: false,
+		  			initshow2: false,
+		  			initshow3: false,
 			  		bagShow1: false,
 			  		bagShow2: false,
 			  		bagShow3: false
 			  	}
 			  	this.collects = ['', '', ''] // 当前收集能量集  	
 		    },
-		    async requestCollect(key) {
-		    	
+		    async requestCollect(key, type, operation) {
+		    	console.log(key, type, operation, 'params')
+		    	let position = -1
+		       if (!this.collects[0]) {	
+		       		position = 1 
+		       } else if (!!this.collects[0] && !this.collects[1]) {
+		       	    position = 2
+		       } else {
+		       		position = 3
+		       }
 		        const userinfo = storage.getStorage('userinfo') || {}
+		        console.log('userinfo', userinfo)
 		        const resultData = await collectService({
 		    		openid: userinfo.openid,
-		    		color: key
+		    		color: key,
+		    		operation,
+		    		type,
+		    		position
 		    	})
 		        switch (resultData.code) {
+		        	case 100:
+		        		break 
 		       		case 101:
-		       			console.log('没宠物，一轮完毕')
+		       			console.log('没宠物，一轮完毕', resultData)
+		       			this.finish.integral = resultData.data.integral
 		       			break
 		       		case 102:
-		       			console.log('宠物')
+		       			this.finish.integral = resultData.data.integral
+		       			this.finish.pet = resultData.data.pet
 		       			break
 		       }
 		    },
-		    getBagEnergy(color) {
+		    async getBagEnergy(color) {
 		    	if (this.ISENDING) return
 		    	this.ISENDING = true
 		       if (this.collects.includes(color)) {
-		       	this.$tip.toast('不能选择重复颜色')
+		       //	this.$tip.toast('不能选择重复颜色')
+		       	this.toast = 'repeat'
+		       	setTimeout(() => { this.toast = ''}, 1000)
 		       	this.ISENDING = false
 		       	return
 		       }
+		       await this.requestCollect(color, 1, 1)
 		    	if (!this.collects[0]) {
 		    		this.collects[0] = color
 		      		this.bags.bagShow1 = true
@@ -431,9 +478,32 @@
 		      		}, 1000)
 		      	}
 
+		    },
+		    goBulid() {
+		    	wx.redirectTo({
+					url: '/pages/build/main'
+				});
+		    },
+		    async getCollect() {
+		    	this.ISENDING = true
+		    	const userinfo = storage.getStorage('userinfo') || {}
+		    	const resultData = await getCollectService({ openid: userinfo.openid })
+		    	// this.ISENDING = false
+		    	console.log(resultData)
+		    	if (resultData.data) {
+		    		resultData.data.forEach(item => {
+			    		this.collects[item.position - 1] = item.color
+			    		console.log('test1')
+			    		// const type = 
+			    		this[item.ctype === 0 ? 'video' : 'bags'][`initshow${item.position}`] = true
+			    		console.log('test2', this.collects, this.bags, this.video)
+			    	})
+		    	}
+		    	this.ISENDING = false
 		    }
 		},
-		onShow() {
+		async onShow() {
+			await this.getCollect()
 			this.openBlueTooth()
 		},
 		mounted() {
@@ -809,6 +879,13 @@
 						width:45px;
 						bottom:16px;
 					}
+					&.initshow{
+						transition: 0;
+						opacity: 1;
+						height:45px;
+						width:45px;
+						bottom:16px;
+					}
 					&.address1.together{
 						left: 110%;
 					}
@@ -981,6 +1058,32 @@
 		&.show{
 			opacity: 1;
 			// display: block;
+		}
+		&.initshow1{
+			transition: 0;
+			opacity: 1;
+			bottom: 159px;
+			width:45px;
+			height:45px;
+			left:26%;
+			z-index:7;
+		}
+		&.initshow2{
+			transition: 0;
+			opacity: 1;
+			height:45px;
+			width:45px;
+			bottom: 159px;
+			z-index:7;
+		}
+		&.initshow3{
+			transition: 0;
+			opacity: 1;
+			bottom: 159px;
+			width:45px;
+			height:45px;
+			left:74%;
+			z-index:7;
 		}
 		&.down1{
 			bottom: 159px;
