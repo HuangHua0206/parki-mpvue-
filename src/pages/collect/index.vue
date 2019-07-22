@@ -55,37 +55,32 @@
 		<div class="nums-wrap" style="z-index: 45;">
 			<div class="one-three">
 				<div class="num  ">
-					<div v-if="!video.energyShow1" @click="deleteEnergy(0)" class="bag-energy address1" :class="{
-						'show': bags.bagShow1,
-						'initshow': bags.initshow1,
-						'blue': collects[0] === '3' ,
-						'yellow': collects[0] === '2',
-						'green': collects[0] === '4',
-						'orange': collects[0] === '1',
-						'together': together
-					}"></div>
+					<div v-if="!video.energyShow1 && !reset">
+						<img  @click="deleteEnergy(0)" class="bag-energy address1" :class="{
+							'show': bags.bagShow1,
+							'initshow': bags.initshow1,
+							'together': together
+						}" :src="'http://parkiland.isxcxbackend1.cn/pl2_ball_'+collects[0]+'.png'"/>
+					</div>
+					
 				</div>
 				<div class="num ">
-				 	<div v-if="!video.energyShow2" @click="deleteEnergy(1)" class="bag-energy address2" :class="{
-						'show': bags.bagShow2,
-						'initshow': bags.initshow2,
-						'blue': collects[1] === '3' ,
-						'yellow': collects[1] === '2',
-						'green': collects[1] === '4',
-						'orange': collects[1] === '1',
-						'together': together
-					}"></div>
+					<div v-if="!video.energyShow2 && !reset">
+						<img  @click="deleteEnergy(1)" class="bag-energy address2" :class="{
+							'show': bags.bagShow2,
+							'initshow': bags.initshow2,
+							'together': together
+						}" :src="'http://parkiland.isxcxbackend1.cn/pl2_ball_'+collects[1]+'.png'"/>
+					</div>
 				</div>
 				<div  class="num  ">
-			 		<div v-if="!video.energyShow3" @click="deleteEnergy(1)" class="bag-energy address3" :class="{
-						'show': bags.bagShow3,
-						'initshow': bags.initshow3,
-						'blue': collects[2] === '3' ,
-						'yellow': collects[2] === '2',
-						'green': collects[2] === '4',
-						'orange': collects[2] === '1',
-						'together': together
-					}"></div>
+			 		<div v-if="!video.energyShow3 && !reset">
+						<img  @click="deleteEnergy(2)" class="bag-energy address3" :class="{
+							'show': bags.bagShow3,
+							'initshow': bags.initshow3,
+							'together': together
+						}" :src="'http://parkiland.isxcxbackend1.cn/pl2_ball_'+collects[2]+'.png'"/>
+					</div>
 				</div>
 			</div>
 			<div class="plus"  @click="energyIn = !energyIn"></div>
@@ -204,6 +199,7 @@
 	export default{
 		data () {
 		  return {
+		  	reset:false,
 		  	toast: '',
 		  	together: false,
 		  	index: 0, // 第index个位置发生能量变化
@@ -270,8 +266,14 @@
 
 			},
 			async deleteEnergy(index) {
+				if (!this.collects[index]) return
+				this.IS_SENDING = true
+				this.bags['initshow'+(index+1)] = false
 				await this.requestCollect(this.collects[index], 1, 2, index + 1)
-				this.collects[index] = ''
+				setTimeout(() => { 
+					this.collects[index] = ''
+					this.IS_SENDING = false
+				}, 500);
 				this.bags[`bagShow${index+1}`] = false
 				this.getBagsData()
 			},
@@ -312,7 +314,7 @@
 		          wx.onBeaconUpdate(res => {
 		           console.info("beacons", res.beacons);
 
-		           	 if (this.ISSAME) return
+		           	 if (this.ISSAME || this.ISENDING) return
 		           	 	console.log('magor', res.beacons[0].major, ENERGY_CONFIG)
 		           	 const item = ENERGY_CONFIG.filter(item => item.major === res.beacons[0].major)[0]
 		           	 console.log('item', item)
@@ -357,7 +359,10 @@
 		      	} else {
 		      		this.collects[2] = key
 		      		this.index = 2
-		      		setTimeout(()=>{ this.together = true }, 3500)
+		      		setTimeout(()=>{ 
+		      			this.together = true
+		      			this.ISENDING = true
+		      		}, 3500)
 		      	}
 		       setTimeout(() => {
 		       	this.video.play = false
@@ -383,6 +388,7 @@
 		    	}
 		    },
 		    resetData() {
+		    	this.reset = true
 		    	this.together = false
 			  	this.index = 0 // 第index个位置发生能量变化
 			  	this.video = Object.assign(this.video, {
@@ -411,7 +417,9 @@
 			  		bagShow2: false,
 			  		bagShow3: false
 			  	})
+			  	this.ISENDING = false
 			  	this.collects = ['', '', ''] // 当前收集能量集  	
+			  	setTimeout(() => this.reset=false, 200);
 		    },
 		    async requestCollect(key, type, operation, position) {
 		    	console.log(key, type, operation, 'params')
@@ -477,7 +485,7 @@
 		      		this.bags.bagShow3 = true
 		      		setTimeout(()=>{ 
 		      			this.together = true
-		      			this.ISENDING = false
+		      			this.ISENDING = true
 		      		}, 1000)
 		      	}
 
@@ -854,7 +862,7 @@
 					.bg("pl2_3@2x");
 				}
 				.bag-energy{
-					transition: 1s;
+					transition: 0.5s ;
 					opacity:0;
 					position: absolute;
 					height: 90px;

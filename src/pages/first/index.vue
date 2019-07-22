@@ -11,8 +11,8 @@
         ></button>
         <div class="process-loading" v-if="percent!==100"></div>
         <div class="process-wrap"><div :style="{width: percent+'%'}"></div></div>
-        <image :src="item" v-for="(item, index) in imgList" v-show="false" @load="preLoadImg" :key="index" />
-       <video :src="item" v-for="(item, index) in videoList" v-show="false" @progress="preLoadImg" muted :key="index" />
+      <!--   <image :src="item" v-for="(item, index) in imgList" v-show="false" @load="preLoadImg" :key="index" />
+       <video :src="item" v-for="(item, index) in videoList" v-show="false" @progress="preLoadImg" muted :key="index" /> -->
 		 
 	</div>
 </template>
