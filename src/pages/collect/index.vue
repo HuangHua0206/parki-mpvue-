@@ -147,9 +147,6 @@
 			'yellow': collects[0] === '2',
 			'green': collects[0] === '4',
 			'orange': collects[0] === '1',
-			// 'show': true,
-			// 'down1': true,
-			// 'together': true
 			'initshow1': video.initshow1,
 			'show': video.energyShow1,
 			'down1': video.energyDown1,
@@ -161,9 +158,6 @@
 			'green': collects[1] === '4',
 			'orange': collects[1] === '1',
 			'initshow2': video.initshow2,
-			// 'show': true,
-			// 'down2': true,
-			// 'together': true
 			'show': video.energyShow2,
 			'down2': video.energyDown2,
 			'together': together
@@ -174,9 +168,6 @@
 			'green': collects[2] === '4',
 			'orange': collects[2] === '1',
 			'initshow3': video.initshow3,
-			// 'show': true,
-			// 'down3': true,
-			// 'together': true
 			'show': video.energyShow3,
 			'down3': video.energyDown3,
 			'together': together
@@ -296,16 +287,6 @@
 		      });
 		    },
 		    searchBlueTooth() {
-		      //搜索设备
- 
-		      // if (!this.blueStatus) {
-		      //   // _this.warning = true;
-		      //   // _this.warningText = "! 请打开蓝牙设备";
-		      //   setTimeout(() => {
-		      //     // _this.warning = false;
-		      //   }, 1000);
-		      //   return;
-		      // }
 		      wx.startBeaconDiscovery({
 		        uuids: ["FDA50693-A4E2-4FB1-AFCF-C6EB07647825"],
 		        success: res => {
@@ -359,9 +340,9 @@
 		      	} else {
 		      		this.collects[2] = key
 		      		this.index = 2
+		      		this.ISENDING = true
 		      		setTimeout(()=>{ 
 		      			this.together = true
-		      			this.ISENDING = true
 		      		}, 3500)
 		      	}
 		       setTimeout(() => {
@@ -460,8 +441,7 @@
 
 		    },
 		    async getBagEnergy(color, num) {
-		    	if (!num) return
-		    	console.log(this.ISENDING, 'this.ISENDINGthis.ISENDINGthis.ISENDING')
+		    	if (!num) return // 数量为0时点击无效
 		    	if (this.ISENDING) return
 		    	this.ISENDING = true
 		       if (this.collects.includes(color)) {
@@ -483,9 +463,9 @@
 		      	} else {
 		      		this.collects[2] = color
 		      		this.bags.bagShow3 = true
+		      		this.ISENDING = true
 		      		setTimeout(()=>{ 
 		      			this.together = true
-		      			this.ISENDING = true
 		      		}, 1000)
 		      	}
 
@@ -549,7 +529,9 @@
 @keyframes onlineAnimation{
 	0% { left:0; opacity:0}
     80% { left:0; opacity:0}
-    100% {left:-45px; opacity:1}
+    98% {left:-45px; opacity:1}
+    99% {left:-45px; opacity:0}
+    100% {left:0; opacity:0}
 }
 // .for(@list){  
 //     .loop(@index:1) when ( @index<=length(@list) ){  
