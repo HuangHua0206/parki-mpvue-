@@ -1,11 +1,11 @@
 <template>
 	<div class="range-pop-wrap">
 		<div class="mask" ></div>
-		<CommonTop 
+<!-- 		<CommonTop 
 	  		ctxt="搜集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
 	  		:leftNum="9999"
 	  		:rightNum="9999">
-	  	</CommonTop>
+	  	</CommonTop> -->
 	  	<div class="rang-bg">
 	  		<div class="close-btn" @click="$emit('closePop')"></div>
 	  		<ul class="range-list">

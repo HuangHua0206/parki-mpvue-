@@ -26,3 +26,13 @@ export function animalListService(data) {
 		data
 	})
 }
+
+// 背包列表
+export function bagsListService(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/parki/yield/query',
+		method: 'post',
+		data
+	})
+}

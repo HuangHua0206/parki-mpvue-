@@ -11,7 +11,7 @@
 		<div class="button friend-button"  :class="{'fade-right-in': fadeIn}" ></div>
 		<div class="build-store"></div>
 		<div class="build-my"></div>
-		<div class="mask" style="z-index:6" v-if="true">
+		<div class="mask" style="z-index:6" v-if="false">
 			<div class="area"></div>
 		</div>
 	</div>

@@ -92,24 +92,24 @@
 		</div>
 		<!-- 能量背包-->
 		<div   class="energy-wrap" :class="{fadeUp: energyIn}">
-			<div class="boll " @click="getBagEnergy('2')">
+			<div class="boll " @click="getBagEnergy('2', bags['2'])">
 				<div class="round yellow"></div>
-				<div class="num">{{bags.yellow}}</div>
+				<div class="num">{{bags['2']}}</div>
 				<div class="little-round"></div>
 			</div>
-			<div class="boll " @click="getBagEnergy('3')">
+			<div class="boll " @click="getBagEnergy('3', bags['3'])">
 				<div class="round blue"></div>
-				<div class="num">{{bags.blue}}</div>
+				<div class="num">{{bags['3']}}</div>
 				<div class="little-round"></div>
 			</div>
-			<div class="boll " @click="getBagEnergy('4')">
+			<div class="boll " @click="getBagEnergy('4', bags['4'])">
 				<div class="round green"></div>
-				<div class="num">{{bags.green}}</div>
+				<div class="num">{{bags['4']}}</div>
 				<div class="little-round"></div>
 			</div>
-			<div class="boll " @click="getBagEnergy('1')">
+			<div class="boll " @click="getBagEnergy('1', bags['1'])">
 				<div class="round orange"></div>
-				<div class="num">{{bags.orange}}</div>
+				<div class="num">{{bags['1']}}</div>
 				<div class="little-round"></div>
 			</div>
 		</div>
@@ -198,7 +198,7 @@
 	import Animal from './animal'
 	import Success from './success'
 	import storage from 'utils/storage'
-	import { collectService, getCollectService, animalListService } from 'services/collect'
+	import { collectService, getCollectService, animalListService, bagsListService } from 'services/collect'
 	import ENERGY_CONFIG from './energy.js'
 	
 	export default{
@@ -226,10 +226,10 @@
 		  		initshow1: false,
 		  		initshow2: false,
 		  		initshow3: false,
-		  		yellow: 0,
-		  		blue:2,
-		  		green:4,
-		  		orange:8,
+		  		'2': 0,
+		  		'3':0,
+		  		'4':0,
+		  		'1':0,
 		  		bagShow1: false,
 		  		bagShow2: false,
 		  		bagShow3: false
@@ -273,6 +273,7 @@
 				await this.requestCollect(this.collects[index], 1, 2, index + 1)
 				this.collects[index] = ''
 				this.bags[`bagShow${index+1}`] = false
+				this.getBagsData()
 			},
 			openBlueTooth() {
 		      const _this = this;
@@ -370,6 +371,17 @@
 		       this.ISENDING = false
 
 		    },
+		    async getBagsData() {
+		    	const userinfo = storage.getStorage('userinfo') || {}
+		        console.log('userinfo', userinfo)
+		    	const resultData = await bagsListService({ openid: userinfo.openid})
+		    	// console.log(resultData, '====')
+		    	if (resultData.data) {
+		    		resultData.data.forEach(item => {
+		    			this.bags[item.color] = item.yield
+		    		})
+		    	}
+		    },
 		    resetData() {
 		    	this.together = false
 			  	this.index = 0 // 第index个位置发生能量变化
@@ -392,10 +404,10 @@
 		  			pet:null
 			  	}
 			  	this.bags = {
-			  		yellow: 0,
-			  		blue:2,
-			  		green:4,
-			  		orange:8,
+			  		'2': 0,
+			  		'3':0,
+			  		'4':0,
+			  		'1':0,
 			  		initshow1: false,
 		  			initshow2: false,
 		  			initshow3: false,
@@ -425,6 +437,10 @@
 		    		type,
 		    		position: _position
 		    	})
+		    	console.log(type, 'type')
+		    	if (type === 1) {
+			       	this.getBagsData()
+			       }
 		        switch (resultData.code) {
 		        	case 100:
 		        		break 
@@ -437,8 +453,10 @@
 		       			this.finish.pet = resultData.data.pet
 		       			break
 		       }
+
 		    },
-		    async getBagEnergy(color) {
+		    async getBagEnergy(color, num) {
+		    	if (!num) return
 		    	console.log(this.ISENDING, 'this.ISENDINGthis.ISENDINGthis.ISENDING')
 		    	if (this.ISENDING) return
 		    	this.ISENDING = true
@@ -493,12 +511,14 @@
 		},
 		async onShow() {
 			await this.getCollect()
+			await this.getBagsData()
 			this.openBlueTooth()
 		},
 		mounted() {
 			this.fadeIn = true
 		},
 		onUnload() {
+			console.log('onUnload')
 			this.fadeIn = false
 		},
 		components: { CommonTop, Email, Task, Range, Bracelet, Animal, Success }
@@ -876,9 +896,11 @@
 						bottom:16px;
 					}
 					&.address1.together{
+						transition: 0.5;
 						left: 110%;
 					}
 					&.address3.together{
+						transition: 0.5;
 						left:-20%;
 					}
 				}
