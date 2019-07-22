@@ -385,7 +385,7 @@
 		    resetData() {
 		    	this.together = false
 			  	this.index = 0 // 第index个位置发生能量变化
-			  	this.video = { // 收集能量时视频相关参数
+			  	this.video = Object.assign(this.video, {
 			  		play: false, // 检测到能量时播放视频
 			  		address: 0, // 能量当前放置位置
 			  		energyType: '', // 能量类型（4种，blue，orange，yellow，green）
@@ -398,23 +398,19 @@
 			  		initshow1: false,
 		  			initshow2: false,
 		  			initshow3: false,
-			  	}
+			  	})
 			  	this.finish = {
 			  		integral: 0,
 		  			pet:null
 			  	}
-			  	this.bags = {
-			  		'2': 0,
-			  		'3':0,
-			  		'4':0,
-			  		'1':0,
+			  	this.bags = Object.assign(this.bags, {
 			  		initshow1: false,
 		  			initshow2: false,
 		  			initshow3: false,
 			  		bagShow1: false,
 			  		bagShow2: false,
 			  		bagShow3: false
-			  	}
+			  	})
 			  	this.collects = ['', '', ''] // 当前收集能量集  	
 		    },
 		    async requestCollect(key, type, operation, position) {
