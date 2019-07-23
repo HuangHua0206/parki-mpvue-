@@ -14,9 +14,11 @@ fly.interceptors.response.use(
         return res.data
     },
     err => {
+        console.log(err, 'errerr')
+       // return err.response
         // Tip.toast(JSON.stringify(err) + 'err')
         //发生网络错误后会走到这里
-        //return Promise.resolve("ssss")
+        return Promise.resolve(err.response)
     }
 )
 

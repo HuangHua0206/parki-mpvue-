@@ -249,22 +249,31 @@
 				const resultData = await animalListService({
 					openid: userinfo.openid
 				})
-				if (resultData.data) {
+				if (resultData && resultData.data) {
 					this.animalList = resultData.data
 					this.which = 'animal'
 				}
-				console.log(resultData)
 
 			},
 			async deleteEnergy(index) {
 				if (!this.collects[index]) return
 				this.IS_SENDING = true
 				this.bags['initshow'+(index+1)] = false
-				await this.requestCollect(this.collects[index], 1, 2, index + 1)
+				const ok = await this.requestCollect(this.collects[index], 1, 2, index + 1)
+				if (!ok) {
+			       	this.ISENDING = false
+			       	return
+		       }
 				setTimeout(() => { 
 					this.collects[index] = ''
 					this.IS_SENDING = false
-				}, 500);
+				},200);
+				
+				// setTimeout(() => { 
+					
+					
+				// },500);
+				
 				this.bags[`bagShow${index+1}`] = false
 				this.getBagsData()
 			},
@@ -277,7 +286,6 @@
 		        },
 		        fail(res) {
 		          wx.onBluetoothAdapterStateChange(function(res) {
-		          	console.log(res)
 		            if (res.available) {
 		              _this.blueStatus = true;
 		              _this.searchBlueTooth();
@@ -290,17 +298,12 @@
 		      wx.startBeaconDiscovery({
 		        uuids: ["FDA50693-A4E2-4FB1-AFCF-C6EB07647825"],
 		        success: res => {
-		        	console.info(res, 'res');
 
 		          wx.onBeaconUpdate(res => {
-		           console.info("beacons", res.beacons);
 
 		           	 if (this.ISSAME || this.ISENDING) return
-		           	 	console.log('magor', res.beacons[0].major, ENERGY_CONFIG)
 		           	 const item = ENERGY_CONFIG.filter(item => item.major === res.beacons[0].major)[0]
-		           	 console.log('item', item)
 		             if (this.collects.includes(item.key)) {
-		             	console.log('重复')
 		             	this.ISSAME = true
 		             	setTimeout(() => {
 		             		// this.$tip.toast('不能收集重复能量')
@@ -316,7 +319,7 @@
 		          });
 		        },
 		        fail: function(err) {
-		        	console.log(err, 'err')
+		        	// console.log(err, 'err')
 		        }
 		      });
 		    },
@@ -327,20 +330,26 @@
 		       const item = ENERGY_CONFIG.filter(item => item.major === major)[0]
 	           const key = item.key
 		       // 发送请求
-		      await this.requestCollect(key, 0, 1)
+		      const ok = await this.requestCollect(key, 0, 1)
+		      if (!ok) {
+			       	this.ISENDING = false
+			       	return
+		       }
 		       // 请求完成之后 播放视频动画
 		       this.video.play = true;
 		       this.video.energyType = item.color
 		       if (!this.collects[0]) {		      
 		      		this.collects[0] = key
 		      		this.index = 0
+		      		this.ISENDING = false
 		      	} else if (!!this.collects[0] && !this.collects[1]) {
 		      		this.collects[1] = key
 		      		this.index = 1
+		      		this.ISENDING = false
 		      	} else {
 		      		this.collects[2] = key
 		      		this.index = 2
-		      		this.ISENDING = true
+		      		// this.ISENDING = true
 		      		setTimeout(()=>{ 
 		      			this.together = true
 		      		}, 3500)
@@ -351,18 +360,15 @@
 		       	this.video[`energyDown${this.index + 1}`] = true
 		       }, 3000);
 		        setTimeout(() => {
-		         	console.log(this.index, 'index');
 		        	this.video[`energyShow${this.index + 1}`] = true
 		       }, 2300);
-		       this.ISENDING = false
+		       // this.ISENDING = false
 
 		    },
 		    async getBagsData() {
 		    	const userinfo = storage.getStorage('userinfo') || {}
-		        console.log('userinfo', userinfo)
 		    	const resultData = await bagsListService({ openid: userinfo.openid})
-		    	// console.log(resultData, '====')
-		    	if (resultData.data) {
+		    	if (resultData && resultData.data) {
 		    		resultData.data.forEach(item => {
 		    			this.bags[item.color] = item.yield
 		    		})
@@ -403,7 +409,6 @@
 			  	setTimeout(() => this.reset=false, 200);
 		    },
 		    async requestCollect(key, type, operation, position) {
-		    	console.log(key, type, operation, 'params')
 		    	let _position = -1
 		       if (!this.collects[0]) {	
 		       		_position = 1 
@@ -414,7 +419,6 @@
 		       }
 		       if (position) _position = position
 		        const userinfo = storage.getStorage('userinfo') || {}
-		        console.log('userinfo', userinfo)
 		        const resultData = await collectService({
 		    		openid: userinfo.openid,
 		    		color: key,
@@ -422,22 +426,27 @@
 		    		type,
 		    		position: _position
 		    	})
-		    	console.log(type, 'type')
 		    	if (type === 1) {
 			       	this.getBagsData()
 			       }
-		        switch (resultData.code) {
-		        	case 100:
-		        		break 
-		       		case 101:
-		       			console.log('没宠物，一轮完毕', resultData)
-		       			this.finish.integral = resultData.data.integral
-		       			break
-		       		case 102:
-		       			this.finish.integral = resultData.data.integral
-		       			this.finish.pet = resultData.data.pet
-		       			break
-		       }
+	 
+			    if (resultData && resultData.code) {
+			    	switch (resultData.code) {
+			        	case 100:
+			        		return true 
+			       		case 101:
+			       			this.finish.integral = resultData.data.integral
+			       			return true 
+			       		case 102:
+			       			this.finish.integral = resultData.data.integral
+			       			this.finish.pet = resultData.data.pet
+			       			return true 
+			       }
+			   } else {
+			   		return false
+			   		this.ISENDING = false
+			   }
+		        
 
 		    },
 		    async getBagEnergy(color, num) {
@@ -445,13 +454,17 @@
 		    	if (this.ISENDING) return
 		    	this.ISENDING = true
 		       if (this.collects.includes(color)) {
-		       //	this.$tip.toast('不能选择重复颜色')
-		       	this.toast = 'repeat'
-		       	setTimeout(() => { this.toast = ''}, 1000)
-		       	this.ISENDING = false
-		       	return
+			       //	this.$tip.toast('不能选择重复颜色')
+			       	this.toast = 'repeat'
+			       	setTimeout(() => { this.toast = ''}, 1000)
+			       	this.ISENDING = false
+			       	return
 		       }
-		       await this.requestCollect(color, 1, 1)
+		       const ok = await this.requestCollect(color, 1, 1)
+		       if (!ok) {
+			       	this.ISENDING = false
+			       	return
+		       }
 		    	if (!this.collects[0]) {
 		    		this.collects[0] = color
 		      		this.bags.bagShow1 = true
@@ -463,7 +476,7 @@
 		      	} else {
 		      		this.collects[2] = color
 		      		this.bags.bagShow3 = true
-		      		this.ISENDING = true
+		      		// this.ISENDING = true
 		      		setTimeout(()=>{ 
 		      			this.together = true
 		      		}, 1000)
@@ -479,15 +492,11 @@
 		    	this.ISENDING = true
 		    	const userinfo = storage.getStorage('userinfo') || {}
 		    	const resultData = await getCollectService({ openid: userinfo.openid })
-		    	// this.ISENDING = false
-		    	console.log(resultData)
-		    	if (resultData.data) {
+		    	if (resultData && resultData.data) {
 		    		resultData.data.forEach(item => {
 			    		this.collects[item.position - 1] = item.color
-			    		console.log('test1')
 			    		// const type = 
 			    		this[item.ctype === 0 ? 'video' : 'bags'][`initshow${item.position}`] = true
-			    		console.log('test2', this.collects, this.bags, this.video)
 			    	})
 		    	}
 		    	this.ISENDING = false
@@ -502,7 +511,6 @@
 			this.fadeIn = true
 		},
 		onUnload() {
-			console.log('onUnload')
 			this.fadeIn = false
 		},
 		components: { CommonTop, Email, Task, Range, Bracelet, Animal, Success }
@@ -527,11 +535,10 @@
     to {display: block;}
 }
 @keyframes onlineAnimation{
-	0% { left:0; opacity:0}
+	0% { left:0; opacity:0;}
     80% { left:0; opacity:0}
-    98% {left:-45px; opacity:1}
-    99% {left:-45px; opacity:0}
-    100% {left:0; opacity:0}
+    90% { left:-45px; opacity:1}
+    100% {left:-45px; opacity:0;}
 }
 // .for(@list){  
 //     .loop(@index:1) when ( @index<=length(@list) ){  
