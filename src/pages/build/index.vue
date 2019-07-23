@@ -136,8 +136,8 @@ export default {
 	          		console.log(item, $index, 'ooo')
 	          		this.positions.push({
 	          			index: $index + 1,
-	          			x: item.left + 58,
-	          			y: item.top + 38
+	          			x: item.left + (item.width / 2),
+	          			y: item.top + (item.height / 2)
 	          		})
 	          	})
 	          	 console.log(this.positions)
@@ -154,7 +154,7 @@ export default {
 @import '~less/mixin.less';
 	.build-wrap{
 		overflow:hidden;
-		background: url("@{cdn}pl2_build-bg.jpg")  0 0 no-repeat;
+		background: url("@{cdn}pl2_build-bg.jpg")  0 0 repeat;
     	background-size: 100% auto;
 		position:absolute;
 		height:100%;
