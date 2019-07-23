@@ -851,7 +851,7 @@
 					.bg("pl2_3@2x");
 				}
 				.bag-energy{
-					transition: 0.5s ;
+					transition: 0.5s;
 					opacity:0;
 					position: absolute;
 					height: 90px;
@@ -1110,16 +1110,19 @@
 			z-index:7;
 		}
 		&.energy-1.together{
+			transition: 0.5s;
 			z-index:88;
 			left: 37%;
 			// .bg("pl2_ball_green@2x");
 		}
 		&.energy-2.together{
+			transition: 0.5s;
 			z-index:88;
 			// left: 38%;
 			// .bg("pl2_ball_green@2x");
 		}
 		&.energy-3.together{
+			transition: 0.5s;
 			z-index:88;
 			left: 62%;
 			// .bg("pl2_ball_green@2x");
