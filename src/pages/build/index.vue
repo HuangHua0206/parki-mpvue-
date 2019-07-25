@@ -7,12 +7,10 @@
 	  		share>
   		</CommonTop>
   		<div @click="goCollect" class="button collect-energy" :class="{'fade-left-in': fadeIn}"  ></div>
-		<div class="button hunting-button" :class="{'fade-right-in': fadeIn}" @touchstart="tStart"
-            @touchmove="tMove"
-            @touchend="tEnd"></div>
+		<div class="button hunting-button" :class="{'fade-right-in': fadeIn}" ></div>
 		<div class="button friend-button"  :class="{'fade-right-in': fadeIn}" ></div>
-		<div class="build-store" @click="which='store'"></div>
-		<div class="build-my" @click="which='my'"></div>
+		<div class="build-store" @click="showStore"></div>
+		<div class="build-my" @click="showMy"></div>
  		
  		<!-- 建造区 -->
 		<div class="area" :class="{noBg : !isBuild}" >
@@ -20,7 +18,15 @@
 				<div class="build-content" :class="{
 					'activeGreen': index === ($index +1) && active === 'ok',
 					'activeRed': index === $index +1 && active === 'forbid'
-				}" >{{$index+1}}</div>
+				}" > 
+					<div class="build-one">
+						<div class="tent">
+							<div class="progress"></div>
+						</div>
+						<div class="confirm"></div>
+						<div class="cancel"></div>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -29,16 +35,18 @@
 <!-- 			<div class="mask" @click="which=''"></div> -->
 			<div class="store common">
 				<div class="titles">
-					<div class="title-item" :class="{active: store.type === 'build'}" @click="store.type = 'build'">建筑</div>
-					<div class="title-item" :class="{active: store.type === 'parki-build'}" @click="store.type = 'parki-build'">Parki建筑</div>
-					<div class="title-item" :class="{active: store.type === 'nature'}" @click="store.type = 'nature'">自然</div>
+					<div class="title-item" :class="{active: storeType === 1}" @click="storeType = 1">建筑</div>
+					<div class="title-item" :class="{active: storeType === 2}" @click="storeType = 2">Parki建筑</div>
+					<div class="title-item" :class="{active: storeType === 3}" @click="storeType = 3">自然</div>
 				</div>
 				<div class="list">
-					<div class="list-item"></div>
-					<div class="list-item"></div>
-					<div class="list-item"></div>
-					<div class="list-item"></div>
-					<div class="list-item"></div>
+					<div class="list-item" v-for="(item, $index) in shopList">
+						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+item.prdname+'.png'" :key="$index" />
+						<div class="cost">
+							<div class="icon"></div>
+							<div class="money">{{item.cost}}</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -46,16 +54,18 @@
 		<!-- 	<div class="mask" @click="which=''"></div> -->
 			<div class="my common">
 				<div class="titles">
-					<div class="title-item" :class="{active: store.type === 'build'}" @click="store.type = 'build'">建筑</div>
-					<div class="title-item" :class="{active: store.type === 'parki-build'}" @click="store.type = 'parki-build'">Parki建筑</div>
-					<div class="title-item" :class="{active: store.type === 'nature'}" @click="store.type = 'nature'">自然</div>
+					<div class="title-item" :class="{active: myType === 1}" @click="myType = 1">建筑</div>
+					<div class="title-item" :class="{active: myType === 2}" @click="myType = 2">Parki建筑</div>
+					<div class="title-item" :class="{active: myType === 3}" @click="myType = 3">自然</div>
 				</div>
 				<div class="list">
-					<div class="list-item"></div>
-					<div class="list-item"></div>
-					<div class="list-item"></div>
-					<div class="list-item"></div>
-					<div class="list-item"></div>
+					<div class="list-item" 
+						v-for="(item, $index) in myList"
+						@touchstart="tStart"
+			            @touchmove="tMove"
+			            @touchend="tEnd"> 	
+						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+item.prdname+'.png'" :key="$index" />
+			        </div>
 				</div>
 			</div>
 		</div>
@@ -63,43 +73,51 @@
 </template>
 <script>
 import CommonTop from 'components/top'
+import storage from 'utils/storage'
+import { shopListService, myListService, buildService, removeService, buildListService } from 'services/build'
 export default {
 	data() {
 		return {
 			positions: [],
-			index: 34,
-			active: 'ok',
-			isBuild: false,
+			hasBuild: [],
+			shopList: [],
+			myList: [],
+			index: -1,
+			active: '',
+			isBuild: true,
 			which: '',
 			fadeIn: false,
-			store: {
-				type: 'build'
-			}
+			forbidList: [7,10, 14,17,21,24,28,31,35,38,42,45],
+			storeType: 1,//  3 是植物,1是建筑，2是parki
+			myType: 1
 		}
 	},
 	components: { CommonTop },
 	methods: {
-		goCollect() {
-	    	wx.redirectTo({
-				url: '/pages/collect/main'
-			});
+		async getStore(type) {
+			const resultData = await shopListService({ type })
+			if (resultData && resultData.data) {
+				this.shopList = resultData.data
+			}
 		},
-		// 找到最近的那一个区块
-		getMinOne(left, top) {
-	      let minVal = Infinity;
-	      let currentActive = -1;
-	      let itemCache = {};
-	      //拿到两点之间最小的距离与菱形索引
-	      this.positions.forEach(item => {
-	        let result = this.minRange(left, top, item.x, item.y);
-	        if (result < minVal) {
-	          minVal = Number(result);
-	          this.index = item.index;
-	          this.active = 'ok'
-	        }
-	      });
-	      return { currentActive, itemCache };
-	    },
+		async getMy(type) {
+			const userinfo = storage.getStorage('userinfo') || {}
+			const resultData = await myListService({ type, openid: userinfo.openid })
+			if (resultData && resultData.data) {
+				this.shopList = resultData.data
+			}
+		},
+		showStore() {
+			this.getStore(1)
+			this.which='store'
+		},
+		showMy() {
+			this.getMy(1)
+			this.which='my'
+		},
+		goCollect() {
+	    	wx.redirectTo({ url: '/pages/collect/main' });
+		},
 	    //两点间距离公式
 	    minRange(x1, y1, x2, y2) {
 	      return Math.abs(Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2)));
@@ -108,25 +126,36 @@ export default {
 			console.log(666)
 		},
 		tMove(e) {
-			console.log(e)
-			console.log(888)
-			this.getMinOne(e.clientX, e.clientY)
-			// this.X = e.clientX
-			// this.Y = e.clientY
+			let minVal = Infinity;
+	        let _index = -1
+	        //拿到两点之间最小的距离与菱形索引
+	        this.positions.forEach(item => {
+		        let result = this.minRange(e.clientX, e.clientY, item.x, item.y);
+		        if (result < minVal) {
+		            minVal = Number(result);
+		            _index = item.index;
+		        }
+	        });
+	        // 找到当前active索引
+	        this.index = _index
+	        // 当前位置是否为原本禁止区域，或者已经有建筑
+	        if (this.forbidList.includes(_index) || this.hasBuild.includes(_index)) {
+	            this.active = 'forbid'
+	        } else {
+	        	this.active = 'ok'
+	        }
 		},
 		tEnd() {
 			console.log(10000)
 		},
 	},
 	mounted() {
-		console.log(999)
 		this.fadeIn = true
 		const query1 = wx.createSelectorQuery();
 	      query1
 	        .select(".area")
 	        .boundingClientRect()
 	        .exec(res1 => {
-	          console.log(res1[0], 'res1[0]')
 	          //获取菱形DOM
 	          const query = wx.createSelectorQuery();
 	          query.selectAll(".area-item").boundingClientRect();
@@ -140,14 +169,24 @@ export default {
 	          			y: item.top + (item.height / 2)
 	          		})
 	          	})
-	          	 console.log(this.positions)
 	          });
 	        });
-	      console.log(this.positions, ' console.log(this.positions)')  
 	},
 	onUnload() {
 		this.fadeIn = false
 	},
+	watch: {
+		storeType: {
+			handler(newVal, oldVal) {
+				this.getStore(newVal)
+			}
+		},
+		myType: {
+			handler(newVal, oldVal) {
+				this.getMy(newVal)
+			}
+		}
+	}
 }
 </script>
 <style lang="less">
@@ -311,6 +350,9 @@ export default {
 					&.activeRed{
 						.bg("pl2_build_red");
 					}
+					.build-one{
+
+					}
 				}
 			}
 		}
@@ -329,7 +371,7 @@ export default {
 			.common{
 				.bg("pl2_buildingshop");
 				padding: 128rpx 40rpx;
-				overflow-y: auto;
+				// overflow-y: auto;
 				position: absolute;
 				bottom:0;
 				left:50%;
@@ -361,13 +403,43 @@ export default {
 					display: flex;
 					justify-content: space-between;
 					flex-wrap: wrap;
+					overflow-y: auto;
+					height: 516rpx;
 					.list-item{
 						width:144rpx;
 						height:144rpx;
-						background: #BFBFBF;
+						background:rgba(191,191,191,0.36);
 						border-radius:33rpx;
-						opacity:0.36;
 						margin-top:26rpx;
+						position: relative;
+						img{
+							position: absolute;
+							left:50%;
+							top:40%;
+							transform: translate(-50%, -50%);
+							height:60%;
+							width:60%;
+						}
+						.cost{
+							position: absolute;
+							bottom:5rpx;
+							left:50%;
+							transform: translateX(-50%);
+							display: flex;
+							align-items: flex-end;
+							.icon{
+								.bg("pl2_energy");
+								width:15rpx;
+								height:20rpx;
+								margin-right: 8rpx;
+							}
+							.money{
+								// line-height: 34rpx;
+								color: #ffad01;
+								font-size:16rpx;
+							}
+
+						}
 					}
 				}
 				&.my{

@@ -71,6 +71,7 @@
 							'initshow': bags.initshow2,
 							'together': together
 						}" :src="'http://parkiland.isxcxbackend1.cn/pl2_ball_'+collects[1]+'.png'"/>
+
 					</div>
 				</div>
 				<div  class="num  ">
@@ -302,7 +303,9 @@
 		          wx.onBeaconUpdate(res => {
 
 		           	 if (this.ISSAME || this.ISENDING) return
-		           	 const item = ENERGY_CONFIG.filter(item => item.major === res.beacons[0].major)[0]
+		           	 let major = -1 
+		           	 const beacon = res.beacons.filter(item => item.accuracy > 0 && item.accuracy < 0.5)[0]
+		           	 const item = ENERGY_CONFIG.filter(item => item.major === beacon.major)[0]
 		             if (this.collects.includes(item.key)) {
 		             	this.ISSAME = true
 		             	setTimeout(() => {
