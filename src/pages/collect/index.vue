@@ -317,7 +317,7 @@
 		             	}, 5000);
 		             	setTimeout(() => { this.toast = '' }, 6000)
 		             } else {
-		             	this.handleFindDevs(res.beacons);
+		             	this.handleFindDevs(beacon);
 		             }
 		             
 		          });
@@ -327,10 +327,10 @@
 		        }
 		      });
 		    },
-		    async handleFindDevs(beacons) {
+		    async handleFindDevs(beacon) {
 		       if (this.ISENDING) return
 		       this.ISENDING = true
-		       const major = beacons[0].major
+		       const major = beacon.major
 		       const item = ENERGY_CONFIG.filter(item => item.major === major)[0]
 	           const key = item.key
 		       // 发送请求
