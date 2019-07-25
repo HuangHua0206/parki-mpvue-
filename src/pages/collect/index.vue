@@ -305,6 +305,7 @@
 		           	 if (this.ISSAME || this.ISENDING) return
 		           	 console.log(res.beacons, 'res.beacons')
 		           	 const beacon = res.beacons.filter(item => item.accuracy > 0 && item.accuracy < 0.5)[0]
+		           	 if (!beacon) return
 		           	 const item = ENERGY_CONFIG.filter(item => item.major === beacon.major)[0]
 		             if (this.collects.includes(item.key)) {
 		             	this.ISSAME = true
