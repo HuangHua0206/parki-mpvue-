@@ -1,7 +1,14 @@
 {
   "pages": [
-    "pages/first/main",
+   "pages/first/main",
     "pages/collect/main",
+     
+    
+ 
+    "pages/build/main",
+   
+    
+    
     "pages/earth/main",
     "pages/energy/main",
     "pages/boss/main",
