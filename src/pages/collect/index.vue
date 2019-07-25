@@ -344,11 +344,11 @@
 		       if (!this.collects[0]) {		      
 		      		this.collects[0] = key
 		      		this.index = 0
-		      		this.ISENDING = false
+		      		setTimeout(() => this.ISENDING = false, 4000)
 		      	} else if (!!this.collects[0] && !this.collects[1]) {
 		      		this.collects[1] = key
 		      		this.index = 1
-		      		this.ISENDING = false
+		      		setTimeout(() => this.ISENDING = false, 4000)
 		      	} else {
 		      		this.collects[2] = key
 		      		this.index = 2
@@ -624,8 +624,8 @@
     .toast{
     	opacity:0;
     	position:fixed;
-    	width:250px;
-    	height:68px;
+    	width:250rpx;
+    	height:68rpx;
     	left:50%;
     	top:30%;
     	transform:translateX(-50%);
