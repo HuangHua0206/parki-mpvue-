@@ -302,20 +302,22 @@
 
 		          wx.onBeaconUpdate(res => {
 
-		           	 if (this.ISSAME || this.ISENDING) return
+		           	 if (this.ISENDING) return
 		           	 console.log(res.beacons, 'res.beacons')
 		           	 const beacon = res.beacons.filter(item => item.accuracy > 0 && item.accuracy < 0.5)[0]
 		           	 if (!beacon) return
 		           	 const item = ENERGY_CONFIG.filter(item => item.major === beacon.major)[0]
 		             if (this.collects.includes(item.key)) {
-		             	this.ISSAME = true
-		             	setTimeout(() => {
-		             		// this.$tip.toast('不能收集重复能量')
-		             		this.toast = 'repeat'
-		             		this.ISSAME = false
+		             	if (!this.ISSAME) {
+		             		setTimeout(() => {
+			             		// this.$tip.toast('不能收集重复能量')
+			             		this.toast = 'repeat'
+			             		this.ISSAME = false
 
-		             	}, 5000);
-		             	setTimeout(() => { this.toast = '' }, 6000)
+			             	}, 5000);
+			             	setTimeout(() => { this.toast = '' }, 6000)
+		             	}
+		             	this.ISSAME = true
 		             } else {
 		             	this.handleFindDevs(beacon);
 		             }
@@ -378,40 +380,7 @@
 		    		})
 		    	}
 		    },
-		    resetData() {
-		    	this.reset = true
-		    	this.together = false
-			  	this.index = 0 // 第index个位置发生能量变化
-			  	this.video = Object.assign(this.video, {
-			  		play: false, // 检测到能量时播放视频
-			  		address: 0, // 能量当前放置位置
-			  		energyType: '', // 能量类型（4种，blue，orange，yellow，green）
-			  		energyShow1: false, // 视频将播放完时显示生成的能力球
-			  		energyDown1: false,
-			  		energyShow2: false, // 视频将播放完时显示生成的能力球
-			  		energyDown2: false,
-			  		energyShow3: false, // 视频将播放完时显示生成的能力球
-			  		energyDown3: false,
-			  		initshow1: false,
-		  			initshow2: false,
-		  			initshow3: false,
-			  	})
-			  	this.finish = {
-			  		integral: 0,
-		  			pet:null
-			  	}
-			  	this.bags = Object.assign(this.bags, {
-			  		initshow1: false,
-		  			initshow2: false,
-		  			initshow3: false,
-			  		bagShow1: false,
-			  		bagShow2: false,
-			  		bagShow3: false
-			  	})
-			  	this.ISENDING = false
-			  	this.collects = ['', '', ''] // 当前收集能量集  	
-			  	setTimeout(() => this.reset=false, 200);
-		    },
+		   
 		    async requestCollect(key, type, operation, position) {
 		    	let _position = -1
 		       if (!this.collects[0]) {	
@@ -504,6 +473,40 @@
 			    	})
 		    	}
 		    	this.ISENDING = false
+		    },
+		     resetData() {
+		    	this.reset = true
+		    	this.together = false
+			  	this.index = 0 // 第index个位置发生能量变化
+			  	this.video = Object.assign(this.video, {
+			  		play: false, // 检测到能量时播放视频
+			  		address: 0, // 能量当前放置位置
+			  		energyType: '', // 能量类型（4种，blue，orange，yellow，green）
+			  		energyShow1: false, // 视频将播放完时显示生成的能力球
+			  		energyDown1: false,
+			  		energyShow2: false, // 视频将播放完时显示生成的能力球
+			  		energyDown2: false,
+			  		energyShow3: false, // 视频将播放完时显示生成的能力球
+			  		energyDown3: false,
+			  		initshow1: false,
+		  			initshow2: false,
+		  			initshow3: false,
+			  	})
+			  	this.finish = {
+			  		integral: 0,
+		  			pet:null
+			  	}
+			  	this.bags = Object.assign(this.bags, {
+			  		initshow1: false,
+		  			initshow2: false,
+		  			initshow3: false,
+			  		bagShow1: false,
+			  		bagShow2: false,
+			  		bagShow3: false
+			  	})
+			  	this.ISENDING = false
+			  	this.collects = ['', '', ''] // 当前收集能量集  	
+			  	setTimeout(() => this.reset=false, 200);
 		    }
 		},
 		async onShow() {
@@ -515,7 +518,48 @@
 			this.fadeIn = true
 		},
 		onUnload() {
+			this.resetData()
 			this.fadeIn = false
+			this.reset = false
+			this.toast = ''
+		  	this.video = { // 收集能量时视频相关参数
+		  		play: false, // 检测到能量时播放视频
+		  		address: 0, // 能量当前放置位置
+		  		initshow1: false,
+		  		initshow2: false,
+		  		initshow3: false,
+		  		energyType: '', // 能量类型（4种，blue，orange，yellow，green）
+		  		energyShow1: false, // 视频将播放完时显示生成的能力球
+		  		energyDown1: false,
+		  		energyShow2: false, // 视频将播放完时显示生成的能力球
+		  		energyDown2: false,
+		  		energyShow3: false, // 视频将播放完时显示生成的能力球
+		  		energyDown3: false
+		  	}
+		  	this.bags = {
+		  		initshow1: false,
+		  		initshow2: false,
+		  		initshow3: false,
+		  		'2': 0,
+		  		'3':0,
+		  		'4':0,
+		  		'1':0,
+		  		bagShow1: false,
+		  		bagShow2: false,
+		  		bagShow3: false
+		  	}
+		  	this.finish = {
+		  		integral: 0,
+		  		pet:null
+		  	}
+		  	this.collects= ['', '', '']   	
+		  	this.online = false 
+		  	this.blueStatus = false 
+		  	this.which = '' 
+		  	this.energyIn = false 
+		  	this.hasBracelet= true 
+		  	this.ISSAME = false 
+		  	this.IS_SENDING=false 
 		},
 		components: { CommonTop, Email, Task, Range, Bracelet, Animal, Success }
 	}

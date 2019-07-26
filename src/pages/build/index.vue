@@ -14,7 +14,7 @@
  		
  		<!-- 建造区 -->
 		<div class="area" :class="{noBg : !isBuild}" >
-			<div class="area-item item1" :class="'item' + ($index+1)"  v-for="(item, $index) in 51" style="text-align: center;line-height: 38px;">
+			<div class="area-item item1" :class="'item' + ($index+1)"  v-for="(item, $index) in 51" :key="$index" style="text-align: center;line-height: 38px;">
 				<div class="build-content" :class="{
 					'activeGreen': index === ($index +1) && active === 'ok',
 					'activeRed': index === $index +1 && active === 'forbid'
@@ -40,8 +40,8 @@
 					<div class="title-item" :class="{active: storeType === 3}" @click="storeType = 3">自然</div>
 				</div>
 				<div class="list">
-					<div class="list-item" v-for="(item, $index) in shopList">
-						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+item.prdname+'.png'" :key="$index" />
+					<div class="list-item" v-for="(item, $index) in shopList" :key="$index">
+						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+item.prdname+'.png'"  />
 						<div class="cost">
 							<div class="icon"></div>
 							<div class="money">{{item.cost}}</div>
@@ -61,10 +61,11 @@
 				<div class="list">
 					<div class="list-item" 
 						v-for="(item, $index) in myList"
+						:key="$index"
 						@touchstart="tStart"
 			            @touchmove="tMove"
 			            @touchend="tEnd"> 	
-						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+item.prdname+'.png'" :key="$index" />
+						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+item.prdname+'.png'"  />
 			        </div>
 				</div>
 			</div>
@@ -160,9 +161,7 @@ export default {
 	          const query = wx.createSelectorQuery();
 	          query.selectAll(".area-item").boundingClientRect();
 	          query.exec(res=>{
-	          	console.log(res, 'ppp')
 	          	res[0].forEach((item, $index) => {
-	          		console.log(item, $index, 'ooo')
 	          		this.positions.push({
 	          			index: $index + 1,
 	          			x: item.left + (item.width / 2),
