@@ -49,3 +49,13 @@ export function buildListService(data) {
 		data
 	})
 }
+
+// 购买接口
+export function buyService(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/parki/shop/buy',
+		method: 'post',
+		data
+	})
+}

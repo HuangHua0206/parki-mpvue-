@@ -19,7 +19,8 @@
 					'activeGreen': index === ($index +1) && active === 'ok',
 					'activeRed': index === $index +1 && active === 'forbid'
 				}" > 
-					<div class="build-one">
+					<div class="build-one" v-if="true">
+						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_造山.png'"/>
 						<div class="tent">
 							<div class="progress"></div>
 						</div>
@@ -40,7 +41,7 @@
 					<div class="title-item" :class="{active: storeType === 3}" @click="storeType = 3">自然</div>
 				</div>
 				<div class="list">
-					<div class="list-item" v-for="(item, $index) in shopList" :key="$index">
+					<div class="list-item" v-for="(item, $index) in shopList" :key="$index" @click="openBuyPop(item)">
 						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+item.prdname+'.png'"  />
 						<div class="cost">
 							<div class="icon"></div>
@@ -62,12 +63,37 @@
 					<div class="list-item" 
 						v-for="(item, $index) in myList"
 						:key="$index"
-						@touchstart="tStart"
-			            @touchmove="tMove"
-			            @touchend="tEnd"> 	
+						@touchstart="e => tStart(e, item)"
+			            @touchmove="e => tMove(e, item)"
+			            @touchend="e => tMove(e, item)"> 	
 						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+item.prdname+'.png'"  />
+						<div class="num">{{item.amount}}</div>
 			        </div>
 				</div>
+			</div>
+		</div>
+		<div class="buy-pop" v-if="buyOpen">
+			<div class="mask"></div>
+			<div class="buy-wrap">
+				<div class="close" @click="buyOpen = false"></div>
+				<div class="content">
+					<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+buyContent.prdname+'.png'" />
+					<div class="name">蘑菇屋</div>
+					<div class="money">
+						<div class="icon"></div>
+						<div class="cost">x {{buyContent.cost}}</div>
+					</div>
+				</div>
+				<div class="num-wrap">
+					<div class="sub" @click="subNum"></div>
+					<div class="num">{{buyNum}}</div>
+					<div class="add" @click="addNum"></div>
+				</div>
+				<div class="total">
+					一共花费<div class="icon"></div>
+						<div class="cost">{{buyNum * buyContent.cost}}</div>
+				</div>
+				<div class="buy-btn" @click="buyBuild">购买</div>
 			</div>
 		</div>
 	</div>
@@ -75,7 +101,7 @@
 <script>
 import CommonTop from 'components/top'
 import storage from 'utils/storage'
-import { shopListService, myListService, buildService, removeService, buildListService } from 'services/build'
+import { shopListService, myListService, buildService, removeService, buildListService, buyService } from 'services/build'
 export default {
 	data() {
 		return {
@@ -90,7 +116,14 @@ export default {
 			fadeIn: false,
 			forbidList: [7,10, 14,17,21,24,28,31,35,38,42,45],
 			storeType: 1,//  3 是植物,1是建筑，2是parki
-			myType: 1
+			myType: 1,
+			buyContent: {
+				url: '',
+				cost: 0
+			},
+			buyOpen:false,
+			buyNum: 1,
+			buildContent: {}
 		}
 	},
 	components: { CommonTop },
@@ -105,7 +138,7 @@ export default {
 			const userinfo = storage.getStorage('userinfo') || {}
 			const resultData = await myListService({ type, openid: userinfo.openid })
 			if (resultData && resultData.data) {
-				this.shopList = resultData.data
+				this.myList = resultData.data
 			}
 		},
 		showStore() {
@@ -123,10 +156,13 @@ export default {
 	    minRange(x1, y1, x2, y2) {
 	      return Math.abs(Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2)));
 	    },
-		tStart() {
-			console.log(666)
+		tStart(e, item) {
+			this.buildContent = item
+			this.isBuild = true
+			console.log(666, e, item)
 		},
-		tMove(e) {
+		tMove(e, item) {
+			this.which = ''
 			let minVal = Infinity;
 	        let _index = -1
 	        //拿到两点之间最小的距离与菱形索引
@@ -146,9 +182,40 @@ export default {
 	        	this.active = 'ok'
 	        }
 		},
-		tEnd() {
+		tEnd(e) {
 			console.log(10000)
 		},
+		openBuyPop(item) {
+			this.buyContent = item
+			this.buyOpen = true
+			this.buyNum = 1
+		},
+		subNum() {
+			if (this.buyNum <=1 ) {
+				this.$tip.toast('不能在减少了哦')
+				return
+			}
+			this.buyNum -= 1
+		},
+		addNum() {
+			console.log(777)
+			this.buyNum += 1
+			console.log(this.buyNum)
+		},
+		async buyBuild() {
+			const userinfo = storage.getStorage('userinfo') || {}
+			const resultData = await buyService({
+				openid: userinfo.openid,
+				prdid: this.buyContent.prdid,
+				prdname: this.buyContent.prdname,
+				amount: this.buyNum
+			})
+			if (resultData && resultData.errmsg) {
+				this.$top.toast(resultData.errmsg)
+				return
+			}
+			this.buyOpen = false
+		}
 	},
 	mounted() {
 		this.fadeIn = true
@@ -350,7 +417,19 @@ export default {
 						.bg("pl2_build_red");
 					}
 					.build-one{
-
+						width:100%;
+						height:100%;
+						position:absolute;
+						left:0;
+						top:0;
+						img{
+							position:absolute;
+							left:50%;
+							top:50%;
+							width:60%;
+							height:60%;
+							transform:translate(-50%,-50%);
+						}
 					}
 				}
 			}
@@ -369,7 +448,7 @@ export default {
 			}
 			.common{
 				.bg("pl2_buildingshop");
-				padding: 128rpx 40rpx;
+				padding: 128rpx 0 0 40rpx;
 				// overflow-y: auto;
 				position: absolute;
 				bottom:0;
@@ -380,6 +459,7 @@ export default {
 				box-sizing: border-box;
 				.titles{
 					display: flex;
+					padding-right:40rpx;
 					justify-content: space-between;
 					.title-item{
 						width:163rpx;
@@ -400,17 +480,20 @@ export default {
 				}
 				.list{
 					display: flex;
-					justify-content: space-between;
 					flex-wrap: wrap;
 					overflow-y: auto;
 					height: 516rpx;
 					.list-item{
+						margin-right:18rpx;
 						width:144rpx;
 						height:144rpx;
 						background:rgba(191,191,191,0.36);
 						border-radius:33rpx;
 						margin-top:26rpx;
 						position: relative;
+						&div:nth-child(4n+0){
+							margin-right:0;
+						}
 						img{
 							position: absolute;
 							left:50%;
@@ -418,6 +501,14 @@ export default {
 							transform: translate(-50%, -50%);
 							height:60%;
 							width:60%;
+						}
+						.num{
+							font-size:21rpx;
+							color:rgba(108,108,108,1);
+							position:absolute;
+							bottom:5rpx;
+							left:50%;
+							transform:translateX(-50%);
 						}
 						.cost{
 							position: absolute;
@@ -443,6 +534,108 @@ export default {
 				}
 				&.my{
 					.bg("pl2_warehouse");
+				}
+			}
+		}
+		.buy-pop{
+			z-index:50;
+			position:absolute;
+			left:0;
+			height:0;
+			height:100%;
+			width:100%;
+			.buy-wrap{
+				.bg("pl2_buy_bg");
+				width: 566rpx;
+				height:856rpx;
+				position:absolute;
+				left:50%;
+				top:50%;
+				transform:translate(-50%, -50%);
+				.close{
+					.bg("pl2_buy_close");
+					width:58rpx;
+					height:58rpx;
+					position:absolute;
+					right:-20rpx;
+					top:-20rpx;
+				}
+				.content{
+					width:190rpx;
+					margin:89rpx auto 84rpx;
+					img{
+						border:8rpx solid #eee;
+						border-radius:50%;
+						height:190rpx;
+						width:190rpx;
+					}
+					.name{
+						font-size:24rpx;
+						margin-top:30rpx;
+						text-align:center;
+					}
+					.money{
+						display:flex;
+						justify-content:center;
+						margin-top:15rpx;
+						.icon{
+							.bg("pl2_energy");
+							width:15rpx;
+							height:20rpx;
+							margin-right: 8rpx;
+						}
+						.cost{
+							// line-height: 34rpx;
+							color: #ffad01;
+							font-size:16rpx;
+						}
+					}
+				}
+				.num-wrap{
+					padding: 0 139rpx;
+					display:flex;
+					justify-content:space-between;
+					.sub{
+						.bg("pl2_buy_sub");
+						width:42rpx;
+						height:42rpx;
+					}
+					.num{
+						font-size:38rpx;
+						// line-height:42rpx;
+					}
+					.add{
+						.bg("pl2_buy_add");
+						width:42rpx;
+						height:42rpx;
+					}
+				}
+				.total{
+					margin:128rpx 0 50rpx;
+					display:flex;
+					justify-content:center;
+					font-size:24rpx;
+					.icon{
+						.bg("pl2_energy");
+						width:17rpx;
+						height:25rpx;
+						margin-left:10rpx;
+						margin-right: 8rpx;
+					}
+					.cost{
+						// line-height: 34rpx;
+						color: #ffad01;
+						font-size:24rpx;
+					}
+				}
+				.buy-btn{
+					.bg("pl2_buy_confirm");
+					width:170rpx;
+					height:89rpx;
+					margin: 50rpx auto 0;
+					font-size:30rpx;
+					line-height:80rpx;
+					text-align:center;
 				}
 			}
 		}
