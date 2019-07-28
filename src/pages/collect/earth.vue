@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div class="earth-wrap" @click="$emit('closePop')">
   	<div class="mask" ></div>
   	<div class="earth-wrap">
 		<div class="earth-button">确认</div>  
@@ -16,7 +16,14 @@ export default {
 
 <style  lang="less">
 @import "~less/mixin.less";
-	.mask{
+	.earth-wrap{
+		position:absolute;
+		left:0;
+		top:0;
+		width:100%;
+		height:100%;
+		z-index:55;
+		.mask{
 		left:0;
 		top:0;
 		position: absolute;
@@ -45,4 +52,5 @@ export default {
 		transform: translateX(-50%);
 	}
 }
+	}
 </style>

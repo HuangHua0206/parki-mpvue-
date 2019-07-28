@@ -1,5 +1,5 @@
 <template>
-  <div class="energy-pop-wrap" >
+  <div class="energy-pop-wrap" @click="$emit('closePop')">
   	<div class="mask" ></div>
   	<div class="energy-wrap">
 		<CommonDescription 
@@ -29,7 +29,14 @@ export default {
 <style  lang="less">
 @import "~less/mixin.less";
 	.energy-pop-wrap{
+left:0;
+		top:0;
+		position: absolute;
+			width:100%;
+		height: 100%;
+			z-index:80;
 		.mask{
+		
 		left:0;
 		top:0;
 		position: absolute;
@@ -43,7 +50,8 @@ export default {
 		position: absolute;
 		width:347px;
 		.bg('pl2_magic_energy@2x');
-		left: 14px;
+		left: 50%;
+		transform:translateX(-50%);
 		bottom: 14px;
 		z-index: 3;
 		  
@@ -70,4 +78,4 @@ export default {
 	}
 	}
 }
-</style>
+</style> 

@@ -15,8 +15,8 @@
 				<div class="content">2:手环与收集靠近时会活的金币奖励</div>
 				<div class="desc">THE BRACELET WILL RECEIVE A GOLD COIN REWARD WHEN IT IS CLOSE TO THE PHONE</div>
 			</div>
-			<div class="band">
-				<div class="img"></div>
+			<div class="band" >
+				<div class="img"  @click="openScan"></div>
 				<div class="desc">已绑定XXXX</div>
 			</div>
 			</div>
@@ -26,15 +26,36 @@
 	</div>
 </template>
 <script>
+	import storage from 'utils/storage'
+	import { bindBraceletService } from 'services/collect'
 	export default{
 		methods: {
+			openScan() {
+				console.log('扫码')
+				wx.scanCode({
+					onlyFromCamera:true,
+					scanType: ['qrCode'],
+					success: res => {
+						this.bindBracelet(res.result)
+						console.log(res.result, 'res78687678')
+					}
+				})
+			},
+			async bindBracelet(minor) {
+				const userinfo = storage.getStorage('userinfo') || {}
+				const resultData = await bindBraceletService({
+					openid: userinfo.openid,
+					minor
+				})
+				this.$emit('closePop', 'bind')
+			}
 		}
 	}
 </script>
 <style lang="less">
 @import "~less/mixin.less";
 	.bracelet-pop-wrap{
-		z-index:55;
+		z-index:80;
 		position: absolute;
 		width:100%;
 	    height: 100%;
@@ -67,6 +88,7 @@
 				.bg("pl2_pic@2x");
 				width:77px;
 				height: 114px;
+				z-index:80;
 				margin:0 auto ;
 			}
 			.txt{

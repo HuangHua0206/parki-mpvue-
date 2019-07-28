@@ -15,7 +15,7 @@
 		<div class="button task-button" :class="{'fade-left-in': fadeIn}" @click="which = 'task'"></div>
 		<div class="button email-button" :class="{'fade-left-in': fadeIn}" @click="which = 'email'"></div>
 		<div class="button animal-button" :class="{'fade-right-in': fadeIn}" @click="getAnimaList"></div>
-		<div v-if="!online" class="button online-button"  :class="{'fade-right-in': fadeIn}" @click="which = 'bracelet'"> 
+		<div v-if="online" class="button online-button"  :class="{'fade-right-in': fadeIn}" > 
 			<div class="progress-mask" >
 				<div class="progress hasBracelet"  >
 					<div class="sunny hasBracelet"   ></div>
@@ -24,7 +24,7 @@
 			
 			<div class="bracelet">+2</div>
 		</div>
-		<div v-else class="button offline-button" :class="{'fade-right-in': fadeIn}"></div>
+		<div v-else class="button offline-button" :class="{'fade-right-in': fadeIn}" @click="which = 'bracelet'"></div>
 		<div class="line" :class="{finish: together}">
 			<div class="mask"> 
 				<div 
@@ -86,6 +86,11 @@
 			</div>
 			<div class="plus"  @click="energyIn = !energyIn"></div>
 		</div>
+		<div class="world" >
+			<div class="boss" v-show="worldEvent === 'boss'" @click="goBoss"></div>
+			<div class="amazing" v-show="worldEvent === 'amazing'" @click="which='amazing'"></div>
+			<div class="earth" v-show="worldEvent === 'earth'" @click="which='earth'"></div>
+		</div>
 		<!-- 能量背包-->
 		<div   class="energy-wrap" :class="{fadeUp: energyIn}">
 			<div class="boll " @click="getBagEnergy('2', bags['2'])">
@@ -126,6 +131,12 @@
 		<div class="pop-up-right" :class="{fadeUp: which === 'animal'}">
 			<Animal   @closePop="close"   :animalList="animalList"/>
 		</div>
+		<div class="pop-up-fadein" :class="{fadeUp: which === 'amazing'}">
+			<Amazing   @closePop="close"    />
+		</div>
+		<div class="pop-up-fadein" :class="{fadeUp: which === 'earth'}">
+			<Earth   @closePop="close"    />
+		</div>
 		<div 
 			class="collect-sunny"
 	 		v-if="video.play"
@@ -142,6 +153,7 @@
 			/>
 			
 		</div>
+		
 		<!-- 蓝牙获取能量（包含动画效果） -->
 		<div class="energy energy-1" :class="{
 			'blue': collects[0] === '3' ,
@@ -173,6 +185,14 @@
 			'down3': video.energyDown3,
 			'together': together
 		}"></div>
+<!-- 		<div class="energy energy-4" :class="{
+			'blue': collects[2] === '3' ,
+			'yellow': collects[2] === '2',
+			'green': collects[2] === '4',
+			'orange': collects[2] === '1',
+			'initshow3': video.initshow3,
+			'show': video.energyShow3,
+		}"></div> -->
 	</div>
 	
 </template>
@@ -183,6 +203,8 @@
 	import Range from './range'
 	import Bracelet from './bracelet'
 	import Animal from './animal'
+	import Amazing from './amazing'
+	import Earth from './earth'
 	import Success from './success'
 	import storage from 'utils/storage'
 	import { collectService, getCollectService, animalListService, bagsListService } from 'services/collect'
@@ -191,6 +213,7 @@
 	export default{
 		data () {
 		  return {
+		  	worldEvent: 'earth',
 		  	reset:false,
 		  	toast: '',
 		  	together: false,
@@ -242,7 +265,15 @@
 			}
 		},
 		methods: {
-			close() {
+			goBoss() {
+				wx.redirectTo({
+					url: '/pages/boss/main'
+				});
+			},
+			close(param) {
+				if (param === 'bind') {
+					this.online = true
+				}
 				this.which = ''
 			},
 			async getAnimaList() {
@@ -304,7 +335,13 @@
 
 		           	 if (this.ISENDING) return
 		           	 console.log(res.beacons, 'res.beacons')
-		           	 const beacon = res.beacons.filter(item => item.accuracy > 0 && item.accuracy < 0.5)[0]
+		           	 const beaconNearby = res.beacons.filter(item => item.accuracy > 0 && item.accuracy < 0.5)
+		           	 const amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
+		           	 if (amazingEnergy) { // 神奇能量触发
+
+		           	 	return
+		           	 }
+		           	 const beacon = beaconNearby[0]
 		           	 if (!beacon) return
 		           	 const item = ENERGY_CONFIG.filter(item => item.major === beacon.major)[0]
 		             if (this.collects.includes(item.key)) {
@@ -561,7 +598,7 @@
 		  	this.ISSAME = false 
 		  	this.IS_SENDING=false 
 		},
-		components: { CommonTop, Email, Task, Range, Bracelet, Animal, Success }
+		components: { CommonTop, Email, Task, Range, Bracelet, Animal, Success, Amazing, Earth }
 	}
 </script>
 <style lang="less">
@@ -1069,6 +1106,17 @@
 			right:0;
 		}
 	}
+	.pop-up-fadein{
+		display:none;
+		position: absolute;
+		top:0;
+		left:0;
+		height: 100%;
+		width:100%;
+		&.fadeUp{
+			display:block;
+		}
+	}
 	.collect-sunny{
 		position: absolute;
 		left:0;
@@ -1176,6 +1224,28 @@
 			// .bg("pl2_ball_green@2x");
 		}
 	} 
-	
+	.world{
+
+		width:95rpx;
+		height:123rpx;
+		position:absolute;
+		right:35rpx;
+		bottom:32rpx;
+		.boss{
+			.bg("pl2_event_monster@2x");
+			width:100%;
+			height:100%;
+		}
+		.earth{
+			.bg("pl2_event_earthquake@2x");
+			width:100%;
+			height:100%;
+		}
+		.amazing{
+			.bg("pl2_eventmagicenergy@2x");
+			width:100%;
+			height:100%;
+		}
+	}
 }
 </style>

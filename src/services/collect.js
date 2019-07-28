@@ -36,3 +36,13 @@ export function bagsListService(data) {
 		data
 	})
 }
+
+// 绑定手环
+export function bindBraceletService(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/parki/yield/query',
+		method: 'post',
+		data
+	})
+}

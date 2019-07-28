@@ -13,35 +13,52 @@
 		<div class="build-my" @click="showMy"></div>
  		
  		<!-- 建造区 -->
-		<div class="area" :class="{noBg : !isBuild}" >
-			<div class="area-item item1" :class="'item' + ($index+1)"  v-for="(item, $index) in 51" :key="$index" style="text-align: center;line-height: 38px;">
+		<div class="area" @longpress="longTap">
+			<div :class="{noBg : !isBuild}" class="mark"></div>
+			<div class="action area-item item1" :class="'item' + ($index+1)"  v-for="(item, $index) in 51" :key="$index"  >
 				<div class="build-content" :class="{
-					'activeGreen': index === ($index +1) && active === 'ok',
+					'activeGreen': index === ($index +1) && active === 'ok' && !imgDown,
 					'activeRed': index === $index +1 && active === 'forbid'
-				}" > 
-					<div class="build-one" v-if="true">
-						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_造山.png'"/>
-						<div class="tent">
-							<div class="progress"></div>
+				}"  style="text-align: center;line-height:76rpx">   
+					<div class="build-one" v-if="index === ($index+1)"  >
+						<img v-if="!tentShow" :src="'http://parkiland.isxcxbackend1.cn/pl2_'+buildContent.prdname+'.png'" :class="{down : imgDown, 'build-img': tend }"   />
+						<div class="tent" v-show="tentShow">
+							<div class="progress">
+								<div class="line"></div>
+							</div>
 						</div>
-						<div class="confirm"></div>
-						<div class="cancel"></div>
+						<div v-if="!imgDown && index === ($index +1) && active === 'ok'"  class="confirm" @click="confrimBuild"></div>
+						<div v-if="!imgDown" class="cancel" @click="cancelBuild"></div>
 					</div>
+				</div>
+			</div>
+			<div 
+				class="area-item item1" 
+				:class="'item' + (item.location)"  
+				v-for="(item, $index) in buildList" 
+				:key="$index" 
+				>
+				<div class="build-content" >
+					<div class="build-one"  >
+						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+item.prdname+'.png'"/>
+				<!-- 		<div v-if="!tentShow" class="cancel"></div> -->
+					</div>
+					<div v-if="deleteIndex === item.location" class="cancel" @click="deleteBuild"></div>
 				</div>
 			</div>
 		</div>
 
 		<!-- 建造--选择区域 -->
-		<div class="pop-up-bottom" :class="{fadeUp: which === 'store'}">
+		<div class="pop-up-bottom" :class="{fadeUp: which === 'store'}" @click="which=''">
 <!-- 			<div class="mask" @click="which=''"></div> -->
 			<div class="store common">
 				<div class="titles">
-					<div class="title-item" :class="{active: storeType === 1}" @click="storeType = 1">建筑</div>
-					<div class="title-item" :class="{active: storeType === 2}" @click="storeType = 2">Parki建筑</div>
-					<div class="title-item" :class="{active: storeType === 3}" @click="storeType = 3">自然</div>
+					<div class="title-item" :class="{active: storeType === 1}" @click.stop="storeType = 1">建筑</div>
+					<div class="title-item" :class="{active: storeType === 2}" @click.stop="storeType = 2">Parki建筑</div>
+					<div class="title-item" :class="{active: storeType === 3}" @click.stop="storeType = 3">自然</div>
 				</div>
 				<div class="list">
-					<div class="list-item" v-for="(item, $index) in shopList" :key="$index" @click="openBuyPop(item)">
+					<div class="list-item" v-for="(item, $index) in shopList" :key="$index" @click.stop="openBuyPop(item)">
 						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+item.prdname+'.png'"  />
 						<div class="cost">
 							<div class="icon"></div>
@@ -51,34 +68,35 @@
 				</div>
 			</div>
 		</div>
-		<div class="pop-up-bottom" :class="{fadeUp: which === 'my'}">
+		<div class="pop-up-bottom" :class="{fadeUp: which === 'my'}" @click="which=''">
 		<!-- 	<div class="mask" @click="which=''"></div> -->
 			<div class="my common">
 				<div class="titles">
-					<div class="title-item" :class="{active: myType === 1}" @click="myType = 1">建筑</div>
-					<div class="title-item" :class="{active: myType === 2}" @click="myType = 2">Parki建筑</div>
-					<div class="title-item" :class="{active: myType === 3}" @click="myType = 3">自然</div>
+					<div class="title-item" :class="{active: myType === 1}" @click.stop="myType = 1">建筑</div>
+					<div class="title-item" :class="{active: myType === 2}" @click.stop="myType = 2">Parki建筑</div>
+					<div class="title-item" :class="{active: myType === 3}" @click.stop="myType = 3">自然</div>
 				</div>
 				<div class="list">
 					<div class="list-item" 
 						v-for="(item, $index) in myList"
 						:key="$index"
-						@touchstart="e => tStart(e, item)"
-			            @touchmove="e => tMove(e, item)"
-			            @touchend="e => tMove(e, item)"> 	
+						@click.stop=""
+						@touchstart.stop="e => tStart(e, item)"
+			            @touchmove.stop="e => tMove(e, item)"
+			            @touchend.stop="e => tEnd(e, item)"> 	
 						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+item.prdname+'.png'"  />
 						<div class="num">{{item.amount}}</div>
 			        </div>
 				</div>
 			</div>
 		</div>
-		<div class="buy-pop" v-if="buyOpen">
+		<div class="buy-pop" v-if="buyOpen" >
 			<div class="mask"></div>
 			<div class="buy-wrap">
 				<div class="close" @click="buyOpen = false"></div>
 				<div class="content">
 					<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+buyContent.prdname+'.png'" />
-					<div class="name">蘑菇屋</div>
+					<div class="name">{{buyContent.prdname}}</div>
 					<div class="money">
 						<div class="icon"></div>
 						<div class="cost">x {{buyContent.cost}}</div>
@@ -96,6 +114,7 @@
 				<div class="buy-btn" @click="buyBuild">购买</div>
 			</div>
 		</div>
+		<div style="opacity:0;" class="opacity0-tent"></div>
 	</div>
 </template>
 <script>
@@ -106,12 +125,15 @@ export default {
 	data() {
 		return {
 			positions: [],
-			hasBuild: [],
 			shopList: [],
+			buildList: [],
 			myList: [],
-			index: -1,
+			imgDown:false,
+			tend:false,
+			index: -1, // 构建第index个建筑
+			tentShow: false,
 			active: '',
-			isBuild: true,
+			isBuild: false,
 			which: '',
 			fadeIn: false,
 			forbidList: [7,10, 14,17,21,24,28,31,35,38,42,45],
@@ -123,30 +145,91 @@ export default {
 			},
 			buyOpen:false,
 			buyNum: 1,
-			buildContent: {}
+			buildContent: {},
+			deleteIndex: -1
 		}
 	},
+	filters: {
+		
+	},
 	components: { CommonTop },
+	computed: {
+		hasBuild() {
+			const arr = this.buildList.map(item => item.location)
+			console.log(arr)
+			return arr
+		}
+	},
+	onShow() {
+		this.getData()
+	},
 	methods: {
+		longTap(e) {
+			console.log('长按')
+
+			let minVal = Infinity;
+	        let _index = -1
+	        //拿到两点之间最小的距离与菱形索引
+	        this.positions.forEach(item => {
+		        let result = this.minRange(e.clientX, e.clientY, item.x, item.y);
+		        if (result < minVal) {
+		            minVal = Number(result);
+		            _index = item.index;
+		        }
+	        });
+	        this.deleteIndex = _index
+			this.isBuild = true
+		},
+		cancelBuild() {
+			this.index = -1
+			this.isBuild = false
+		},
+		async deleteBuild() {
+			const userinfo = storage.getStorage('userinfo') || {}
+	        const resultData = await removeService({
+	        	openid: userinfo.openid,
+	        	uniqueid: this.buildList.filter(item => item.location ===  this.deleteIndex)[0].uniqueid
+	        })
+	        this.isBuild = false
+	        this.getData()
+		},
+		hasbuildurl(_index) {
+			if (!this.buildList.length) return ''
+			return this.buildList.filter(item => item.location === _index)[0].prdname
+		},
 		async getStore(type) {
 			const resultData = await shopListService({ type })
 			if (resultData && resultData.data) {
 				this.shopList = resultData.data
 			}
 		},
+
 		async getMy(type) {
 			const userinfo = storage.getStorage('userinfo') || {}
 			const resultData = await myListService({ type, openid: userinfo.openid })
 			if (resultData && resultData.data) {
 				this.myList = resultData.data
+			} else {
+				this.myList = []
+			}
+		},
+		async getData() {
+			const userinfo = storage.getStorage('userinfo') || {}
+			const resultData = await buildListService({openid: userinfo.openid})
+			if (resultData && resultData.data) {
+				this.buildList = resultData.data
+				
+				console.log(this.buildList)
+			} else {
+				this.buildList = []
 			}
 		},
 		showStore() {
-			this.getStore(1)
+			this.getStore(this.storeType)
 			this.which='store'
 		},
 		showMy() {
-			this.getMy(1)
+			this.getMy(this.myType)
 			this.which='my'
 		},
 		goCollect() {
@@ -183,7 +266,8 @@ export default {
 	        }
 		},
 		tEnd(e) {
-			console.log(10000)
+			this.tend = true
+			console.log(10000, this.index)
 		},
 		openBuyPop(item) {
 			this.buyContent = item
@@ -210,11 +294,39 @@ export default {
 				prdname: this.buyContent.prdname,
 				amount: this.buyNum
 			})
-			if (resultData && resultData.errmsg) {
-				this.$top.toast(resultData.errmsg)
+			console.log('buy', resultData)
+			if (resultData.data && resultData.data.errmsg) {
+this.$top.toast('resultData.data.errmsg')
+				// this.$top.toast(resultData.data.errmsg)
 				return
 			}
+
 			this.buyOpen = false
+		},
+		async confrimBuild(item) {
+			console.log(item)
+			const userinfo = storage.getStorage('userinfo') || {}
+			const resultData = await buildService({
+				openid: userinfo.openid,
+				prdid: this.buildContent.prdid,
+				prdname: this.buildContent.prdname,
+				location: this.index
+			})
+			if (resultData && resultData.uniqueid) {
+				 this.imgDown = true
+
+				 setTimeout(()=>this.tentShow = true, 1000)
+				 setTimeout(() => this.getData(), 3500)
+				 // setTimeout(() => , 3000)
+				 this.isBuild = false
+				 setTimeout(() => {
+				 	this.index = -1
+				 	this.tentShow = false
+				 	this.imgDown = false
+				 	this.tend = false
+				 	}, 4000)
+				 
+			}
 		}
 	},
 	mounted() {
@@ -257,7 +369,118 @@ export default {
 </script>
 <style lang="less">
 @import '~less/mixin.less';
+@keyframes tentAnimation{
+	0%{background-image: url("@{cdn}pl2_tent_00.png");}
+	1%{background-image: url("@{cdn}pl2_tent_01.png");}
+	2%{background-image: url("@{cdn}pl2_tent_02.png");}
+	3%{background-image: url("@{cdn}pl2_tent_03.png");}
+	4%{background-image: url("@{cdn}pl2_tent_04.png");}
+	5%{background-image: url("@{cdn}pl2_tent_05.png");}
+	6%{background-image: url("@{cdn}pl2_tent_06.png");}
+	7%{background-image: url("@{cdn}pl2_tent_07.png");}
+	8%{background-image: url("@{cdn}pl2_tent_08.png");}
+	9%{background-image: url("@{cdn}pl2_tent_09.png");}
+	10%{background-image: url("@{cdn}pl2_tent_10.png");}
+	11%{background-image: url("@{cdn}pl2_tent_11.png");}
+	12%{background-image: url("@{cdn}pl2_tent_12.png");}
+	13%{background-image: url("@{cdn}pl2_tent_13.png");}
+	14%{background-image: url("@{cdn}pl2_tent_14.png");}
+	15%{background-image: url("@{cdn}pl2_tent_15.png");}
+	16%{background-image: url("@{cdn}pl2_tent_16.png");}
+	17%{background-image: url("@{cdn}pl2_tent_17.png");}
+	18%{background-image: url("@{cdn}pl2_tent_18.png");}
+	19%{background-image: url("@{cdn}pl2_tent_19.png");}
+	20%{background-image: url("@{cdn}pl2_tent_20.png");}
+	21%{background-image: url("@{cdn}pl2_tent_21.png");}
+	22%{background-image: url("@{cdn}pl2_tent_22.png");}
+	23%{background-image: url("@{cdn}pl2_tent_23.png");}
+	24%{background-image: url("@{cdn}pl2_tent_24.png");}
+	25%{background-image: url("@{cdn}pl2_tent_25.png");}
+	26%{background-image: url("@{cdn}pl2_tent_26.png");}
+	27%{background-image: url("@{cdn}pl2_tent_27.png");}
+	28%{background-image: url("@{cdn}pl2_tent_28.png");}
+	29%{background-image: url("@{cdn}pl2_tent_29.png");}
+	30%{background-image: url("@{cdn}pl2_tent_30.png");}
+	
+	31%{background-image: url("@{cdn}pl2_tent_00.png");}
+	32%{background-image: url("@{cdn}pl2_tent_01.png");}
+	33%{background-image: url("@{cdn}pl2_tent_02.png");}
+	34%{background-image: url("@{cdn}pl2_tent_03.png");}
+	35%{background-image: url("@{cdn}pl2_tent_04.png");}
+	36%{background-image: url("@{cdn}pl2_tent_05.png");}
+	37%{background-image: url("@{cdn}pl2_tent_06.png");}
+	38%{background-image: url("@{cdn}pl2_tent_07.png");}
+	39%{background-image: url("@{cdn}pl2_tent_08.png");}
+	40%{background-image: url("@{cdn}pl2_tent_09.png");}
+	41%{background-image: url("@{cdn}pl2_tent_10.png");}
+	42%{background-image: url("@{cdn}pl2_tent_11.png");}
+	43%{background-image: url("@{cdn}pl2_tent_12.png");}
+	44%{background-image: url("@{cdn}pl2_tent_13.png");}
+	45%{background-image: url("@{cdn}pl2_tent_14.png");}
+	46%{background-image: url("@{cdn}pl2_tent_15.png");}
+	47%{background-image: url("@{cdn}pl2_tent_16.png");}
+	48%{background-image: url("@{cdn}pl2_tent_17.png");}
+	49%{background-image: url("@{cdn}pl2_tent_18.png");}
+	50%{background-image: url("@{cdn}pl2_tent_19.png");}
+	51%{background-image: url("@{cdn}pl2_tent_20.png");}
+	52%{background-image: url("@{cdn}pl2_tent_21.png");}
+	53%{background-image: url("@{cdn}pl2_tent_22.png");}
+	54%{background-image: url("@{cdn}pl2_tent_23.png");}
+	55%{background-image: url("@{cdn}pl2_tent_24.png");}
+	56%{background-image: url("@{cdn}pl2_tent_25.png");}
+	57%{background-image: url("@{cdn}pl2_tent_26.png");}
+	58%{background-image: url("@{cdn}pl2_tent_27.png");}
+	59%{background-image: url("@{cdn}pl2_tent_28.png");}
+	60%{background-image: url("@{cdn}pl2_tent_29.png");}
+	61%{background-image: url("@{cdn}pl2_tent_30.png");}
+	62%{background-image: url("@{cdn}pl2_tent_00.png");}
+	63%{background-image: url("@{cdn}pl2_tent_01.png");}
+	64%{background-image: url("@{cdn}pl2_tent_02.png");}
+	65%{background-image: url("@{cdn}pl2_tent_03.png");}
+	66%{background-image: url("@{cdn}pl2_tent_04.png");}
+	67%{background-image: url("@{cdn}pl2_tent_05.png");}
+	68%{background-image: url("@{cdn}pl2_tent_06.png");}
+	69%{background-image: url("@{cdn}pl2_tent_07.png");}
+	70%{background-image: url("@{cdn}pl2_tent_08.png");}
+	71%{background-image: url("@{cdn}pl2_tent_09.png");}
+	72%{background-image: url("@{cdn}pl2_tent_10.png");}
+	73%{background-image: url("@{cdn}pl2_tent_11.png");}
+	74%{background-image: url("@{cdn}pl2_tent_12.png");}
+	75%{background-image: url("@{cdn}pl2_tent_13.png");}
+	76%{background-image: url("@{cdn}pl2_tent_14.png");}
+	77%{background-image: url("@{cdn}pl2_tent_15.png");}
+	78%{background-image: url("@{cdn}pl2_tent_16.png");}
+	79%{background-image: url("@{cdn}pl2_tent_17.png");}
+	80%{background-image: url("@{cdn}pl2_tent_18.png");}
+	81%{background-image: url("@{cdn}pl2_tent_19.png");}
+	82%{background-image: url("@{cdn}pl2_tent_20.png");}
+	83%{background-image: url("@{cdn}pl2_tent_21.png");}
+	84%{background-image: url("@{cdn}pl2_tent_22.png");}
+	85%{background-image: url("@{cdn}pl2_tent_23.png");}
+	86%{background-image: url("@{cdn}pl2_tent_24.png");}
+	87%{background-image: url("@{cdn}pl2_tent_25.png");}
+	88%{background-image: url("@{cdn}pl2_tent_26.png");}
+	89%{background-image: url("@{cdn}pl2_tent_27.png");}
+	90%{background-image: url("@{cdn}pl2_tent_28.png");}
+	91%{background-image: url("@{cdn}pl2_tent_29.png");}
+	92%{background-image: url("@{cdn}pl2_tent_30.png");}
+	93%{background-image: url("@{cdn}pl2_tent_00.png");}
+	94%{background-image: url("@{cdn}pl2_tent_01.png");}
+	95%{background-image: url("@{cdn}pl2_tent_02.png");}
+	96%{background-image: url("@{cdn}pl2_tent_03.png");}
+	97%{background-image: url("@{cdn}pl2_tent_04.png");}
+	98%{background-image: url("@{cdn}pl2_tent_05.png");}
+	99%{background-image: url("@{cdn}pl2_tent_06.png");}
+	100%{background-image: url("@{cdn}pl2_tent_07.png");}
+}
+@keyframes tentLine{
+	from{width:0;}
+	to{width:100%;}
+}
 	.build-wrap{
+		.opacity0-tent{
+			animation: tentAnimation 3s infinite;
+		}
 		overflow:hidden;
 		background: url("@{cdn}pl2_build-bg.jpg")  0 0 repeat;
     	background-size: 100% auto;
@@ -317,23 +540,34 @@ export default {
 			.bg("pl2_Warehouse@2x");
 		}
 		.area{
-			.bg("pl2_area@2x");
-			background: url("@{cdn}pl2_area@2x.png")  center center no-repeat;
-			background-size: cover;
+			
 			width:750rpx;
 			height:684rpx;
 			top:350rpx;
 			position:absolute;
 			left:0;
-			&.noBg{
-				background: none;
+			.mark{
+				position:absolute;
+				left:0;
+				top:0;
+				height:100%;
+				width:100%;
+				.bg("pl2_area@2x");
+				background: url("@{cdn}pl2_area@2x.png")  center center no-repeat;
+				background-size: cover;
+				&.noBg{
+					background: none;
+				}
 			}
+			
 			.area-item{
 				
 				width:232rpx;
 				height: 76rpx;
 				position: absolute;
-				
+				// &.action{
+				// 	z-index:2;
+				// }
 				&.item1{
 					left:259rpx;
 					top:0;
@@ -405,11 +639,30 @@ export default {
 					left:607rpx;
 				}
 				.build-content{
+			//		z-index:60;
 					position: absolute;
 					left:0;
 					top:0;
 					width:100%;
 					height:100%;
+					.confirm{
+							z-index:10;
+							.bg("pl2_do@2x");
+							width:33rpx;
+							height:33rpx;
+							position:absolute;
+							right:10rpx;
+							top:0;
+						}
+						.cancel{
+							z-index:10;
+							.bg("pl2_don't@2x");
+							width:33rpx;
+							height:33rpx;
+							position:absolute;
+							right:10rpx;
+							bottom:0;
+						}
 					&.activeGreen{
 						.bg("pl2_build_green");
 					}
@@ -426,9 +679,51 @@ export default {
 							position:absolute;
 							left:50%;
 							top:50%;
-							width:60%;
-							height:60%;
+							width:127rpx;
+							height:80rpx;
 							transform:translate(-50%,-50%);
+							&.build-img{
+								top:-1500rpx;
+							}
+							&.down{
+								transition: 1s;
+								top:50%;
+							}
+						}
+						
+					}
+					.tent{
+						z-index:60;
+						// display:none;
+						position:absolute;
+						background-size:cover;
+						background-origin:center center;
+						background-repeat: no-repeat;
+						background-color:transparent;
+						animation: tentAnimation 3s ease normal;
+						// background-image: url("@{cdn}pl2_tent_00.png");
+						top:0;
+						left:50%;
+						height:300rpx;
+						width:300rpx;
+						transform:translate(-50%,-50%);
+						.progress{
+							// display:none;
+							position:absolute;
+							width:70rpx;
+							height:14rpx;
+							border: 4rpx solid #000;
+							border-radius:12rpx;
+							background:#fff;
+							overflow:hidden;
+							left:50%;
+							top:60%;
+							transform:translateX(-50%);
+							.line{
+								background:#fff000;
+								height:100%;
+								animation: tentLine 3s ease normal;
+							}
 						}
 					}
 				}
