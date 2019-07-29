@@ -213,6 +213,8 @@
 	export default{
 		data () {
 		  return {
+		  	FIRST_EARTH: true,
+		  	socketStatus: -1,
 		  	worldEvent: 'earth',
 		  	reset:false,
 		  	toast: '',
@@ -265,6 +267,32 @@
 			}
 		},
 		methods: {
+			 listenSocket() {
+			 const userinfo = storage.getStorage('userinfo') || {}
+		      this.socketTask = getApp().globalData.socketTask;
+		      if (!this.socketTask || this.socketTask.readyState !=1){
+		        console.info("重新連接")
+		        this.socketTask = wx.connectSocket({
+		        	//url: 'wss://www.isxcxbackend1.cn/websocket'
+		         url: 'wss://www.j4ckma.cn/parki/ws?openid='+userinfo.openid
+		        })
+		        getApp().globalData.socketTask = this.socketTask;
+		      }
+		      console.log('this.socketTask', this.socketTask)
+		      this.socketTask.onMessage(res => {
+		        console.log('oooo', res);
+		        this.worldEventAction(res)
+		      }),
+		        //连接失败
+		        this.socketTask.onError(function() {
+		          console.log("websocket连接失败！");
+		          // _this_this.gsStatus = 1;
+		          // _this.isSlow = false;
+		        });
+		    },
+		    worldEventAction(socket) {
+		    	this.socketStatus = socket.status
+		    },
 			goBoss() {
 				wx.redirectTo({
 					url: '/pages/boss/main'
@@ -335,11 +363,19 @@
 
 		           	 if (this.ISENDING) return
 		           	 console.log(res.beacons, 'res.beacons')
-		           	 const beaconNearby = res.beacons.filter(item => item.accuracy > 0 && item.accuracy < 0.5)
+		           	 let beaconNearby = res.beacons.filter(item => item.accuracy > 0 && item.accuracy < 0.5)
 		           	 const amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
 		           	 if (amazingEnergy) { // 神奇能量触发
 
 		           	 	return
+		           	 }
+		           	 if (this.socketStatus === 0) {
+		           	 	if (this.FIRST_EARTH) {
+		           	 		this.which = 'earth'
+		           	 	}
+		           	 	this.FIRST_EARTH = false
+		           	 //	this.$tip.toast('地震来了，不能收集绿色能量啦~')
+		           	 	beaconNearby = beaconNearby.filter(item => item.major !== 103)
 		           	 }
 		           	 const beacon = beaconNearby[0]
 		           	 if (!beacon) return
@@ -547,6 +583,7 @@
 		    }
 		},
 		async onShow() {
+			this.listenSocket()
 			await this.getCollect()
 			await this.getBagsData()
 			this.openBlueTooth()
@@ -554,8 +591,10 @@
 		mounted() {
 			this.fadeIn = true
 		},
-		onUnload() {
-			this.resetData()
+		onHide() {
+		    wx.stopBeaconDiscovery();
+		    // getApp().globalData.back.stop();
+		    this.resetData()
 			this.fadeIn = false
 			this.reset = false
 			this.toast = ''
@@ -597,7 +636,13 @@
 		  	this.hasBracelet= true 
 		  	this.ISSAME = false 
 		  	this.IS_SENDING=false 
+		  },
+		mounted() {
+			this.fadeIn = true
 		},
+		// onUnload() {
+			
+		// },
 		components: { CommonTop, Email, Task, Range, Bracelet, Animal, Success, Amazing, Earth }
 	}
 </script>

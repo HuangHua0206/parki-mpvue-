@@ -41,7 +41,7 @@ export function bagsListService(data) {
 export function bindBraceletService(data) {
 	return request({
 		testUrl: '/static/json/list.json',
-		url: '/parki/yield/query',
+		url: '/parki/wristband/bind',
 		method: 'post',
 		data
 	})

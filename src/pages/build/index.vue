@@ -700,7 +700,7 @@ this.$top.toast('resultData.data.errmsg')
 						background-origin:center center;
 						background-repeat: no-repeat;
 						background-color:transparent;
-						animation: tentAnimation 3s ease normal;
+						animation: tentAnimation 3s ease infinite;
 						// background-image: url("@{cdn}pl2_tent_00.png");
 						top:0;
 						left:50%;

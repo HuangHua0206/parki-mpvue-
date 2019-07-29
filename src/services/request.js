@@ -24,7 +24,7 @@ fly.interceptors.response.use(
 
 export default function request(config) {
     // Tip.toast('请求发出')
-	 console.log(config)
+	 // console.log(config)
 	 // 本地mock情况下取testUrl字段 统一使用location.origin
     // if (process.env.NODE_ENV === 'development' && process.env.LOCAL_TEST) {
     //     config['method'] = 'get'
