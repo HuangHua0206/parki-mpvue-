@@ -190,9 +190,15 @@
 			'down3': video.energyDown3,
 			'together': together
 		}"></div>
-		<div class="energy energy-4 super" :class="{
-			'show': video.energyShow4
-		}"></div>
+		<div class="energy energy-4 super" v-if="video.energyShow4" :class="{
+			'show': video.energyShow4,
+		}">
+			<img src="http://parkiland.isxcxbackend1.cn/pl2_ball_super.png" :class="{
+				'little': video.superlittle,
+				'finish': video.superfinish
+			}"/>
+			<div class="super-num" v-if="video.superfinish" ></div>
+		</div>
 	</div>
 	
 </template>
@@ -239,7 +245,9 @@
 		  		energyDown2: false,
 		  		energyShow3: false, // 视频将播放完时显示生成的能力球
 		  		energyDown3: false,
-		  		energyShow4:false
+		  		energyShow4:false,
+		  		superlittle: false,
+		  		superfinish: false
 		  	},
 		  	bags: {
 		  		initshow1: false,
@@ -393,6 +401,7 @@
 		           	 		return // 此时不能有任何操作
 		           	 	}
 		           	 }
+		           	// amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
 		           	 // 超级能量结束
 		           	 if ((this.SOCKET_STATUS === 1 && this.SOCKET_EVENT === 'stopsuperenergy') ||
 		           	 	(this.SOCKET_STATUS === 4 && this.SOCKET_EVENT === 'stopsuperenergy')) {
@@ -441,6 +450,8 @@
 		    },
 		    // 超级能量收集
 		    async superEnergyCollect() {
+		    	if (this.ISENDING) return
+		    	this.ISENDING = true
 		    	// 掉接口
 		    	this.video.play = true;
 		        this.video.energyType = 'super'
@@ -449,8 +460,20 @@
 		       }, 2000);
 		        setTimeout(() => {
 			       	this.video.play = false
+			       	this.video.superlittle=true
 			       	this.video.energyType += '-finish'
 		       }, 3000);
+		        setTimeout(() => {
+			       	this.video.superfinish=true
+		       }, 3200);
+		         setTimeout(() => {
+			       	// 重置超级能量收集变量
+			       	this.video.energyType = ''
+			       	this.video.superlittle=false
+			       	this.video.superfinish=false
+			       	this.video[`energyShow4`] = false
+			       	this.ISENDING = false
+		       }, 4000);
 		    },
 		    // 普通能量收集
 		    async handleFindDevs(beacon, isNearbyBracelet) {
@@ -732,6 +755,10 @@
     90% { left:-45px; opacity:1}
     100% {left:-45px; opacity:0;}
 }
+@keyframes superNumNone{
+	from{opacity: 1;top:50%;}
+	to{opacity: 0;top:-30%;}
+}
 // .for(@list){  
 //     .loop(@index:1) when ( @index<=length(@list) ){  
 //         @item:extract(@list, @index);  
@@ -993,6 +1020,10 @@
 					width:100%;
 					background: #ff7603 ;
 				}
+				&.super-action{
+					width:100%;
+					background:#e84dff;
+				}
 				&.green-finish{
 					transition:width 0.5s;
 					background: #23ff03;
@@ -1008,6 +1039,10 @@
 				&.orange-finish{
 					transition:width 0.5s;
 					background:#ff7603 ;
+				}
+				&.super-finish{
+					transition:width 0.5s;
+					background:#e84dff ;
 				}
 
 			}
@@ -1262,9 +1297,6 @@
 		&.orange{
 			.bg("pl2_ball_orange@2x");
 		}
-		&.super{
-			.bg("pl2_ball_orange@2x");
-		}
 		&.show{
 			opacity: 1;
 			// display: block;
@@ -1333,6 +1365,46 @@
 			left: 62%;
 			// .bg("pl2_ball_green@2x");
 		}
+		&.super{
+			transition: 0.5s;
+			&.show{
+				opacity: 1;
+			}
+			img{
+				position: absolute;
+				width:100%;
+				height:100%;
+				opacity: 1;
+				border-radius: 50%;
+				transition: 0.5s;
+				left:50%;
+				top:50%;
+				transform:translate(-50%,-50%);
+				&.little{
+					transition: 0.1s;
+					width:80%;
+					height:80%;
+				}
+				&.finish{
+					transition: 0.3s;
+					width:130%;
+					opacity: 0;
+					height:130%;
+				}
+			}
+			.super-num{
+				position: absolute;
+				width:191rpx;
+				height:68rpx;
+				.bg("pl2_num_super");
+				left:50%;
+				top:50%;
+				opacity: 0;
+				transform:translate(-50%,-50%);
+				animation: superNumNone 1s normal ease;
+			}
+		}
+
 	} 
 	.world{
 
