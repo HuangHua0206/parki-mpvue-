@@ -190,7 +190,7 @@
 			'down3': video.energyDown3,
 			'together': together
 		}"></div>
-		<div class="energy energy-4 super" v-if="video.energyShow4" :class="{
+		<div class="energy energy-4 super" v-if="video.energyType === 'super' || video.energyType === 'super-finish'" :class="{
 			'show': video.energyShow4,
 		}">
 			<img src="http://parkiland.isxcxbackend1.cn/pl2_ball_super.png" :class="{
@@ -416,6 +416,7 @@
 		           	 if (this.SOCKET_STATUS === 4 && this.SOCKET_EVENT === 'stopattackmonster') {
 		           	 	this.worldEvent= ''
 		           	 }
+		           //	 amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
 		           	 if (amazingEnergy) { // 神奇能量触发(神奇能量触发时，检测到神奇能量优先收集神奇能量)
 		           	 	this.superEnergyCollect(amazingEnergy)
 		           	 	return
