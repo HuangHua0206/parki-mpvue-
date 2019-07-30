@@ -34,10 +34,12 @@
 						'blue-action': video.energyType === 'blue',
 						'orange-action': video.energyType === 'orange',
 						'yellow-action': video.energyType === 'yellow',
+						'super-action': video.energyType === 'super',
 						'green-finish': video.energyType === 'green-finish', 
 						'blue-finish': video.energyType === 'blue-finish',
 						'orange-finish': video.energyType === 'orange-finish',
 						'yellow-finish': video.energyType === 'yellow-finish',
+						'super-finish': video.energyType === 'super-finish',
 					}"> 
 					
 				</div>
@@ -88,7 +90,7 @@
 		</div>
 		<div class="world" >
 			<div class="boss" v-show="worldEvent === 'boss'" @click="goBoss"></div>
-			<div class="amazing" v-show="worldEvent === 'amazing'" @click="which='amazing'"></div>
+			<div class="amazing" v-show="worldEvent === 'super'" @click="which='super'"></div>
 			<div class="earth" v-show="worldEvent === 'earth'" @click="which='earth'"></div>
 		</div>
 		<!-- 能量背包-->
@@ -131,8 +133,11 @@
 		<div class="pop-up-right" :class="{fadeUp: which === 'animal'}">
 			<Animal   @closePop="close"   :animalList="animalList"/>
 		</div>
-		<div class="pop-up-fadein" :class="{fadeUp: which === 'amazing'}">
-			<Amazing   @closePop="close"    />
+		<div class="pop-up-fadein" :class="{fadeUp: which === 'super'}">
+			<Amazing   @closePop="close" player="小心晴"   />
+		</div>
+		<div class="pop-up-fadein" :class="{fadeUp: which === 'my-super'}">
+			<SuperMe   :total="888" />
 		</div>
 		<div class="pop-up-fadein" :class="{fadeUp: which === 'earth'}">
 			<Earth   @closePop="close"    />
@@ -185,14 +190,9 @@
 			'down3': video.energyDown3,
 			'together': together
 		}"></div>
-<!-- 		<div class="energy energy-4" :class="{
-			'blue': collects[2] === '3' ,
-			'yellow': collects[2] === '2',
-			'green': collects[2] === '4',
-			'orange': collects[2] === '1',
-			'initshow3': video.initshow3,
-			'show': video.energyShow3,
-		}"></div> -->
+		<div class="energy energy-4 super" :class="{
+			'show': video.energyShow4
+		}"></div>
 	</div>
 	
 </template>
@@ -207,6 +207,7 @@
 	import Earth from './earth'
 	import Success from './success'
 	import storage from 'utils/storage'
+	import SuperMe from './superMe'
 	import { collectService, getCollectService, animalListService, bagsListService } from 'services/collect'
 	import ENERGY_CONFIG from './energy.js'
 	
@@ -214,8 +215,12 @@
 		data () {
 		  return {
 		  	FIRST_EARTH: true,
-		  	socketStatus: -1,
-		  	worldEvent: 'earth',
+		  	SOCKET_INFO: {
+		  		status: -1,
+		  		eventname: '',
+		  		openid: ''
+		  	},
+		  	worldEvent: 'super',
 		  	reset:false,
 		  	toast: '',
 		  	together: false,
@@ -233,7 +238,8 @@
 		  		energyShow2: false, // 视频将播放完时显示生成的能力球
 		  		energyDown2: false,
 		  		energyShow3: false, // 视频将播放完时显示生成的能力球
-		  		energyDown3: false
+		  		energyDown3: false,
+		  		energyShow4:false
 		  	},
 		  	bags: {
 		  		initshow1: false,
@@ -281,7 +287,7 @@
 		      console.log('this.socketTask', this.socketTask)
 		      this.socketTask.onMessage(res => {
 		        console.log('oooo', res);
-		        this.worldEventAction(res)
+		        this.SOCKET_INFO = res
 		      }),
 		        //连接失败
 		        this.socketTask.onError(function() {
@@ -289,9 +295,6 @@
 		          // _this_this.gsStatus = 1;
 		          // _this.isSlow = false;
 		        });
-		    },
-		    worldEventAction(socket) {
-		    	this.socketStatus = socket.status
 		    },
 			goBoss() {
 				wx.redirectTo({
@@ -361,23 +364,57 @@
 
 		          wx.onBeaconUpdate(res => {
 
-		           	 if (this.ISENDING) return
+		           	 if (this.ISENDING || this.reset) return
 		           	 console.log(res.beacons, 'res.beacons')
 		           	 let beaconNearby = res.beacons.filter(item => item.accuracy > 0 && item.accuracy < 0.5)
-		           	 const amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
-		           	 if (amazingEnergy) { // 神奇能量触发
-
-		           	 	return
-		           	 }
-		           	 if (this.socketStatus === 0) {
-		           	 	if (this.FIRST_EARTH) {
+		           	 let amazingEnergy = null
+		           	 // socket处理（世界事件）
+		           	 if (this.SOCKET_INFO.status === 0 && this.SOCKET_INFO.eventname === 'prohibitedcollectgreen') {
+		           	 	this.worldEvent = 'earth'
+		           	 	if (this.FIRST_EARTH) { // 第一次接收到服务端推送时自动弹出地震告知弹窗，以后需要用户自行点击按钮
 		           	 		this.which = 'earth'
 		           	 	}
 		           	 	this.FIRST_EARTH = false
 		           	 //	this.$tip.toast('地震来了，不能收集绿色能量啦~')
 		           	 	beaconNearby = beaconNearby.filter(item => item.major !== 103)
 		           	 }
-		           	 const beacon = beaconNearby[0]
+		           	 if ((this.SOCKET_STATUS === 1 && this.SOCKET_EVENT === 'startsuperenergy') || 
+		           	 	 (this.SOCKET_STATUS === 4 && this.SOCKET_EVENT === 'startsuperenergy')) {
+		           	 		this.FIRST_EARTH = true
+		           	 		this.worldEvent = 'super'
+		           	 	// 触发了神奇能量（当自己被触发神奇能量，其他人被触发神奇能量）
+		           	 	const userinfo = storage.getStorage('userinfo') || {}
+		           	 	if (userinfo.openid != this.SOCKET_INFO.openid) {
+		           	 		// 其他玩家被触发超级能量
+		           	 		amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
+		           	 	} else {
+		           	 		// 自己手环被触发超级能量
+		           	 		this.which= 'my-super' // 弹窗遮罩界面
+		           	 		return // 此时不能有任何操作
+		           	 	}
+		           	 }
+		           	 // 超级能量结束
+		           	 if ((this.SOCKET_STATUS === 1 && this.SOCKET_EVENT === 'stopsuperenergy') ||
+		           	 	(this.SOCKET_STATUS === 4 && this.SOCKET_EVENT === 'stopsuperenergy')) {
+		           	 	this.worldEvent= ''
+		           	 	this.which = ''
+		           	 }
+		           	 // 开始打怪兽
+		           	 if (this.SOCKET_STATUS === 3 && this.SOCKET_EVENT === 'startattackmonster') {
+		           	 	this.worldEvent= 'boss'
+		           	 }
+		           	 // 打怪兽结束
+		           	 if (this.SOCKET_STATUS === 4 && this.SOCKET_EVENT === 'stopattackmonster') {
+		           	 	this.worldEvent= ''
+		           	 }
+		           	 if (amazingEnergy) { // 神奇能量触发(神奇能量触发时，检测到神奇能量优先收集神奇能量)
+		           	 	this.superEnergyCollect(amazingEnergy)
+		           	 	return
+		           	 }
+
+		           	 // 以下为普通能量收集
+		           	 const beacon = beaconNearby.filter(item => item.major !==200)[0] // 此时为普通能量收集，过滤掉手环
+		           	 const isNearbyBracelet = !!(beaconNearby.filter(item => item.major ===200)[0]) // 自己的手环是否在附近
 		           	 if (!beacon) return
 		           	 const item = ENERGY_CONFIG.filter(item => item.major === beacon.major)[0]
 		             if (this.collects.includes(item.key)) {
@@ -392,7 +429,7 @@
 		             	}
 		             	this.ISSAME = true
 		             } else {
-		             	this.handleFindDevs(beacon);
+		             	this.handleFindDevs(beacon, isNearbyBracelet);
 		             }
 		             
 		          });
@@ -402,14 +439,37 @@
 		        }
 		      });
 		    },
-		    async handleFindDevs(beacon) {
+		    // 超级能量收集
+		    async superEnergyCollect() {
+		    	// 掉接口
+		    	this.video.play = true;
+		        this.video.energyType = 'super'
+		        setTimeout(() => {
+		        	this.video[`energyShow4`] = true
+		       }, 2000);
+		        setTimeout(() => {
+			       	this.video.play = false
+			       	this.video.energyType += '-finish'
+		       }, 3000);
+		    },
+		    // 普通能量收集
+		    async handleFindDevs(beacon, isNearbyBracelet) {
 		       if (this.ISENDING) return
 		       this.ISENDING = true
 		       const major = beacon.major
+		       const minor = beacon.minor
 		       const item = ENERGY_CONFIG.filter(item => item.major === major)[0]
 	           const key = item.key
 		       // 发送请求
-		      const ok = await this.requestCollect(key, 0, 1)
+		       let _position = -1
+		       if (!this.collects[0]) {	
+		       		_position = 1 
+		       } else if (!!this.collects[0] && !this.collects[1]) {
+		       	    _position = 2
+		       } else {
+		       		_position = 3
+		       }
+		      const ok = await this.requestCollect(key, 0, 1, _position, major.toString(), minor.toString(), isNearbyBracelet)
 		      if (!ok) {
 			       	this.ISENDING = false
 			       	return
@@ -440,7 +500,7 @@
 		       }, 3000);
 		        setTimeout(() => {
 		        	this.video[`energyShow${this.index + 1}`] = true
-		       }, 2300);
+		       }, 2000);
 		       // this.ISENDING = false
 
 		    },
@@ -454,23 +514,16 @@
 		    	}
 		    },
 		   
-		    async requestCollect(key, type, operation, position) {
-		    	let _position = -1
-		       if (!this.collects[0]) {	
-		       		_position = 1 
-		       } else if (!!this.collects[0] && !this.collects[1]) {
-		       	    _position = 2
-		       } else {
-		       		_position = 3
-		       }
-		       if (position) _position = position
+		    async requestCollect(key, type, operation, position, major, minor, isNearbyBracelet) {
 		        const userinfo = storage.getStorage('userinfo') || {}
 		        const resultData = await collectService({
 		    		openid: userinfo.openid,
 		    		color: key,
 		    		operation,
 		    		type,
-		    		position: _position
+		    		position,
+		    		major, 
+		    		minor
 		    	})
 		    	if (type === 1) {
 			       	this.getBagsData()
@@ -496,7 +549,7 @@
 
 		    },
 		    async getBagEnergy(color, num) {
-		    	if (!num) return // 数量为0时点击无效
+		    	if (!num || this.reset) return // 数量为0时点击无效
 		    	if (this.ISENDING) return
 		    	this.ISENDING = true
 		       if (this.collects.includes(color)) {
@@ -506,7 +559,16 @@
 			       	this.ISENDING = false
 			       	return
 		       }
-		       const ok = await this.requestCollect(color, 1, 1)
+		       // 发送请求
+		       let _position = -1
+		       if (!this.collects[0]) {	
+		       		_position = 1 
+		       } else if (!!this.collects[0] && !this.collects[1]) {
+		       	    _position = 2
+		       } else {
+		       		_position = 3
+		       }
+		       const ok = await this.requestCollect(color, 1, 1, _position)
 		       if (!ok) {
 			       	this.ISENDING = false
 			       	return
@@ -548,7 +610,7 @@
 		    	this.ISENDING = false
 		    },
 		     resetData() {
-		    	this.reset = true
+		    	this.reset = true // 重置时不再出现背包消失的效果
 		    	this.together = false
 			  	this.index = 0 // 第index个位置发生能量变化
 			  	this.video = Object.assign(this.video, {
@@ -579,7 +641,7 @@
 			  	})
 			  	this.ISENDING = false
 			  	this.collects = ['', '', ''] // 当前收集能量集  	
-			  	setTimeout(() => this.reset=false, 200);
+			  	setTimeout(() => this.reset=false, 2000);
 		    }
 		},
 		async onShow() {
@@ -595,7 +657,7 @@
 		    wx.stopBeaconDiscovery();
 		    // getApp().globalData.back.stop();
 		    this.resetData()
-			this.fadeIn = false
+			// this.fadeIn = false
 			this.reset = false
 			this.toast = ''
 		  	this.video = { // 收集能量时视频相关参数
@@ -643,7 +705,7 @@
 		// onUnload() {
 			
 		// },
-		components: { CommonTop, Email, Task, Range, Bracelet, Animal, Success, Amazing, Earth }
+		components: { CommonTop, Email, Task, Range, Bracelet, Animal, Success, Amazing, Earth, SuperMe }
 	}
 </script>
 <style lang="less">
@@ -751,8 +813,8 @@
     .toast{
     	opacity:0;
     	position:fixed;
-    	width:250rpx;
-    	height:68rpx;
+    	width:375rpx;
+    	height:102rpx;
     	left:50%;
     	top:30%;
     	transform:translateX(-50%);
@@ -1198,6 +1260,9 @@
 			.bg("pl2_ball_yellow@2x");
 		}
 		&.orange{
+			.bg("pl2_ball_orange@2x");
+		}
+		&.super{
 			.bg("pl2_ball_orange@2x");
 		}
 		&.show{

@@ -1,7 +1,11 @@
 <template>
 	<div :class="className" class="animalCard-wrap">
 		<image :src="url" class="animalCard-img" />
-        <div :class="progress" v-if="progress"><div>{{text}}</div></div>
+        <div :class="progress" v-if="progress === 'other'">
+            <div class="progress" :style="{width: progressWidth}"></div>
+            <div class="content">{{text}}</div>
+        </div>
+        <div :class="progress" v-if="progress === 'max' || progress === 'update'">{{text}}</div>
         <div class="animalCard-level">{{level}}</div>
         <div class="animalCard-eng">{{eng}}</div>
         <div class="animalCard-new" v-if="isnew"></div>
@@ -44,6 +48,9 @@
 				type: String,
 				rquired: false
 			},
+            progressWidth: {
+                type: String,
+            }
 		}
 	}
 </script>
@@ -55,7 +62,7 @@
 }
 .animalCard-wrap{
 	width: 115px;
-    display: inline-block;
+    // display: inline-block;
     margin-right: 2px;
     margin-bottom: 30px;
     position: relative;
@@ -67,38 +74,66 @@
     .max {
         width: 114px;
         height: 22px;
-        .bg("max@2x");
+        background: #df7d26;
+        border: 2px solid #000;
+        box-sizing: border-box;
+        border-radius: 6px;
         line-height: 22px;
         text-align: center;
         color: #fff;
         font-size: 10px;
-        text-shadow:5px 2px 10px #000;
+ 
+         text-shadow:#000 2px 0 0,#000 0 2px 0,#000 -2px 0 0,#000 0 -2px 0;
     }
     .update {
         width: 114px;
         height: 22px;
-        .bg("up3@2x");
+        background: #81eb26;
+        border: 2px solid #000;
+        box-sizing: border-box;
+        border-radius: 6px;
         line-height: 22px;
         text-align: center;
         color: #fff;
         font-size: 10px;
-        text-shadow:5px 2px 10px #000;
+        text-shadow:#000 2px 0 0,#000 0 2px 0,#000 -2px 0 0,#000 0 -2px 0;
     }
     .other {
         width: 114px !important;
         height: 22px;
-        .bg("gray bot@2x");
+        // .bg("gray bot@2x");
         line-height: 22px;
         text-align: center;
         color: #fff;
         font-size: 10px;
+        overflow: hidden;
         text-shadow:5px 2px 10px #000;
-        div {
+        background: #b5b5b5;
+        border: 2px solid #000;
+        box-sizing: border-box;
+        border-radius: 6px;
+        position: relative;
+        .progress{
+            background: #fff000;
+            height: 100%;
+            width: 70px;
+            box-sizing: border-box;
+            border-radius: 6px;
+            border-right: 2px solid #000;
+        }
+        .content {
+            position: absolute;
+            left:0;
+            top:0;
+            width:100%;
             // width: 20px;
             height: 22px;
             text-align: center;
             display: inline-block;
+            font-size: 10px;
+            text-shadow:#000 2px 0 0,#000 0 2px 0,#000 -2px 0 0,#000 0 -2px 0;
         }
+        
     }
     .animalCard-level {
         position: absolute;

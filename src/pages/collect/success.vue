@@ -17,10 +17,16 @@
 			 		</div>
 					
 				</div>
-				<div class="num">{{integral}}</div>
+				<div class="money">
+					<div class="icon"></div>
+					<div class="cost">{{integral}}</div>
+				</div>
 			</div>
 			<div class="no-animal" v-else>
-				<div class="num">{{integral}}</div>
+				<div class="money">
+					<div class="icon"></div>
+					<div class="cost">{{integral}}</div>
+				</div>
 			 
 				<div class="card"></div>
 			</div>
@@ -68,17 +74,27 @@
 		//	.bg("pl2_blackhalf@2x");
 			width:100%;
 			height: 100%;
-			.num{
+			.money{
+				text-align: right;
+				display:flex;
+				margin-bottom: 10px;
+				justify-content:center;
 				font-size:30px;
-				width:70px;
-				margin:0 auto;
-				line-height:36px;
-				height:30px;
-				text-align:center;
-				color:#f9bf2b;
-				padding-left:20px;
-				background: url("@{cdn}pl2_energy_2@2x.png") no-repeat 0 top;
-				background-size:15px 100%;
+				align-items: center;
+			//	margin-top:15px;
+				.icon{
+					.bg("pl2_energy");
+					width:22px;
+					height:30px;
+					margin-right: 8px;
+				}
+				.cost{
+				//	height:30px;
+					// line-height: 34rpx;
+					color: #ffad01;
+					line-height: 30px;
+					// font-size:16px;
+				}
 			}
 			.title{
 				font-size:30px;

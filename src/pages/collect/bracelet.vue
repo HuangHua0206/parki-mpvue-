@@ -45,7 +45,7 @@
 				const userinfo = storage.getStorage('userinfo') || {}
 				const resultData = await bindBraceletService({
 					openid: userinfo.openid,
-					minor
+					bandid: minor
 				})
 				this.$emit('closePop', 'bind')
 			}

@@ -18,5 +18,10 @@ export default  [
 		color: 'green',
 		major: 103,
 		key: '4'
+	},
+	{
+		color: 'super',
+		major: 200,
+		key: '5'
 	}
 ]

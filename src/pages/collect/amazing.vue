@@ -3,14 +3,14 @@
   	<div class="mask" ></div>
   	<div class="energy-wrap">
 		<CommonDescription 
-			ctxtL="注意：玩家XXXXX的"
+			:ctxtL="'注意：玩家'+player+'的'"
 			ctxtR="变成了神奇能量。"
 			rtxt="手环"
 			className="first-text"
 			etxt="Note: A player's Bracelet becomes magical energy.">
 		</CommonDescription>
 		<CommonDescription 
-			ctxtL="快找到XXXXX！搜集神奇能量能获得大量积分！"
+			:ctxtL="'快找到'+player+'！搜集神奇能量能获得大量积分！'"
 			className="second-text"
 			etxt="Find it quickly! Gathering magic energy can get a lot of points!">
 		</CommonDescription>
@@ -22,14 +22,19 @@
  
 import CommonDescription from 'components/description'
 export default {
-	components: { CommonDescription }
+	components: { CommonDescription },
+	props: {
+		player: {
+			type: String
+		}
+	}
 }
 </script>
 
 <style  lang="less">
 @import "~less/mixin.less";
 	.energy-pop-wrap{
-left:0;
+		left:0;
 		top:0;
 		position: absolute;
 			width:100%;

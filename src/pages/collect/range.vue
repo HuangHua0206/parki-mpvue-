@@ -141,7 +141,7 @@
 				 					top:6px;
 				 					// .bg("pl2_energy_2@2x");
 				 					background: url("@{cdn}pl2_energy_2@2x.png")  center 2px no-repeat;
-		    						background-size: 100% 100%;
+		    						background-size: contain;
 				 					display: inline-block;
 				 					// background-origin: 0 0;
 				 				}
