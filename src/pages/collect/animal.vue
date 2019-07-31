@@ -83,7 +83,7 @@
 @import "~less/mixin.less";
 	.animal-pop-wrap{
 
-		z-index:55;
+		z-index:100;
 		position: absolute;
 		width:100%;
 	    height: 100%;
@@ -100,12 +100,12 @@
 		.animal-bg{
 			z-index:10;
 			.bg("petcard background");
-			width:365px;
-			height: 586px;
+			width:100%;
+	    	height: 100%;
 			overflow-y:auto;
 			position: absolute;
-			right:0;
-			bottom:14px;
+			// right:0;
+			// bottom:14px;
 			// padding: 0 25px;
 			.logo{
 				position:absolute;

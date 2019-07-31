@@ -295,7 +295,7 @@
 		      console.log('this.socketTask', this.socketTask)
 		      this.socketTask.onMessage(res => {
 		        console.log('oooo', res);
-		        this.SOCKET_INFO = res
+		        this.SOCKET_INFO = JSON.parse(res.data)
 		      }),
 		        //连接失败
 		        this.socketTask.onError(function() {
@@ -371,8 +371,8 @@
 		        success: res => {
 
 		          wx.onBeaconUpdate(res => {
-
-		           	 if (this.ISENDING || this.reset) return
+		          	// 正在发送请求时，完成一轮收集延迟2s时，界面有弹窗出现时，不再检测
+		           	 if (this.ISENDING || this.reset || !!this.which) return
 		           	 console.log(res.beacons, 'res.beacons')
 		           	 let beaconNearby = res.beacons.filter(item => item.accuracy > 0 && item.accuracy < 0.5)
 		           	 let amazingEnergy = null
@@ -386,12 +386,13 @@
 		           	 //	this.$tip.toast('地震来了，不能收集绿色能量啦~')
 		           	 	beaconNearby = beaconNearby.filter(item => item.major !== 103)
 		           	 }
-		           	 if ((this.SOCKET_STATUS === 1 && this.SOCKET_EVENT === 'startsuperenergy') || 
-		           	 	 (this.SOCKET_STATUS === 4 && this.SOCKET_EVENT === 'startsuperenergy')) {
+		           	 if ((this.SOCKET_INFO.status === 1 && this.SOCKET_INFO.eventname === 'startsuperenergy') || 
+		           	 	 (this.SOCKET_INFO.status === 4 && this.SOCKET_INFO.eventname === 'startsuperenergy')) {
 		           	 		this.FIRST_EARTH = true
 		           	 		this.worldEvent = 'super'
 		           	 	// 触发了神奇能量（当自己被触发神奇能量，其他人被触发神奇能量）
 		           	 	const userinfo = storage.getStorage('userinfo') || {}
+		           	 	console.log(this.SOCKET_INFO.openid,userinfo.openid, 'pppp' )
 		           	 	if (userinfo.openid != this.SOCKET_INFO.openid) {
 		           	 		// 其他玩家被触发超级能量
 		           	 		amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
@@ -403,17 +404,17 @@
 		           	 }
 		           	// amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
 		           	 // 超级能量结束
-		           	 if ((this.SOCKET_STATUS === 1 && this.SOCKET_EVENT === 'stopsuperenergy') ||
-		           	 	(this.SOCKET_STATUS === 4 && this.SOCKET_EVENT === 'stopsuperenergy')) {
+		           	 if ((this.SOCKET_INFO.status === 1 && this.SOCKET_INFO.eventname === 'stopsuperenergy') ||
+		           	 	(this.SOCKET_INFO.status === 4 && this.SOCKET_INFO.eventname === 'stopsuperenergy')) {
 		           	 	this.worldEvent= ''
 		           	 	this.which = ''
 		           	 }
 		           	 // 开始打怪兽
-		           	 if (this.SOCKET_STATUS === 3 && this.SOCKET_EVENT === 'startattackmonster') {
+		           	 if (this.SOCKET_INFO.status === 3 && this.SOCKET_INFO.eventname === 'startattackmonster') {
 		           	 	this.worldEvent= 'boss'
 		           	 }
 		           	 // 打怪兽结束
-		           	 if (this.SOCKET_STATUS === 4 && this.SOCKET_EVENT === 'stopattackmonster') {
+		           	 if (this.SOCKET_INFO.status === 4 && this.SOCKET_INFO.eventname === 'stopattackmonster') {
 		           	 	this.worldEvent= ''
 		           	 }
 		           //	 amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]

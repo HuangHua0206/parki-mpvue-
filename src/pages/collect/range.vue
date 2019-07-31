@@ -59,10 +59,13 @@
 <style lang="less">
 @import "~less/mixin.less";
 	.range-pop-wrap{
+ 		position: absolute;
  
-		
+			width:100%;
+			height: 100%;
+		z-index:100;
 		.mask{
-				z-index:55;
+ 
 			left:0;
 			top:0;
 			position: absolute;
