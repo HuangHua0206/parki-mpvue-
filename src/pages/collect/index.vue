@@ -142,7 +142,7 @@
 			<Amazing   @closePop="close" :player="player"   />
 		</div>
 		<div class="pop-up-fadein" :class="{fadeUp: which === 'my-super'}">
-			<SuperMe   :total="888" />
+			<SuperMe   :total="integral" />
 		</div>
 		<div class="pop-up-fadein" :class="{fadeUp: which === 'earth'}">
 			<Earth   @closePop="close"    />
@@ -241,6 +241,7 @@
 		  		openid: ''
 		  	},
 		  	player: '',
+		  	integral: 0,
 		  	worldEvent: '',
 		  	reset:false,
 		  	toast: '',
@@ -773,6 +774,7 @@
 		           	 		console.log('自己手环被触发超级能量')
 		           	 		// 自己手环被触发超级能量
 		           	 		this.player = now.player
+		           	 		this.integral = now.integral
 		           	 		this.which= 'my-super' // 弹窗遮罩界面
 		           	 	}
 		           	 }
