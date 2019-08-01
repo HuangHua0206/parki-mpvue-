@@ -86,3 +86,13 @@ export function changeAnimalService(data) {
 		data
 	})
 }
+
+// 查询当前积分
+export function myIntegralService(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/integral/query',
+		method: 'post',
+		data
+	})
+}

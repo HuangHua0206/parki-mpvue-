@@ -15,7 +15,7 @@
  		<!-- 建造区 -->
 		<div class="area" @longpress="longTap">
 			<div :class="{noBg : !isBuild}" class="mark"></div>
-			<div class="action area-item item1" :class="'item' + ($index+1)"  v-for="(item, $index) in 51" :key="$index"  >
+			<div class="action area-item item1" :class="'item' + ($index+1)"  v-for="(item, $index) in 51" :key="$index" @longpress.stop="" >
 				<div class="build-content" :class="{
 					'activeGreen': index === ($index +1) && active === 'ok' && !imgDown,
 					'activeRed': index === $index +1 && active === 'forbid'
@@ -191,7 +191,8 @@ export default {
 	        	uniqueid: this.buildList.filter(item => item.location ===  this.deleteIndex)[0].uniqueid
 	        })
 	        this.isBuild = false
-	        this.getData()
+	        this.buildList = this.buildList.filter(item => item.location !==  this.deleteIndex)
+	        // this.getData()
 		},
 		hasbuildurl(_index) {
 			if (!this.buildList.length) return ''

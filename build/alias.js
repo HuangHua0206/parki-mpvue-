@@ -12,5 +12,6 @@ module.exports = {
   'less': resolve('src/less'),
   'img': resolve('src/img'),
   'utils': resolve('src/utils'),
-  'libs': resolve('src/libs')
+  'libs': resolve('src/libs'),
+  'store': resolve('src/store'),
 }
