@@ -91,7 +91,7 @@ export function changeAnimalService(data) {
 export function myIntegralService(data) {
 	return request({
 		testUrl: '/static/json/list.json',
-		url: '/integral/query',
+		url: '/parki/integral/query',
 		method: 'post',
 		data
 	})

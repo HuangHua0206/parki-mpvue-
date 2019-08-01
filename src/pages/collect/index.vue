@@ -7,7 +7,6 @@
 		<Success @resetData="resetData" v-if="together" :integral="finish.integral" :pet="finish.pet"></Success>
 		<CommonTop 
 	  		ctxt="搜集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
-	  		:leftNum="9999"
 	  		:rightNum="9999"
 	  		@openRange="which = 'range'"
 	  		>
@@ -339,8 +338,10 @@
 				const userinfo = storage.getStorage('userinfo') || {}
 				const resultData = await bandStatusService({ openid: userinfo.openid })
 				console.log('band', resultData)
-				this.bindid = resultData.data.bindid
-				this.online = resultData.data.bindstatus === 1
+				if (resultData && resultData.data) {
+					this.bindid = resultData.data.bindid
+					this.online = resultData.data.bindstatus === 1
+				}
 			},
 			close(param) {
 				if (param === 'bind') {
@@ -483,6 +484,7 @@
 			       	this.video[`energyShow4`] = false
 			       	this.ISENDING = false
 		       }, 4000);
+		        this.$store.dispatch('getIntergral')
 		    },
 		    // 普通能量收集
 		    async handleFindDevs(beacon, isNearbyBracelet) {
@@ -580,7 +582,7 @@
 			   		this.ISENDING = false
 			   }
 		        
-
+			   this.$store.dispatch('getIntergral')
 		    },
 		    async getBagEnergy(color, num) {
 		    	if (!num || this.reset) return // 数量为0时点击无效
@@ -679,6 +681,7 @@
 		    }
 		},
 		async onShow() {
+			this.$store.dispatch('getIntergral')
 			this.which = ''
 			this.worldEvent = ''
 			this.listenSocket() // 连接socket

@@ -6,7 +6,7 @@
 	      </div>
 	      <div class="nums">
 	        <div class="left-num">
-	        	{{ leftNum }}
+	        	{{ integral }}
 	        </div>
 	        <div v-if="share" class="right-num share" ></div>
 	        <div v-else class="right-num" @click="$emit('openRange')">
@@ -25,15 +25,14 @@
 		computed: {
 			userAvatar() {
 				return storage.getStorage('userinfo') ? storage.getStorage('userinfo').avatarUrl : ''
+			},
+			integral() {
+				return this.$store.state.integral
 			}
 		},
 		props: {
 			ctxt: {
 				type: String,
-				rquired: true
-			},
-			leftNum: {
-				type: Number,
 				rquired: true
 			},
 			rightNum: {
