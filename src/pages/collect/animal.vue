@@ -3,22 +3,23 @@
 		<div class="mask" @click="$emit('closePop')"></div>
 		<div class="animal-bg">
 			<div class="logo"></div>
-			<div class="text" v-if="isSelect">
+			<div class="text" v-if="selectedItem">
 				<div>守护宠物</div>
-				<div>小熊</div>
-				<div>等级：6</div>
-				<div>战斗力：56</div>
+				<div>{{selectedItem.petname}}</div>
+				<div>等级：{{ selectedItem.level }}</div>
+				<div>战斗力：{{selectedItem.power}}</div>
 			</div>
 			<CommonCard
-				v-if="isSelect"
+				v-if="selectedItem"
 				className="show-card"
-				level="2级"
-				eng="战斗力：22"
-				url="http://parkiland.isxcxbackend1.cn/3%E6%98%9F-%E5%B0%8F%E7%86%8A-no.6.png"
+				:level="selectedItem.level+'级'"
+				:eng="'战斗力：' + selectedItem.power"
+				:url="'http://parkiland.isxcxbackend1.cn/pl2_'+selectedItem.petname+'.png'"
 			/>
 			<div v-else class="not-select"></div>
 			<div class="card-list-wrap">
 				<CommonCard
+					@selectAnimal="$emit('selectAnimal', item.petid)"
 					:progressWidth="(item.experience/Math.pow(2, item.level))*100 + '%'"
 					:key="$index"
 					:progress="item | progress"
@@ -27,6 +28,7 @@
 					:level="item.level+'级'"
 					:eng="'战斗力：' + item.power"
 					className="card-list"
+					:selected="item.selected"
 					:url="'http://parkiland.isxcxbackend1.cn/pl2_'+item.petname+'.png'"
 				/>
 	<!-- 			<CommonCard
@@ -48,7 +50,7 @@
 					url="http://parkiland.isxcxbackend1.cn/3%E6%98%9F-%E5%B0%8F%E7%86%8A-no.6.png"
 				/> -->
 			</div>
-			<div class="animal-button">{{ isSelect ? '更换' : '装备'}}</div>  
+<!-- 			<div class="animal-button">{{ isSelect ? '更换' : '装备'}}</div>   -->
 			<div class="close-btn" @click="$emit('closePop')"> </div>
 		</div>
 	</div>
@@ -68,10 +70,16 @@
 				}
 			}
 		},
+		computed: {
+			selectedItem() {
+				if (this.animalList && this.animalList.length) {
+				 	return this.animalList.filter(item => item.selected === 1)[0]
+				} else {
+					return null
+				}
+			}
+		},
 		props: {
-			isSelect: {
-				type: Boolean
-			},
 			animalList: {
 				type: Array
 			}

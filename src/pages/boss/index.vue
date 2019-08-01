@@ -8,7 +8,7 @@
   	</CommonTop>
 <!--     <div class="main"> -->
       <div class="ellipse"></div>
-      <div class="collect-btn"></div>
+      <div class="collect-btn" @click="goCollect"></div>
       <div class="blood">
         <div class="blood-avatar"></div>
         <div class="blood-num"></div>
@@ -54,7 +54,12 @@ export default {
 	    avatar: 'http://img5.imgtn.bdimg.com/it/u=3300305952,1328708913&fm=26&gp=0.jpg'
 	  }
 	},
-	components: { CommonTop }
+	components: { CommonTop },
+	methods: {
+		goCollect() {
+	    	wx.redirectTo({ url: '/pages/collect/main' });
+		},
+	}
 }
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-	<div :class="className" class="animalCard-wrap">
+	<div :class="className" class="animalCard-wrap" @click="$emit('selectAnimal')">
 		<image :src="url" class="animalCard-img" />
         <div :class="progress" v-if="progress === 'other'">
             <div class="progress" :style="{width: progressWidth}"></div>
@@ -10,6 +10,7 @@
         <div class="animalCard-eng">{{eng}}</div>
         <div class="animalCard-new" v-if="isnew"></div>
         <div class="animalCard-ok" v-if="isok"></div>
+        <div class="select" v-if="!!selected"></div>
     </div>
 </template>
 <script>
@@ -50,6 +51,9 @@
 			},
             progressWidth: {
                 type: String,
+            },
+            selected: {
+                type: Number
             }
 		}
 	}
@@ -167,6 +171,14 @@
         left: 50%;
         transform: translateX(-50%);
     }
-    
+    .select{
+        position: absolute;
+        left:50%;
+        top:50%;
+        width:93rpx;
+        height:93rpx;
+        .bg('pl2_select@2x');
+        transform: translate(-50%, -50%);
+    }
 }
 </style>
