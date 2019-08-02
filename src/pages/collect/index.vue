@@ -395,10 +395,7 @@
 					this.online = resultData.data.bindstatus === 1
 				}
 			},
-			close(param) {
-				if (param === 'bind') {
-					this.online = true
-				}
+			close() {
 				this.which = ''
 			},
 			async getAnimaList() {
@@ -484,8 +481,9 @@
 		           	 }
 
 		           	 // 以下为普通能量收集
-		           	 const beacon = beaconNearby.filter(item => item.major !==200)[0] // 此时为普通能量收集，过滤掉手环
-		           	 const isNearbyBracelet = !!(beaconNearby.filter(item => item.major ===200)[0]) // 自己的手环是否在附近
+		           	const isNearbyBracelet = !!(beaconNearby.filter(item => item.major === 200 && item.minor === this.bandid)[0]) // 自己的手环是否在附近
+		           	const beacon = beaconNearby.filter(item => item.major !==200)[0] // 此时为普通能量收集，过滤掉手环
+		           	
 		           	 if (!beacon) return
 		           	 const item = ENERGY_CONFIG.filter(item => item.major === beacon.major)[0]
 		             if (this.collects.includes(item.key)) {
