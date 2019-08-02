@@ -321,7 +321,9 @@
 		      console.log('this.socketTask', this.socketTask)
 		      this.socketTask.onMessage(res => {
 		        console.log('oooo', res);
-		        this.SOCKET_INFO = JSON.parse(res.data)
+		        const _data = JSON.parse(res.data)
+		        this.SOCKET_INFO = _data
+		        this.socketDeal(_data)
 		      }),
 		        //连接失败
 		        this.socketTask.onError(function() {
@@ -329,6 +331,55 @@
 		          // _this_this.gsStatus = 1;
 		          // _this.isSlow = false;
 		        });
+		    },
+		    socketDeal(now) {
+		    	if (now.status === 0 && now.eventname === 'prohibitedcollectgreen') {
+		           	 	this.worldEvent = 'earth'
+		           	 	if (this.FIRST_EARTH) { // 第一次接收到服务端推送时自动弹出地震告知弹窗，以后需要用户自行点击按钮
+		           	 		this.which = 'earth'
+		           	 	}
+		           	 	this.FIRST_EARTH = false
+		           	 //	this.$tip.toast('地震来了，不能收集绿色能量啦~')
+		           	 	// beaconNearby = beaconNearby.filter(item => item.major !== 103)
+		           	 }
+		           	 if ((now.status === 1 && now.eventname === 'startsuperenergy') || 
+		           	 	 (now.status === 4 && now.eventname === 'startsuperenergy')) {
+		           	 		this.FIRST_EARTH = true
+		           	 		this.worldEvent = 'super'
+		           	 	// 触发了神奇能量（当自己被触发神奇能量，其他人被触发神奇能量）
+		           	 	const userinfo = storage.getStorage('userinfo') || {}
+		           	 	if (userinfo.openid != now.openid) {
+		           	 		console.log('其他玩家被触发超级能量')
+		           	 		// // 其他玩家被触发超级能量
+		           	 		// amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
+		           	 	} else {
+		           	 		console.log('自己手环被触发超级能量')
+		           	 		// 自己手环被触发超级能量
+		           	 		
+		           	 		this.player = now.player
+		           	 		// this.integral = now.integral
+		           	 		this.which= 'my-super' // 弹窗遮罩界面
+		           	 	}
+		           	 }
+		           	 if (now.status === 1 && now.eventname === 'allowcollectgreen') {
+		           	 	this.worldEvent= ''
+		           	 	this.which = ''
+		           	 	this.FIRST_EARTH = true
+		           	 }
+		           	 // 超级能量结束
+		           	 if ((now.status === 1 && now.eventname === 'stopsuperenergy') ||
+		           	 	(now.status === 4 && now.eventname === 'stopsuperenergy')) {
+		           	 	this.worldEvent= ''
+		           	 	this.which = ''
+		           	 }
+		           	 // 开始打怪兽
+		           	 if (now.status === 3 && now.eventname === 'startattackmonster') {
+		           	 	this.worldEvent= 'boss'
+		           	 }
+		           	 // 打怪兽结束
+		           	 if (now.status === 4 && now.eventname === 'stopattackmonster') {
+		           	 	this.worldEvent= ''
+		           	 }
 		    },
 			goBoss() {
 				wx.redirectTo({
@@ -412,6 +463,7 @@
 		           	 console.log(res.beacons, 'res.beacons')
 		           	 let beaconNearby = res.beacons.filter(item => item.accuracy > 0 && item.accuracy < 0.5)
 		           	 let amazingEnergy = null
+		           	// amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
 		           	 // socket处理（世界事件）
 		           	 if (this.SOCKET_INFO.status === 0 && this.SOCKET_INFO.eventname === 'prohibitedcollectgreen') {
 		           	 	beaconNearby = beaconNearby.filter(item => item.major !== 103)
@@ -423,6 +475,7 @@
 		           	 	if (userinfo.openid != this.SOCKET_INFO.openid) {
 		           	 		amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
 		           	 	}
+		           	 	// amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
 		           	 }
 		           //	 amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
 		           	 if (amazingEnergy) { // 神奇能量触发(神奇能量触发时，检测到神奇能量优先收集神奇能量)
@@ -464,6 +517,7 @@
 		    	this.ISENDING = true
 		    	const userinfo = storage.getStorage('userinfo') || {}
 		    	const resultData = await superCollectService({ openid: userinfo.openid })
+		    	if (resultData && resultData.errmsg) return
 		    	this.video.play = true;
 		        this.video.energyType = 'super'
 		        setTimeout(() => {
@@ -747,59 +801,59 @@
 			
 		// },
 		components: { CommonTop, Email, Task, Range, Bracelet, Animal, Success, Amazing, Earth, SuperMe },
-		watch: {
-			SOCKET_INFO:{
-				handler(now, old){
-					console.log(now, old, 'SOCKET_INFO')
-					if (now.status === 0 && now.eventname === 'prohibitedcollectgreen') {
-		           	 	this.worldEvent = 'earth'
-		           	 	if (this.FIRST_EARTH) { // 第一次接收到服务端推送时自动弹出地震告知弹窗，以后需要用户自行点击按钮
-		           	 		this.which = 'earth'
-		           	 	}
-		           	 	this.FIRST_EARTH = false
-		           	 //	this.$tip.toast('地震来了，不能收集绿色能量啦~')
-		           	 	// beaconNearby = beaconNearby.filter(item => item.major !== 103)
-		           	 }
-		           	 if ((now.status === 1 && now.eventname === 'startsuperenergy') || 
-		           	 	 (now.status === 4 && now.eventname === 'startsuperenergy')) {
-		           	 		this.FIRST_EARTH = true
-		           	 		this.worldEvent = 'super'
-		           	 	// 触发了神奇能量（当自己被触发神奇能量，其他人被触发神奇能量）
-		           	 	const userinfo = storage.getStorage('userinfo') || {}
-		           	 	if (userinfo.openid != now.openid) {
-		           	 		console.log('其他玩家被触发超级能量')
-		           	 		// // 其他玩家被触发超级能量
-		           	 		// amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
-		           	 	} else {
-		           	 		console.log('自己手环被触发超级能量')
-		           	 		// 自己手环被触发超级能量
-		           	 		this.player = now.player
-		           	 		this.integral = now.integral
-		           	 		this.which= 'my-super' // 弹窗遮罩界面
-		           	 	}
-		           	 }
-		           	 if (now.status === 1 && now.eventname === 'allowcollectgreen') {
-		           	 	this.worldEvent= ''
-		           	 	this.which = ''
-		           	 	this.FIRST_EARTH = true
-		           	 }
-		           	 // 超级能量结束
-		           	 if ((now.status === 1 && now.eventname === 'stopsuperenergy') ||
-		           	 	(now.status === 4 && now.eventname === 'stopsuperenergy')) {
-		           	 	this.worldEvent= ''
-		           	 	this.which = ''
-		           	 }
-		           	 // 开始打怪兽
-		           	 if (now.status === 3 && now.eventname === 'startattackmonster') {
-		           	 	this.worldEvent= 'boss'
-		           	 }
-		           	 // 打怪兽结束
-		           	 if (now.status === 4 && now.eventname === 'stopattackmonster') {
-		           	 	this.worldEvent= ''
-		           	 }
-				}
-			}
-		}
+		// watch: {
+		// 	SOCKET_INFO:{
+		// 		handler(now, old){
+		// 			console.log(now, old, 'SOCKET_INFO')
+		// 			if (now.status === 0 && now.eventname === 'prohibitedcollectgreen') {
+		//            	 	this.worldEvent = 'earth'
+		//            	 	if (this.FIRST_EARTH) { // 第一次接收到服务端推送时自动弹出地震告知弹窗，以后需要用户自行点击按钮
+		//            	 		this.which = 'earth'
+		//            	 	}
+		//            	 	this.FIRST_EARTH = false
+		//            	 //	this.$tip.toast('地震来了，不能收集绿色能量啦~')
+		//            	 	// beaconNearby = beaconNearby.filter(item => item.major !== 103)
+		//            	 }
+		//            	 if ((now.status === 1 && now.eventname === 'startsuperenergy') || 
+		//            	 	 (now.status === 4 && now.eventname === 'startsuperenergy')) {
+		//            	 		this.FIRST_EARTH = true
+		//            	 		this.worldEvent = 'super'
+		//            	 	// 触发了神奇能量（当自己被触发神奇能量，其他人被触发神奇能量）
+		//            	 	const userinfo = storage.getStorage('userinfo') || {}
+		//            	 	if (userinfo.openid != now.openid) {
+		//            	 		console.log('其他玩家被触发超级能量')
+		//            	 		// // 其他玩家被触发超级能量
+		//            	 		// amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
+		//            	 	} else {
+		//            	 		console.log('自己手环被触发超级能量')
+		//            	 		// 自己手环被触发超级能量
+		//            	 		// this.player = now.player
+		//            	 		// this.integral = now.integral
+		//            	 		// this.which= 'my-super' // 弹窗遮罩界面
+		//            	 	}
+		//            	 }
+		//            	 if (now.status === 1 && now.eventname === 'allowcollectgreen') {
+		//            	 	this.worldEvent= ''
+		//            	 	this.which = ''
+		//            	 	this.FIRST_EARTH = true
+		//            	 }
+		//            	 // 超级能量结束
+		//            	 if ((now.status === 1 && now.eventname === 'stopsuperenergy') ||
+		//            	 	(now.status === 4 && now.eventname === 'stopsuperenergy')) {
+		//            	 	this.worldEvent= ''
+		//            	 	this.which = ''
+		//            	 }
+		//            	 // 开始打怪兽
+		//            	 if (now.status === 3 && now.eventname === 'startattackmonster') {
+		//            	 	this.worldEvent= 'boss'
+		//            	 }
+		//            	 // 打怪兽结束
+		//            	 if (now.status === 4 && now.eventname === 'stopattackmonster') {
+		//            	 	this.worldEvent= ''
+		//            	 }
+		// 		}
+		// 	}
+		// }
 	}
 </script>
 <style lang="less">
