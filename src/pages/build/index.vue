@@ -297,10 +297,10 @@ export default {
 			})
 			console.log('buy', resultData)
 			if (resultData && resultData.errmsg) {
-				this.$top.toast(resultData.errmsg)
+				this.$tip.toast(resultData.errmsg)
 				return
 			}
-
+			this.$tip.toast(`您已成功购买${this.buyContent.prdname}${this.buyNum}个`)
 			this.buyOpen = false
 		},
 		async confrimBuild(item) {
