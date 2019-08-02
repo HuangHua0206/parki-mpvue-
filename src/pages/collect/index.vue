@@ -67,7 +67,7 @@
 							'show': bags.bagShow1,
 							'initshow': bags.initshow1,
 							'together': together
-						}" :src="'http://parkiland.isxcxbackend1.cn/pl2_ball_'+collects[0]+'.png'"/>
+						}" :src="'http://parkiland.isxcxbackend1.cn/pl2_ball_'+(collects[0] || '1')+'.png'"/>
 					</div>
 					
 				</div>
@@ -77,7 +77,7 @@
 							'show': bags.bagShow2,
 							'initshow': bags.initshow2,
 							'together': together
-						}" :src="'http://parkiland.isxcxbackend1.cn/pl2_ball_'+collects[1]+'.png'"/>
+						}" :src="'http://parkiland.isxcxbackend1.cn/pl2_ball_'+(collects[1] || '1')+'.png'"/>
 
 					</div>
 				</div>
@@ -87,7 +87,7 @@
 							'show': bags.bagShow3,
 							'initshow': bags.initshow3,
 							'together': together
-						}" :src="'http://parkiland.isxcxbackend1.cn/pl2_ball_'+collects[2]+'.png'"/>
+						}" :src="'http://parkiland.isxcxbackend1.cn/pl2_ball_'+(collects[2] || '1')+'.png'"/>
 					</div>
 				</div>
 			</div>
@@ -395,7 +395,9 @@
 					this.online = resultData.data.bindstatus === 1
 				}
 			},
-			close() {
+			// 关闭界面弹窗
+			close(param) {
+				if (param === 'bind') this.online = true
 				this.which = ''
 			},
 			async getAnimaList() {

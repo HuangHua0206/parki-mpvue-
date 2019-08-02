@@ -296,9 +296,8 @@ export default {
 				amount: this.buyNum
 			})
 			console.log('buy', resultData)
-			if (resultData.data && resultData.data.errmsg) {
-this.$top.toast('resultData.data.errmsg')
-				// this.$top.toast(resultData.data.errmsg)
+			if (resultData && resultData.errmsg) {
+				this.$top.toast(resultData.errmsg)
 				return
 			}
 

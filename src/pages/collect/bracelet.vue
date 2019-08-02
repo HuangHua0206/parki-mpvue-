@@ -47,6 +47,10 @@
 					openid: userinfo.openid,
 					bandid: minor
 				})
+				if (resultData && resultData.errmsg) {
+					this.$tip.toast(resultData.errmsg)
+					return
+				}
 				this.$emit('closePop', 'bind')
 			}
 		}
