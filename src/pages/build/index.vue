@@ -64,6 +64,7 @@
 							<div class="icon"></div>
 							<div class="money">{{item.cost}}</div>
 						</div>
+						<img class="energy-img" :src="'http://parkiland.isxcxbackend1.cn/pl2_ball_'+item.color+'.png'" />
 					</div>
 				</div>
 			</div>
@@ -86,6 +87,7 @@
 			            @touchend.stop="e => tEnd(e, item)"> 	
 						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+item.prdname+'.png'"  />
 						<div class="num">{{item.amount}}</div>
+						<img class="energy-img" :src="'http://parkiland.isxcxbackend1.cn/pl2_ball_'+item.color+'.png'" />
 			        </div>
 				</div>
 			</div>
@@ -162,8 +164,34 @@ export default {
 	},
 	onShow() {
 		this.getData()
+		this.listenSocket() // 连接socket
 	},
 	methods: {
+		 listenSocket() {
+			 const userinfo = storage.getStorage('userinfo') || {}
+		      this.socketTask = getApp().globalData.socketTask;
+		      if (!this.socketTask || this.socketTask.readyState !=1){
+		        console.info("重新連接")
+		        this.socketTask = wx.connectSocket({
+		        	//url: 'wss://www.isxcxbackend1.cn/websocket'
+		         url: 'wss://www.j4ckma.cn/parki/ws?openid='+userinfo.openid
+		        })
+		        getApp().globalData.socketTask = this.socketTask;
+		      }
+		      console.log('this.socketTask', this.socketTask)
+		      this.socketTask.onMessage(res => {
+		        console.log('oooo', res);
+		        const _data = JSON.parse(res.data)
+		        this.SOCKET_INFO = _data
+		        this.socketDeal(_data)
+		      }),
+		        //连接失败
+		        this.socketTask.onError(function() {
+		          console.log("websocket连接失败！");
+		          // _this_this.gsStatus = 1;
+		          // _this.isSlow = false;
+		        });
+		    },
 		longTap(e) {
 			console.log('长按')
 
@@ -786,16 +814,25 @@ export default {
 						border-radius:33rpx;
 						margin-top:26rpx;
 						position: relative;
+						
 						&div:nth-child(4n+0){
 							margin-right:0;
 						}
 						img{
 							position: absolute;
 							left:50%;
-							top:40%;
+							top:50%;
 							transform: translate(-50%, -50%);
-							height:60%;
-							width:60%;
+							height:50%;
+							width:50%;
+						}
+						.energy-img{
+							position: absolute;
+							width:33rpx;
+							height:33rpx;
+							border-radius: 50%;
+							left:30rpx;
+							top:30rpx;
 						}
 						.num{
 							font-size:21rpx;
