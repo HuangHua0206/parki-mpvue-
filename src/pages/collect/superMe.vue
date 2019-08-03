@@ -13,7 +13,7 @@
 			etxt="LET OTHER PLAYERS COLLECT YOUR ARTIFACT ENERGY.YOU CAN GET ALOT OF POINTS REWORD!">
 		</CommonDescription>
 		<div class="content">
-			<div class="time ">剩余时间：99:99</div>
+			<div class="time ">剩余时间：{{ time }}</div>
 			<div class="nums">
 				<div class="one">
 					<div class="money">
@@ -36,12 +36,29 @@
 import CommonDescription from 'components/description'
 export default {
 	components: { CommonDescription },
+	computed: {
+		time() {
+			console.log(this.remain, 'this.remain')
+			let m = parseInt((this.remain / 60)).toString()
+			if (m.length < 2) {
+				m = '0' + m
+			}
+			let s = (this.remain % 60).toString()
+			if (s.length < 2) {
+				s = '0' + s
+			}
+			return m + ' : ' +s
+		}
+	},
 	props: {
 		time: {
 			type: Number
 		},
 		total: {
 			type: Number
+		},
+		remain: {
+			type : [Number, String]
 		}
 	}
 }

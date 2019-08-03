@@ -18,7 +18,7 @@ fly.interceptors.response.use(
        // return err.response
         // Tip.toast(JSON.stringify(err) + 'err')
         //发生网络错误后会走到这里
-        return Promise.resolve(err.response)
+        return Promise.resolve(err.response.data)
     }
 )
 

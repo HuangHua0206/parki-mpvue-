@@ -10,7 +10,8 @@
 	        </div>
 	        <div v-if="share" class="right-num share" ></div>
 	        <div v-else class="right-num" @click="$emit('openRange')">
-	        	{{ rightNum }}
+	        	查看排名
+	       <!--  	{{ rightNum }} -->
 	        </div>
 	      </div>
 	    </div>

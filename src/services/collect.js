@@ -96,3 +96,53 @@ export function myIntegralService(data) {
 		data
 	})
 }
+
+// 手环上线每5s加2分
+export function reward2Service(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/parki/integral/reward',
+		method: 'post',
+		data
+	})
+}
+
+// 排名
+export function rangeService(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/parki/integral/rank',
+		method: 'post',
+		data
+	})
+}
+
+// 查询任务
+export function taskService(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/parki/task/query',
+		method: 'post',
+		data
+	})
+}
+
+// 领取奖励
+export function earnRewardService(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/parki/task/reward',
+		method: 'post',
+		data
+	})
+}
+
+// 升级宠物
+export function upgradeAnimalService(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/parki/pet/upgrade',
+		method: 'post',
+		data
+	})
+}

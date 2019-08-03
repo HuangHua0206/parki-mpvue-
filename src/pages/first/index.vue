@@ -59,6 +59,7 @@
 			      });
 			},
 			async login(userInfo, code) {
+				console.log(userInfo, 'userInfo')
 				const resultData = await loginService({
 					nickname: userInfo.nickName,
 					avatarurl: userInfo.avatarUrl,

@@ -51,6 +51,7 @@
 					this.$tip.toast(resultData.errmsg)
 					return
 				}
+				this.$emit('reward')
 				this.$emit('closePop', 'bind')
 			}
 		}

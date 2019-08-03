@@ -167,7 +167,7 @@ export default {
 		this.listenSocket() // 连接socket
 	},
 	methods: {
-		 listenSocket() {
+		listenSocket() {
 			 const userinfo = storage.getStorage('userinfo') || {}
 		      this.socketTask = getApp().globalData.socketTask;
 		      if (!this.socketTask || this.socketTask.readyState !=1){
@@ -192,6 +192,9 @@ export default {
 		          // _this.isSlow = false;
 		        });
 		    },
+		socketDeal(socket){
+
+		},
 		longTap(e) {
 			console.log('长按')
 

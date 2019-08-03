@@ -9,13 +9,23 @@
 	  	<div class="rang-bg">
 	  		<div class="close-btn" @click="$emit('closePop')"></div>
 	  		<ul class="range-list">
-	  			<li class="item" :class="{select: isOn}">
+	  			<li class="item" :class="{select: $index === 0}" v-for="(item, $index) in rangeList" :key="$index">
+	  				<div class="avatar">
+				        <img :src="item.avatarurl" />
+				     </div>
+				     <div class="content">
+				     	<div class="name">{{item.nickname}}</div>
+				     	<div class="num"><span class="integral-icon"></span>{{item.integral}}</div>
+				     	<div class="range">{{$index + 1}}</div>
+				     </div>
+	  			</li>
+<!-- 	  			<li class="item">
 	  				<div class="avatar">
 				        <img src="http://img5.imgtn.bdimg.com/it/u=3300305952,1328708913&fm=26&gp=0.jpg" />
 				     </div>
 				     <div class="content">
 				     	<div class="name">HEAVEN</div>
-				     	<div class="num"><span class="integral-icon"></span>9999</div>
+				     	<div class="num">9999</div>
 				     	<div class="range">1</div>
 				     </div>
 	  			</li>
@@ -28,17 +38,7 @@
 				     	<div class="num">9999</div>
 				     	<div class="range">1</div>
 				     </div>
-	  			</li>
-	  			<li class="item">
-	  				<div class="avatar">
-				        <img src="http://img5.imgtn.bdimg.com/it/u=3300305952,1328708913&fm=26&gp=0.jpg" />
-				     </div>
-				     <div class="content">
-				     	<div class="name">HEAVEN</div>
-				     	<div class="num">9999</div>
-				     	<div class="range">1</div>
-				     </div>
-	  			</li>
+	  			</li> -->
 	  		</ul>
 	  	</div>
 	</div>
@@ -49,6 +49,11 @@
 		data() {
 			return {
 				isOn: true
+			}
+		},
+		props: {
+			rangeList: {
+				type:Array
 			}
 		},
 		methods: {	
