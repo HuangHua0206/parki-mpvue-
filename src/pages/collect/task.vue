@@ -8,22 +8,22 @@
 				<div class="desc">任务每日00:00点更新。</div>
 			</div>
 			<ul class="email-list">
-				<li class="item">
-					<div class="task-name">搜索任务</div>
-					<div class="desc">尝试搜集10种不同方式。</div>
+				<li class="item" v-for="(item, $index) in taskList" :key="$index">
+					<div class="task-name">{{item.taskname}}</div>
+					<div class="desc">{{item.taskcontent}}。</div>
 					<div class="reward">
 						<div class="get">奖励:<span class="integral-icon"></span> <span class="num">80</span> </div>
-						<div class="finish">已完成: 2/10</div>
+						<div class="finish">已完成: {{ item.sequence}} / {{ item.schedule}}</div>
 					</div>
 				</li>
-				<li class="item">
+			<!-- 	<li class="item">
 					<div class="task-name">宠物任务</div>
 					<div class="desc">获得一个4级宠物。</div>
 					<div class="reward">
 						<div class="get">奖励:<span class="integral-icon"> </span><span class="num">80</span> </div>
 						<div class="finish">已完成: 2/10</div>
 					</div>
-				</li>
+				</li> -->
 				<li class="item">
 					<div class="task-name">建造任务</div>
 					<div class="desc">任意种植一棵树。</div>
@@ -41,6 +41,11 @@
 </template>
 <script>
 	export default{
+		props: {
+			taskList: {
+				type: Array
+			}
+		},
 		methods: {
 		}
 	}
@@ -114,6 +119,7 @@
 		 			 }
 		 			 .reward{
 		 			 	margin-top: 21px;
+		 			 	padding-bottom:5px;
 		 			 	display: flex;
 		 			 	justify-content: space-between;
 		 			 	.get, .finish{
