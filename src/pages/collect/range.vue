@@ -9,7 +9,7 @@
 	  	<div class="rang-bg">
 	  		<div class="close-btn" @click="$emit('closePop')"></div>
 	  		<ul class="range-list">
-	  			<li class="item" :class="{select: $index === 0}" v-for="(item, $index) in rangeList" :key="$index">
+	  			<li class="item" :class="{select: myopenid === item.openid}" v-for="(item, $index) in rangeList" :key="$index">
 	  				<div class="avatar">
 				        <img :src="item.avatarurl" />
 				     </div>
@@ -45,6 +45,7 @@
 </template>
 <script>
 	import CommonTop from 'components/top'
+	import storage from 'utils/storage'
 	export default{
 		data() {
 			return {
@@ -54,6 +55,12 @@
 		props: {
 			rangeList: {
 				type:Array
+			}
+		},
+		computed: {
+			myopenid() {
+				const userinfo = storage.getStorage('userinfo') || {}
+				return userinfo.openid
 			}
 		},
 		methods: {	
