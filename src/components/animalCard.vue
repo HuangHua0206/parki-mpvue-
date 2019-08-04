@@ -1,11 +1,11 @@
 <template>
-	<div :class="className" class="animalCard-wrap" @click="$emit('selectAnimal')">
-		<image :src="url" class="animalCard-img" />
+	<div :class="className" class="animalCard-wrap" >
+		<image :src="url" class="animalCard-img" @click="$emit('selectAnimal')"/>
         <div :class="progress" v-if="progress === 'other'">
             <div class="progress" :style="{width: progressWidth}"></div>
             <div class="content">{{text}}</div>
         </div>
-        <div :class="progress" v-if="progress === 'max' || progress === 'update'">{{text}}</div>
+        <div :class="progress" v-if="progress === 'max' || progress === 'update'" @click="upgrade(progress)">{{text}}</div>
         <div class="animalCard-level">{{level}}</div>
         <div class="animalCard-eng">{{eng}}</div>
         <div class="animalCard-new" v-if="isnew"></div>
@@ -55,7 +55,14 @@
             selected: {
                 type: Number
             }
-		}
+		},
+        methods: {
+            upgrade(type) {
+                if (type==='update') {
+                    this.$emit('upgrade')
+                }
+            }
+        }
 	}
 </script>
 <style lang="less">
@@ -87,7 +94,7 @@
         color: #fff;
         font-size: 10px;
  
-         text-shadow:#000 2px 0 0,#000 0 2px 0,#000 -2px 0 0,#000 0 -2px 0;
+         text-shadow:#000 1px 0 0,#000 0 1px 0,#000 -1px 0 0,#000 0 -1px 0;
     }
     .update {
         width: 114px;
@@ -100,7 +107,8 @@
         text-align: center;
         color: #fff;
         font-size: 10px;
-        text-shadow:#000 2px 0 0,#000 0 2px 0,#000 -2px 0 0,#000 0 -2px 0;
+        
+        text-shadow:#000 1px 0 0,#000 0 1px 0,#000 -1px 0 0,#000 0 -1px 0;
     }
     .other {
         width: 114px !important;

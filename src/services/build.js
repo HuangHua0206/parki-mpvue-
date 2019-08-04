@@ -59,3 +59,13 @@ export function buyService(data) {
 		data
 	})
 }
+
+// 收集能量球
+export function collectBallsService(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/parki/square/reward',
+		method: 'post',
+		data
+	})
+}

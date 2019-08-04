@@ -136,7 +136,7 @@
 			<Bracelet   @closePop="close"  @reward="reward" />
 		</div>
 		<div class="pop-up-right" :class="{fadeUp: which === 'animal'}">
-			<Animal   @closePop="close"   :animalList="animalList" @selectAnimal="selectAnimal"/>
+			<Animal   @closePop="close"   :animalList="animalList" @selectAnimal="selectAnimal" @upgrade="upgrade"/>
 		</div>
 		<div class="pop-up-fadein" :class="{fadeUp: which === 'super'}">
 			<Amazing   @closePop="close" :player="player"   />
@@ -335,6 +335,16 @@
 				}
 
 			}, 
+			async upgrade(item) {
+				console.log('2')
+				const userinfo = storage.getStorage('userinfo') || {}
+				const resultData = await upgradeAnimalService({
+					petid: item.petid,
+					openid: userinfo.openid
+				})
+				if (resultData && resultData.errmsg) return
+				this.getAnimaList()
+			},
 			rewardRequest() {
 				const userinfo = storage.getStorage('userinfo') || {}
 				reward2Service({openid: userinfo.openid})
@@ -463,6 +473,9 @@
 					this.animalList = resultData.data
 					this.which = 'animal'
 					// this.$forceUpdate()
+				} else {
+					this.which = 'animal'
+					this.animalList = []
 				}
 
 			},
@@ -746,6 +759,67 @@
 					url: '/pages/build/main'
 				});
 		    },
+		    pageReset() {
+				clearInterval(this.timer)
+				// this.resetData()
+				this.FIRST_EARTH = true
+				// this.resetData()
+				// this.fadeIn = false
+				this.animalList= []
+			  	this.rangeList = []
+			  	this.taskList = []
+			  	// timer: null,
+			  	this.bandid = ''
+			  	this.SOCKET_INFO =  {
+			  		status: -1,
+			  		eventname: '',
+			  		openid: ''
+			  	}
+			  	this.player = '' // 超级能量玩家
+			  	this.remaining = 0 // 超级能量剩余时间
+			  	this.integral= 0 // 超级能量触发者获得积分
+			  	this.worldEvent='' // 世界事件名称
+				this.reset = false
+				this.toast = ''
+			  	this.video = { // 收集能量时视频相关参数
+			  		play: false, // 检测到能量时播放视频
+			  		address: 0, // 能量当前放置位置
+			  		initshow1: false,
+			  		initshow2: false,
+			  		initshow3: false,
+			  		energyType: '', // 能量类型（4种，blue，orange，yellow，green）
+			  		energyShow1: false, // 视频将播放完时显示生成的能力球
+			  		energyDown1: false,
+			  		energyShow2: false, // 视频将播放完时显示生成的能力球
+			  		energyDown2: false,
+			  		energyShow3: false, // 视频将播放完时显示生成的能力球
+			  		energyDown3: false
+			  	}
+			  	this.bags = {
+			  		initshow1: false,
+			  		initshow2: false,
+			  		initshow3: false,
+			  		'2': 0,
+			  		'3':0,
+			  		'4':0,
+			  		'1':0,
+			  		bagShow1: false,
+			  		bagShow2: false,
+			  		bagShow3: false
+			  	}
+			  	this.finish = {
+			  		integral: 0,
+			  		pet:null
+			  	}
+			  	this.collects= ['', '', '']   	
+			  	this.online = false 
+			  	this.blueStatus = false 
+			  	this.which = '' 
+			  	this.energyIn = false 
+			  	this.hasBracelet= true 
+			  	this.ISSAME = false 
+			  	this.IS_SENDING=false
+			},
 		    async getCollect() {
 		    	this.ISENDING = true
 		    	const userinfo = storage.getStorage('userinfo') || {}
@@ -758,6 +832,12 @@
 			    	})
 		    	}
 		    	this.ISENDING = false
+		    },
+		    listenColseSocket() {
+		    	this.socketTask.close()
+				wx.onSocketClose(function(res){
+				  console.log("WebSocket 已关闭！")
+				})
 		    },
 		     resetData() {
 		    	this.reset = true // 重置时不再出现背包消失的效果
@@ -795,6 +875,7 @@
 		    }
 		},
 		async onShow() {
+			console.log('onShow')
 			this.$store.dispatch('getIntergral')
 			this.which = ''
 			this.worldEvent = ''
@@ -808,57 +889,18 @@
 			this.fadeIn = true
 		},
 		onHide() {
+			console.log('onHideonHideonHide')
+			this.listenColseSocket()
 			clearInterval(this.timer)
 		    wx.stopBeaconDiscovery();
-		    // getApp().globalData.back.stop();
-		    this.resetData()
-			// this.fadeIn = false
-			this.reset = false
-			this.toast = ''
-		  	this.video = { // 收集能量时视频相关参数
-		  		play: false, // 检测到能量时播放视频
-		  		address: 0, // 能量当前放置位置
-		  		initshow1: false,
-		  		initshow2: false,
-		  		initshow3: false,
-		  		energyType: '', // 能量类型（4种，blue，orange，yellow，green）
-		  		energyShow1: false, // 视频将播放完时显示生成的能力球
-		  		energyDown1: false,
-		  		energyShow2: false, // 视频将播放完时显示生成的能力球
-		  		energyDown2: false,
-		  		energyShow3: false, // 视频将播放完时显示生成的能力球
-		  		energyDown3: false
-		  	}
-		  	this.bags = {
-		  		initshow1: false,
-		  		initshow2: false,
-		  		initshow3: false,
-		  		'2': 0,
-		  		'3':0,
-		  		'4':0,
-		  		'1':0,
-		  		bagShow1: false,
-		  		bagShow2: false,
-		  		bagShow3: false
-		  	}
-		  	this.finish = {
-		  		integral: 0,
-		  		pet:null
-		  	}
-		  	this.collects= ['', '', '']   	
-		  	this.online = false 
-		  	this.blueStatus = false 
-		  	this.which = '' 
-		  	this.energyIn = false 
-		  	this.hasBracelet= true 
-		  	this.ISSAME = false 
-		  	this.IS_SENDING=false 
+		    this.pageReset()
 		  },
 		mounted() {
 			this.fadeIn = true
 		},
+		
 		onUnload() {
-			clearInterval(this.timer)
+			this.pageReset()
 		},
 		components: { CommonTop, Email, Task, Range, Bracelet, Animal, Success, Amazing, Earth, SuperMe },
 	}

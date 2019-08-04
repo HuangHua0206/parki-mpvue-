@@ -15,6 +15,7 @@
  		<!-- 建造区 -->
 		<div class="area" @longpress="longTap">
 			<div :class="{noBg : !isBuild}" class="mark"></div>
+			<!--  建造action -->
 			<div class="action area-item item1" :class="'item' + ($index+1)"  v-for="(item, $index) in 51" :key="$index" @longpress.stop="" >
 				<div class="build-content" :class="{
 					'activeGreen': index === ($index +1) && active === 'ok' && !imgDown,
@@ -32,8 +33,9 @@
 					</div>
 				</div>
 			</div>
+			<!-- 已建造好 -->
 			<div 
-				class="area-item item1" 
+				class="area-item item1 finish-list" 
 				:class="'item' + (item.location)"  
 				v-for="(item, $index) in buildList" 
 				:key="$index" 
@@ -43,6 +45,16 @@
 						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+item.prdname+'.png'"/>
 				<!-- 		<div v-if="!tentShow" class="cancel"></div> -->
 					</div>
+					<div class="time-remaing" v-if="!!item.remaining">{{ item.remainingShow }}</div>
+					<div class="energy" :class="{
+						'blue': item.color === '3' ,
+						'yellow': item.color === '2',
+						'green': item.color === '4',
+						'orange': item.color === '1',
+						'borth': item.remaining === 0,
+						'hasborth': item.remaining !== 0 && !item.remaining,
+						'collect': item.collect
+					}" @click="collectEnergy(item)"></div>
 					<div v-if="deleteIndex === item.location" class="cancel" @click="deleteBuild"></div>
 				</div>
 			</div>
@@ -122,7 +134,15 @@
 <script>
 import CommonTop from 'components/top'
 import storage from 'utils/storage'
-import { shopListService, myListService, buildService, removeService, buildListService, buyService } from 'services/build'
+import { 
+	shopListService, 
+	myListService, 
+	buildService, 
+	removeService, 
+	buildListService, 
+	buyService,
+	collectBallsService
+	 } from 'services/build'
 export default {
 	data() {
 		return {
@@ -151,22 +171,49 @@ export default {
 			deleteIndex: -1
 		}
 	},
-	filters: {
-		
-	},
 	components: { CommonTop },
 	computed: {
 		hasBuild() {
 			const arr = this.buildList.map(item => item.location)
-			console.log(arr)
+		//	console.log(arr)
 			return arr
 		}
+		
 	},
 	onShow() {
-		this.getData()
+		console.log('onShow')
+		this.$store.dispatch('getIntergral')
+		this.getData('created')
 		this.listenSocket() // 连接socket
 	},
 	methods: {
+		async collectEnergy(build) {
+			console.log('uihuijhkjhk')
+			const userinfo = storage.getStorage('userinfo') || {}
+			const resultData = await collectBallsService({
+				openid: userinfo.openid,
+				uniqueid: build.uniqueid
+			})
+			if (resultData && resultData.errmsg) return
+			this.buildList = this.buildList.map(item => {
+				if (build.location === item.location) {
+					item.remaining = resultData.remaining
+					item.remainingShow = this.fromateTime(resultData.remaining)
+				}
+				return item
+			})
+		},
+		fromateTime(remaining) {
+			let m = parseInt((remaining / 60)).toString()
+			if (m.length < 2) {
+				m = '0' + m
+			}
+			let s = (remaining % 60).toString()
+			if (s.length < 2) {
+				s = '0' + s
+			}
+			return m + ' : ' +s
+		},
 		listenSocket() {
 			 const userinfo = storage.getStorage('userinfo') || {}
 		      this.socketTask = getApp().globalData.socketTask;
@@ -180,7 +227,7 @@ export default {
 		      }
 		      console.log('this.socketTask', this.socketTask)
 		      this.socketTask.onMessage(res => {
-		        console.log('oooo', res);
+		   //     console.log('oooo', res);
 		        const _data = JSON.parse(res.data)
 		        this.SOCKET_INFO = _data
 		        this.socketDeal(_data)
@@ -193,7 +240,18 @@ export default {
 		        });
 		    },
 		socketDeal(socket){
-
+			console.log('socket', socket)
+			this.buildList = this.buildList.map(item => {
+				if (socket.location === item.location) {
+					return {
+						...item,
+						...socket,
+						remainingShow: this.fromateTime(socket.remaining)
+					}
+				} else {
+					return item
+				}
+			})
 		},
 		longTap(e) {
 			console.log('长按')
@@ -237,6 +295,11 @@ export default {
 		},
 
 		async getMy(type) {
+			this.socketTask.send({
+				data: JSON.stringify({
+					test: '测试一下发送websocket内容'
+				})
+			})
 			const userinfo = storage.getStorage('userinfo') || {}
 			const resultData = await myListService({ type, openid: userinfo.openid })
 			if (resultData && resultData.data) {
@@ -245,13 +308,34 @@ export default {
 				this.myList = []
 			}
 		},
-		async getData() {
+		async getData(from) {
 			const userinfo = storage.getStorage('userinfo') || {}
 			const resultData = await buildListService({openid: userinfo.openid})
 			if (resultData && resultData.data) {
-				this.buildList = resultData.data
+				const list = []
+				let _buildList = JSON.parse(JSON.stringify(this.buildList))
+				this.buildList.forEach(item => {
+				 	list.push(item.location)
+				})
+				console.log(list, 'list')
+				resultData.data.forEach(item => {
+					// console.log(item.location)
+					if(!list.includes(item.location)) {
+						_buildList = [..._buildList, {
+							...item,
+							remainingShow: this.fromateTime(item.remaining)
+						}]
+					}
+				})
+				if (from === 'created') {
+					console.log('_buildList===.>', _buildList)
+					_buildList = _buildList.map(item => {
+						if (item.remaining === 0) delete item.remaining
+						return item
+					})
+				}
 				
-				console.log(this.buildList)
+				this.buildList = _buildList
 			} else {
 				this.buildList = []
 			}
@@ -272,11 +356,15 @@ export default {
 	      return Math.abs(Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2)));
 	    },
 		tStart(e, item) {
+			if (this.tentShow || this.imgDown || this.tend) return
+
 			this.buildContent = item
 			this.isBuild = true
 			console.log(666, e, item)
 		},
 		tMove(e, item) {
+			if (this.tentShow || this.imgDown || this.tend) return
+
 			this.which = ''
 			let minVal = Infinity;
 	        let _index = -1
@@ -332,6 +420,7 @@ export default {
 				return
 			}
 			this.$tip.toast(`您已成功购买${this.buyContent.prdname}${this.buyNum}个`)
+			this.$store.dispatch('getIntergral')
 			this.buyOpen = false
 		},
 		async confrimBuild(item) {
@@ -347,7 +436,7 @@ export default {
 				 this.imgDown = true
 
 				 setTimeout(()=>this.tentShow = true, 1000)
-				 setTimeout(() => this.getData(), 3500)
+				 setTimeout(() => this.getData('add'), 3500)
 				 // setTimeout(() => , 3000)
 				 this.isBuild = false
 				 setTimeout(() => {
@@ -358,7 +447,38 @@ export default {
 				 	}, 4000)
 				 
 			}
-		}
+		},
+		 listenColseSocket() {
+			this.socketTask.close()
+			wx.onSocketClose(function(res){
+			  console.log("WebSocket 已关闭！")
+			})
+	    },
+	    pageReset() {
+	    	this.fadeIn = false
+			this.positions= []
+			this.shopList = []
+			this.buildList = []
+			this.myList = []
+			this.imgDown=[]
+			this.tend =false
+			this.index= -1 
+			this.tentShow=false
+			this.active=''
+			this.isBuild = false
+			this.which= ''
+			this.fadeIn= false
+			this.storeType= 1
+			this.myType = 1
+			this.buyContent={
+				url: '',
+				cost: 0
+			}
+			this.buyOpen=false
+			this.buyNum=1
+			this.buildContent={}
+			this.deleteIndex= -1
+	    }
 	},
 	mounted() {
 		this.fadeIn = true
@@ -381,9 +501,9 @@ export default {
 	          });
 	        });
 	},
-	onUnload() {
-		this.fadeIn = false
-	},
+	// onUnload() {
+
+	// },
 	watch: {
 		storeType: {
 			handler(newVal, oldVal) {
@@ -395,6 +515,14 @@ export default {
 				this.getMy(newVal)
 			}
 		}
+	},
+	onHide() {
+		console.log('onHideonHideonHide')
+		this.listenColseSocket()
+		this.pageReset()
+	},
+	onUnload() {
+		this.pageReset()
 	}
 }
 </script>
@@ -759,9 +887,65 @@ export default {
 					}
 				}
 			}
+			.finish-list{
+				.time-remaing{
+					position:absolute;
+					left:50%;
+					bottom:5px;
+					transform: translateX(-50%);
+					border: 3rpx solid #000;
+					border-radius:6px;
+					width:25px;
+					height:12rpx;
+					text-align:center;
+					font-size:12rpx;
+					line-height:12rpx;
+				//	z-index:100;
+					background:#fff;
+				}
+				.energy{
+					z-index:10;
+					width:20px;
+					height:20px;
+					position:absolute;
+					left:50%;
+					transform:translateX(-50%);
+					opacity:0;
+					bottom:-10%;
+					.bg("pl2_ball_yellow@2x");
+					&.yellow{
+						.bg("pl2_ball_yellow@2x");
+					}
+					&.blue{
+						.bg("pl2_ball_blue@2x");
+					}
+					&.green{
+						.bg("pl2_ball_green@2x");
+					}
+					&.orange{
+						.bg("pl2_ball_orange@2x");
+					}
+					&.borth{
+						transition: 0.5s;
+						opacity:1;
+						bottom: 60%;
+					}
+					&.hasborth{
+						opacity:1;
+						bottom: 60%;
+					}
+					// &.collect{
+					// 	transition:0.5s;
+					// 	position: fixed;
+					// 	left:67rpx;
+					// 	top: 256rpx;
+					// }
+				}
+				
+			}
 		}
 		.pop-up-bottom{
-			z-index:35;
+			z-index:65;
 			transition: 0.5s;
 			position: absolute;
 			bottom:-100%;
@@ -873,7 +1057,7 @@ export default {
 			}
 		}
 		.buy-pop{
-			z-index:50;
+			z-index:80;
 			position:absolute;
 			left:0;
 			height:0;

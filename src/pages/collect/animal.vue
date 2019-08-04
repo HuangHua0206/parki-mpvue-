@@ -24,11 +24,12 @@
 					:key="$index"
 					:progress="item | progress"
 				    v-for="(item, $index) in animalList"
-					:text="item.experience + ' / ' + Math.pow(2, item.level)"
+					:text="item | text"
 					:level="item.level+'级'"
 					:eng="'战斗力：' + item.power"
 					className="card-list"
 					:selected="item.selected"
+					@upgrade="$emit('upgrade',item)"
 					:url="'http://parkiland.isxcxbackend1.cn/pl2_'+item.petname+'.png'"
 				/>
 	<!-- 			<CommonCard
@@ -56,17 +57,27 @@
 	</div>
 </template>
 <script>
-	import { animalListService } from 'services/collect'
 	import CommonCard from 'components/animalCard'
 	import storage from 'utils/storage'
 	export default{
 		filters: {
 			progress(item) {
 				const level = Math.pow(2, item.level)
-				if (item.experience === level) {
+				if (item.level === 8) {
 					return 'max'
+				} else if (item.experience >= Math.pow(2, item.level)) {
+					return 'update'
 				} else {
 					return 'other'
+				}
+			},
+			text(item) {
+				if (item.level === 8) {
+					return 'MAX'
+				} else if (item.experience >= Math.pow(2, item.level)){
+					return '升级'
+				} else {
+					return item.experience + ' / ' + Math.pow(2, item.level)
 				}
 			}
 		},

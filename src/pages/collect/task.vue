@@ -28,7 +28,7 @@
 					<div class="task-name">建造任务</div>
 					<div class="desc">任意种植一棵树。</div>
 					<div class="reward">
-						<div class="get">奖励:<span class="integral-icon"></span><span class="num">80 </span> </div>
+						<div class="get">奖励:<span class="integral-icon"></span><span class="num">200 </span> </div>
 	 
 					</div>
 					<div class="get-btn">领取奖励</div>
