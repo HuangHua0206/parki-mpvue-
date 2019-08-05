@@ -7,8 +7,8 @@
 	  		share>
   		</CommonTop>
   		<div @click="goCollect" class="button collect-energy" :class="{'fade-left-in': fadeIn}"  ></div>
-		<div class="button hunting-button" :class="{'fade-right-in': fadeIn}" ></div>
-		<div class="button friend-button"  :class="{'fade-right-in': fadeIn}" ></div>
+		<div class="button hunting-button" :class="{'fade-right-in': fadeIn}" @click="openHunting"></div>
+		<div class="button friend-button" style="z-index:60"  :class="{'fade-right-in': fadeIn}" @click="openFriend"></div>
 		<div class="build-store" @click="showStore"></div>
 		<div class="build-my" @click="showMy"></div>
  		
@@ -128,12 +128,21 @@
 				<div class="buy-btn" @click="buyBuild">购买</div>
 			</div>
 		</div>
+		<!-- 弹窗部分 -->
+		<div class="pop-up-right" :class="{fadeUp: which === 'hunting'}"> 
+			<Hunting   @closePop="which = ''"  />
+		</div>
+		<div class="pop-up-right" :class="{fadeUp: which === 'friend'}"> 
+			<Friend   @closePop="which = ''"  />
+		</div>
 		<div style="opacity:0;" class="opacity0-tent"></div>
 	</div>
 </template>
 <script>
 import CommonTop from 'components/top'
 import storage from 'utils/storage'
+import Hunting from './hunting'
+import Friend from './friend'
 import { 
 	shopListService, 
 	myListService, 
@@ -171,7 +180,7 @@ export default {
 			deleteIndex: -1
 		}
 	},
-	components: { CommonTop },
+	components: { CommonTop, Hunting, Friend },
 	computed: {
 		hasBuild() {
 			const arr = this.buildList.map(item => item.location)
@@ -184,9 +193,22 @@ export default {
 		console.log('onShow')
 		this.$store.dispatch('getIntergral')
 		this.getData('created')
+		// this.fadeIn = true
 		this.listenSocket() // 连接socket
 	},
 	methods: {
+		openHunting() {
+			this.which = 'hunting'
+		},
+		openFriend() {
+			console.log(888)
+			this.which = 'friend'
+			// this.socketTask.send({
+			// 	data: JSON.stringify({
+			// 		test: '测试一下发送websocket内容'
+			// 	})
+			// })
+		},
 		async collectEnergy(build) {
 			console.log('uihuijhkjhk')
 			const userinfo = storage.getStorage('userinfo') || {}
@@ -295,11 +317,7 @@ export default {
 		},
 
 		async getMy(type) {
-			this.socketTask.send({
-				data: JSON.stringify({
-					test: '测试一下发送websocket内容'
-				})
-			})
+			
 			const userinfo = storage.getStorage('userinfo') || {}
 			const resultData = await myListService({ type, openid: userinfo.openid })
 			if (resultData && resultData.data) {
@@ -455,7 +473,7 @@ export default {
 			})
 	    },
 	    pageReset() {
-	    	this.fadeIn = false
+	    //	this.fadeIn = false
 			this.positions= []
 			this.shopList = []
 			this.buildList = []
@@ -467,7 +485,7 @@ export default {
 			this.active=''
 			this.isBuild = false
 			this.which= ''
-			this.fadeIn= false
+			// this.fadeIn= false
 			this.storeType= 1
 			this.myType = 1
 			this.buyContent={
@@ -523,6 +541,7 @@ export default {
 	},
 	onUnload() {
 		this.pageReset()
+		this.fadeIn = false
 	}
 }
 </script>
@@ -662,17 +681,17 @@ export default {
 			
 			&.collect-energy{
 				left:-70px;
-				top:108px;
+				top:88px;
 				.bg("pl2_collection@2x@2x");
 			}
 			&.hunting-button{
 				right:-70px;
-				top:108px;
+				top:88px;
 				.bg("pl2_hunting@2x");
 			}
 			&.friend-button{
 				right:-70px;
-				top:179px;
+				top:149px;
 				.bg("pl2_friend@2x");				
 			}
 			&.fade-left-in{
@@ -912,7 +931,7 @@ export default {
 					transform:translateX(-50%);
 					opacity:0;
 					bottom:-10%;
-					.bg("pl2_ball_yellow@2x");
+					// .bg("pl2_ball_yellow@2x");
 					&.yellow{
 						.bg("pl2_ball_yellow@2x");
 					}
@@ -1156,6 +1175,17 @@ export default {
 					line-height:80rpx;
 					text-align:center;
 				}
+			}
+		}
+		.pop-up-right{
+			transition: 0.5s;
+			position: absolute;
+			top:0;
+			right:-100%;
+			height: 100%;
+			width:100%;
+			&.fadeUp{
+				right:0;
 			}
 		}
 	}

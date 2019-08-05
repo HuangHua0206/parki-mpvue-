@@ -19,26 +19,6 @@
 				     	<div class="range">{{$index + 1}}</div>
 				     </div>
 	  			</li>
-<!-- 	  			<li class="item">
-	  				<div class="avatar">
-				        <img src="http://img5.imgtn.bdimg.com/it/u=3300305952,1328708913&fm=26&gp=0.jpg" />
-				     </div>
-				     <div class="content">
-				     	<div class="name">HEAVEN</div>
-				     	<div class="num">9999</div>
-				     	<div class="range">1</div>
-				     </div>
-	  			</li>
-	  			<li class="item">
-	  				<div class="avatar">
-				        <img src="http://img5.imgtn.bdimg.com/it/u=3300305952,1328708913&fm=26&gp=0.jpg" />
-				     </div>
-				     <div class="content">
-				     	<div class="name">HEAVEN</div>
-				     	<div class="num">9999</div>
-				     	<div class="range">1</div>
-				     </div>
-	  			</li> -->
 	  		</ul>
 	  	</div>
 	</div>
@@ -106,12 +86,15 @@
 				top:-10px;
 			}
 			.range-list{
+				height: 800rpx;
+				overflow-y: auto;
 				.item{
 					position: relative;
 					.bg("pl2_gray_range@2x");
 					height: 37px;
 					width:269px;
 					margin-left: 22px;
+					margin-top: 5px;
 					margin-bottom: 25px;
 					&.select{
 						.bg("pl2_green_ange@2x");

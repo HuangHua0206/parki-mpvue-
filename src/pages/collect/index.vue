@@ -895,9 +895,6 @@
 		    wx.stopBeaconDiscovery();
 		    this.pageReset()
 		  },
-		mounted() {
-			this.fadeIn = true
-		},
 		
 		onUnload() {
 			this.pageReset()
