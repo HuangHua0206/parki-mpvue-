@@ -66,14 +66,17 @@
 					gender: userInfo.gender,
 					code
 				})
-				storage.setStorage('userinfo', {
-					openid: resultData.openid,
-					...userInfo
-				});
-				console.log(333);
-				wx.redirectTo({
-					url: '/pages/collect/main'
-				});
+				if (resultData && resultData.openid) {
+					storage.setStorage('userinfo', {
+						openid: resultData.openid,
+						...userInfo
+					});
+					console.log(333);
+					wx.redirectTo({
+						url: '/pages/collect/main'
+					});
+				}
+				
 			},
 			// callBack() {
 			// 	console.log(111);
