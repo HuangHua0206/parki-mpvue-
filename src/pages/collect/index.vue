@@ -29,7 +29,13 @@
 		<div class="button offline-button" :class="{
 			'fade-right-in': fadeIn,
 			'z-index-top': !online
-		}" @click="which = 'bracelet'"></div>
+		}" @click="which = 'bracelet'">
+			<div class="progress-mask" >
+	<!-- 			<div class="progress hasBracelet"   >
+					<div class="sunny hasBracelet"    ></div>
+				</div> -->
+			</div>
+		</div>
 		<div class="line" :class="{finish: together}">
 			<div class="mask"> 
 				<div 
@@ -1139,6 +1145,18 @@
 			right:-70px;
 			top:180px;
 			.bg("pl2_off line@2x");
+			.progress-mask{
+				border-radius:12px;
+				position: absolute;
+				width:48px;
+				height: 10px;
+				bottom:15px;
+				border:2px solid #000;
+				box-sizing:border-box;
+				background: #fff;
+				left:14px;
+				overflow:hidden;
+			}
 		}
 		&.fade-left-in{
 			left:0;
