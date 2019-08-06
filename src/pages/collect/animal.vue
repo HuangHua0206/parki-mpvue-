@@ -17,41 +17,25 @@
 				:url="'http://parkiland.isxcxbackend1.cn/pl2_'+selectedItem.petname+'.png'"
 			/>
 			<div v-else class="not-select"></div>
-			<div class="card-list-wrap">
-				<CommonCard
-					@selectAnimal="$emit('selectAnimal', item.petid)"
-					:progressWidth="(item.experience/Math.pow(2, item.level))*100 + '%'"
-					:key="$index"
-					:progress="item | progress"
-				    v-for="(item, $index) in animalList"
-					:text="item | text"
-					:level="item.level+'级'"
-					:eng="'战斗力：' + item.power"
-					className="card-list"
-					:selected="item.selected"
-					@upgrade="$emit('upgrade',item)"
-					:url="'http://parkiland.isxcxbackend1.cn/pl2_'+item.petname+'.png'"
-				/>
-	<!-- 			<CommonCard
-					text="MAX"
-					isnew
-					level="2级"
-					eng="战斗力：22"
-					className="card-list"
-					progress="max"
-					url="http://parkiland.isxcxbackend1.cn/3%E6%98%9F-%E5%B0%8F%E7%86%8A-no.6.png"
-				/>
-				<CommonCard
-					text="升级"
-					isnew
-					level="2级"
-					eng="战斗力：22"
-					className="card-list"
-					progress="update"
-					url="http://parkiland.isxcxbackend1.cn/3%E6%98%9F-%E5%B0%8F%E7%86%8A-no.6.png"
-				/> -->
+			<div class="list">
+				<div class="card-list-wrap">
+					<CommonCard
+						@selectAnimal="$emit('selectAnimal', item.petid)"
+						:progressWidth="(item.experience/Math.pow(2, item.level))*100 + '%'"
+						:key="$index"
+						:progress="item | progress"
+					    v-for="(item, $index) in animalList"
+						:text="item | text"
+						:level="item.level+'级'"
+						:eng="'战斗力：' + item.power"
+						className="card-list"
+						:selected="item.selected"
+						@upgrade="$emit('upgrade',item)"
+						:url="'http://parkiland.isxcxbackend1.cn/pl2_'+item.petname+'.png'"
+					/>
+				</div>
 			</div>
-<!-- 			<div class="animal-button">{{ isSelect ? '更换' : '装备'}}</div>   -->
+			
 			<div class="close-btn" @click="$emit('closePop')"> </div>
 		</div>
 	</div>
@@ -157,14 +141,20 @@
 				left: 14px;
 				top: 38px;
 			}
-			.card-list-wrap {
-				height:500px;
+			.list{
+				height:900px;
 				overflow-y:auto;
-				display: flex;
-				flex-wrap: wrap;
-				position: absolute;
+					position: absolute;
 				left: 14px;
 				top: 229px;
+			}
+			.card-list-wrap {
+
+				display: flex;
+				flex-wrap: wrap;
+				// position: absolute;
+				// left: 14px;
+				// top: 229px;
 			}
 			.text {
 				font-size: 14px;

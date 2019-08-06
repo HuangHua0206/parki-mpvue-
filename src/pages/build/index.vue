@@ -160,7 +160,7 @@ export default {
 			buildList: [],
 			myList: [],
 			imgDown:false,
-			tend:false,
+			tend:false, // 选择完成，送手指，展示建筑掉下来效果
 			index: -1, // 构建第index个建筑
 			tentShow: false,
 			active: '',
@@ -374,14 +374,16 @@ export default {
 	      return Math.abs(Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2)));
 	    },
 		tStart(e, item) {
-			if (this.tentShow || this.imgDown || this.tend) return
-
+			console.log(888)
+			console.log(this.tend, this.tentShow, this.imgDown)
+			if (this.tentShow || this.imgDown) return
+console.log(777)
 			this.buildContent = item
 			this.isBuild = true
 			console.log(666, e, item)
 		},
 		tMove(e, item) {
-			if (this.tentShow || this.imgDown || this.tend) return
+			if (this.tentShow || this.imgDown) return
 
 			this.which = ''
 			let minVal = Infinity;
@@ -405,6 +407,7 @@ export default {
 		},
 		tEnd(e) {
 			this.tend = true
+			// this.isBuild = false
 			console.log(10000, this.index)
 		},
 		openBuyPop(item) {
@@ -681,17 +684,17 @@ export default {
 			
 			&.collect-energy{
 				left:-70px;
-				top:88px;
+				top:98px;
 				.bg("pl2_collection@2x@2x");
 			}
 			&.hunting-button{
 				right:-70px;
-				top:88px;
+				top:98px;
 				.bg("pl2_hunting@2x");
 			}
 			&.friend-button{
 				right:-70px;
-				top:149px;
+				top:159px;
 				.bg("pl2_friend@2x");				
 			}
 			&.fade-left-in{
@@ -721,7 +724,7 @@ export default {
 			
 			width:750rpx;
 			height:684rpx;
-			top:350rpx;
+			top:360rpx;
 			position:absolute;
 			left:0;
 			.mark{
