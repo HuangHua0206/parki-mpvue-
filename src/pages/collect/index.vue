@@ -127,7 +127,7 @@
 			<Email   @closePop="close"  />
 		</div>
 		<div class="pop-up-left" :class="{fadeUp: which === 'task'}">
-			<Task    @closePop="close"  :taskList="taskList" />
+			<Task    @closePop="close"  :taskList="taskList" @earnRewards="earnRewards"/>
 		</div>
 		<div class="pop-up-bottom" :class="{fadeUp: which === 'range'}">
 			<Range   @closePop="close" :rangeList="rangeList"  />
@@ -304,12 +304,25 @@
 		computed: {
 			videoSrc() {
 				return `http://parkiland.isxcxbackend1.cn/${this.video.energyType}.mp4`
+			},
+			openid() {
+				const userinfo = storage.getStorage('userinfo') || {}
+				return userinfo.openid
 			}
 		},
 		methods: {
+			async earnRewards(taskid) {
+				const resultData = await earnRewardService({
+					taskid,
+					openid: this.openid
+				})
+				if (resultData && resultData.errmsg) return
+				this.$tip.toast('领取成功，奖励200积分')
+				this.getTaskList()
+				this.$store.dispatch('getIntergral')
+			},
 			async getTaskList() {
-				const userinfo = storage.getStorage('userinfo') || {}
-				const resultData = await taskService({openid: userinfo.openid})
+				const resultData = await taskService({openid: this.openid})
 				if (resultData && resultData.tasks) {
 					this.taskList = resultData.tasks
 					this.which = 'task'
@@ -337,36 +350,31 @@
 			}, 
 			async upgrade(item) {
 				console.log('2')
-				const userinfo = storage.getStorage('userinfo') || {}
 				const resultData = await upgradeAnimalService({
 					petid: item.petid,
-					openid: userinfo.openid
+					openid: this.openid
 				})
 				if (resultData && resultData.errmsg) return
 				this.getAnimaList()
 			},
 			rewardRequest() {
-				const userinfo = storage.getStorage('userinfo') || {}
-				reward2Service({openid: userinfo.openid})
+				reward2Service({openid: this.openid})
 			},
 			async selectAnimal(petid){
-				console.log('petid', petid)
-				const userinfo = storage.getStorage('userinfo') || {}
 				const resultData = await changeAnimalService({
 					petid,
-					openid: userinfo.openid,
+					openid: this.openid,
 					Prdname: '44'
 				})
 				this.getAnimaList()
 			},
 			 listenSocket() {
-			 const userinfo = storage.getStorage('userinfo') || {}
 		      this.socketTask = getApp().globalData.socketTask;
 		      if (!this.socketTask || this.socketTask.readyState !=1){
 		        console.info("重新連接")
 		        this.socketTask = wx.connectSocket({
 		        	//url: 'wss://www.isxcxbackend1.cn/websocket'
-		         url: 'wss://www.j4ckma.cn/parki/ws?openid='+userinfo.openid
+		         url: 'wss://www.j4ckma.cn/parki/ws?openid='+this.openid
 		        })
 		        getApp().globalData.socketTask = this.socketTask;
 		      }
@@ -399,8 +407,7 @@
 		           	 		this.FIRST_EARTH = true
 		           	 		this.worldEvent = 'super'
 		           	 	// 触发了神奇能量（当自己被触发神奇能量，其他人被触发神奇能量）
-		           	 	const userinfo = storage.getStorage('userinfo') || {}
-		           	 	if (userinfo.openid != now.openid) {
+		           	 	if (this.openid != now.openid) {
 		           	 		console.log('其他玩家被触发超级能量')
 		           	 		this.player = now.player
 		           	 		// // 其他玩家被触发超级能量
@@ -449,8 +456,7 @@
 				});
 			},
 			async bandStatus() {
-				const userinfo = storage.getStorage('userinfo') || {}
-				const resultData = await bandStatusService({ openid: userinfo.openid })
+				const resultData = await bandStatusService({ openid: this.openid })
 				console.log('band', resultData)
 				if (resultData && resultData.data) {
 					this.bandid = resultData.data.bandid
@@ -465,9 +471,8 @@
 				this.which = ''
 			},
 			async getAnimaList() {
-				const userinfo = storage.getStorage('userinfo') || {}
 				const resultData = await animalListService({
-					openid: userinfo.openid
+					openid: this.openid
 				})
 				if (resultData && resultData.data) {
 					this.animalList = resultData.data
@@ -537,8 +542,7 @@
 		           	 if ((this.SOCKET_INFO.status === 1 && this.SOCKET_INFO.eventname === 'startsuperenergy') || 
 		           	 	 (this.SOCKET_INFO.status === 4 && this.SOCKET_INFO.eventname === 'startsuperenergy')) {
 		           	 	// 触发了神奇能量（当自己被触发神奇能量，其他人被触发神奇能量）
-		           	 	const userinfo = storage.getStorage('userinfo') || {}
-		           	 	if (userinfo.openid != this.SOCKET_INFO.openid) {
+		           	 	if (this.openid != this.SOCKET_INFO.openid) {
 		           	 		amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
 		           	 	}
 		           	 	// amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
@@ -586,8 +590,7 @@
 		    	console.log(energy);
 		    	if (this.ISENDING) return
 		    	this.ISENDING = true
-		    	const userinfo = storage.getStorage('userinfo') || {}
-		    	const resultData = await superCollectService({ openid: userinfo.openid })
+		    	const resultData = await superCollectService({ openid: this.openid })
 		    	// console.log(resultData, resultData.errmsg, 'err')
 		    	if (resultData && resultData.errmsg) return
 		    	this.video.play = true;
@@ -666,8 +669,7 @@
 
 		    },
 		    async getBagsData() {
-		    	const userinfo = storage.getStorage('userinfo') || {}
-		    	const resultData = await bagsListService({ openid: userinfo.openid})
+		    	const resultData = await bagsListService({ openid: this.openid})
 		    	if (resultData && resultData.data) {
 		    		resultData.data.forEach(item => {
 		    			this.bags[item.color] = item.yield
@@ -676,9 +678,8 @@
 		    },
 		   
 		    async requestCollect(key, type, operation, position, major, minor, isNearbyBracelet) {
-		        const userinfo = storage.getStorage('userinfo') || {}
 		        const o = {
-		    		openid: userinfo.openid,
+		    		openid: this.openid,
 		    		color: key,
 		    		operation,
 		    		type,
@@ -698,18 +699,17 @@
 			        		return true 
 			       		case 101:
 			       			this.finish.integral = resultData.data.integral
+			       			 this.$store.dispatch('getIntergral')
 			       			return true 
 			       		case 102:
 			       			this.finish.integral = resultData.data.integral
 			       			this.finish.pet = resultData.data.pet
+			       			 this.$store.dispatch('getIntergral')
 			       			return true 
 			       }
 			   } else {
 			   		return false
-			   		this.ISENDING = false
 			   }
-		        
-			   this.$store.dispatch('getIntergral')
 		    },
 		    async getBagEnergy(color, num) {
 		    	if (!num || this.reset) return // 数量为0时点击无效
@@ -822,8 +822,7 @@
 			},
 		    async getCollect() {
 		    	this.ISENDING = true
-		    	const userinfo = storage.getStorage('userinfo') || {}
-		    	const resultData = await getCollectService({ openid: userinfo.openid })
+		    	const resultData = await getCollectService({ openid: this.openid })
 		    	if (resultData && resultData.data) {
 		    		resultData.data.forEach(item => {
 			    		this.collects[item.position - 1] = item.color

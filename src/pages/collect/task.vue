@@ -12,9 +12,10 @@
 					<div class="task-name">{{item.taskname}}</div>
 					<div class="desc">{{item.taskcontent}}。</div>
 					<div class="reward">
-						<div class="get">奖励:<span class="integral-icon"></span> <span class="num">80</span> </div>
-						<div class="finish">已完成: {{ item.sequence}} / {{ item.schedule}}</div>
+						<div class="get">奖励:<span class="integral-icon"></span> <span class="num">200</span> </div>
+<!-- 						<div class="finish">已完成: {{ item.sequence}} / {{ item.schedule}}</div> -->
 					</div>
+					<div class="get-btn" v-if="item.schedule === 1" @click="$emit('earnRewards', item.taskid)">领取奖励</div>
 				</li>
 			<!-- 	<li class="item">
 					<div class="task-name">宠物任务</div>
@@ -24,15 +25,15 @@
 						<div class="finish">已完成: 2/10</div>
 					</div>
 				</li> -->
-				<li class="item">
+<!-- 				<li class="item" >
 					<div class="task-name">建造任务</div>
 					<div class="desc">任意种植一棵树。</div>
 					<div class="reward">
 						<div class="get">奖励:<span class="integral-icon"></span><span class="num">200 </span> </div>
 	 
 					</div>
-					<div class="get-btn">领取奖励</div>
-				</li>
+					<div class="get-btn" v-if="item.schedule === 1">领取奖励</div>
+				</li> -->
 			</ul>
 			<div class="close-btn" @click="$emit('closePop')"> </div>
 		</div>

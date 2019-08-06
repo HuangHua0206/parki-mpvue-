@@ -1,6 +1,6 @@
 <template>
 	<div class="range-pop-wrap">
-		<div class="mask" ></div>
+	<!-- 	<div class="mask" ></div> -->
 <!-- 		<CommonTop 
 	  		ctxt="搜集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
 	  		:leftNum="9999"
@@ -94,7 +94,7 @@
 					height: 37px;
 					width:269px;
 					margin-left: 22px;
-					margin-top: 5px;
+					margin-top: 8px;
 					margin-bottom: 25px;
 					&.select{
 						.bg("pl2_green_ange@2x");

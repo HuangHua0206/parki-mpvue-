@@ -10,7 +10,9 @@
         <div class="animalCard-eng">{{eng}}</div>
         <div class="animalCard-new" v-if="isnew"></div>
         <div class="animalCard-ok" v-if="isok"></div>
-        <div class="select" v-if="!!selected"></div>
+        <div class="select-wrap" v-if="selected">
+            <div class="select"></div>
+        </div>
     </div>
 </template>
 <script>
@@ -179,14 +181,24 @@
         left: 50%;
         transform: translateX(-50%);
     }
-    .select{
-        position: absolute;
-        left:50%;
-        top:50%;
-        width:93rpx;
-        height:93rpx;
-        .bg('pl2_select@2x');
-        transform: translate(-50%, -50%);
+    .select-wrap{
+         position: absolute;
+         left:0;
+         top:0;
+        height:155px;
+        width:115px;
+        border-radius:8px;
+        background: rgba(0, 0, 0, 0.5);
+        .select{
+            position: absolute;
+            left:50%;
+            top:50%;
+            width:93rpx;
+            height:93rpx;
+            .bg('pl2_select@2x');
+            transform: translate(-50%, -50%);
+        }
     }
+    
 }
 </style>

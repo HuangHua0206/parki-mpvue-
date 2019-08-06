@@ -10,7 +10,7 @@
 	        </div>
 	        <div v-if="share" class="right-num share" ></div>
 	        <div v-else class="right-num" @click="$emit('openRange')">
-	        	查看排名
+	        	排行榜
 	       <!--  	{{ rightNum }} -->
 	        </div>
 	      </div>
@@ -95,6 +95,8 @@
 
 			}
 			.right-num{
+				padding-left:25rpx;
+
 				line-height: 20px;
 				box-sizing: border-box;
 				padding-right: 4px;
@@ -102,8 +104,8 @@
 				.bg('pl2_Ranking@2x');
 				width:72px;
 				height: 22px;
-				text-align:right;
-				color:#fff;
+				text-align:center;
+				color:rgb(255, 173, 1);
 				padding-bottom:5px;
 				&.share{
 					transform:translateY(-9rpx);
@@ -123,10 +125,10 @@
 		height: 21px;
 		background: ;
 		border-radius: 6px;
-		background: url("@{imgOrigin}pl2_tips@2x.png") no-repeat 35px 3px rgba(0, 0, 0, 0.1);
+		background: url("@{imgOrigin}pl2_tips@2x.png") no-repeat 35px 3px rgba(0, 0, 0, 0.5);
 		background-size:12px 15px;
 		color:#fff;
-		font-size:7px;
+		font-size:8px;
 		line-height:21px;
 		text-align:center;
 

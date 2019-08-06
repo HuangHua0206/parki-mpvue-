@@ -121,7 +121,7 @@
 			.bg("petcard background");
 			width:100%;
 	    	height: 100%;
-			overflow-y:auto;
+			// overflow-y:auto;
 			position: absolute;
 			// right:0;
 			// bottom:14px;
@@ -158,6 +158,8 @@
 				top: 38px;
 			}
 			.card-list-wrap {
+				height:500px;
+				overflow-y:auto;
 				display: flex;
 				flex-wrap: wrap;
 				position: absolute;

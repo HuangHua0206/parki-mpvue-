@@ -478,7 +478,7 @@ export default {
 			this.shopList = []
 			this.buildList = []
 			this.myList = []
-			this.imgDown=[]
+			this.imgDown=false
 			this.tend =false
 			this.index= -1 
 			this.tentShow=false
@@ -990,6 +990,7 @@ export default {
 					display: flex;
 					padding-right:40rpx;
 					justify-content: space-between;
+
 					.title-item{
 						width:163rpx;
 						height:44rpx;
@@ -1008,11 +1009,14 @@ export default {
 					}
 				}
 				.list{
-					display: flex;
-					flex-wrap: wrap;
+					// display: flex;
+					// flex-wrap: wrap;
+					// align-items:flex-start;
+					// justify-content:space-between;
 					overflow-y: auto;
 					height: 516rpx;
 					.list-item{
+						float:left;
 						margin-right:18rpx;
 						width:144rpx;
 						height:144rpx;
