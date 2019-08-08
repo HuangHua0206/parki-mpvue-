@@ -119,7 +119,7 @@
 					position:relative;
 					.bg("pl2_congratulation stay@2x");
 					.bg2{
-						animation:getAnimalBg 2s infinite ease;
+						animation:getAnimalBg 2s infinite linear;
 						.bg("pl2_congratulation pl2_spin@2x");
 						position:absolute;
 						width:205px;

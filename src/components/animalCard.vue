@@ -187,7 +187,7 @@
          top:0;
         height:155px;
         width:115px;
-        border-radius:8px;
+        border-radius:14px;
         background: rgba(0, 0, 0, 0.5);
         .select{
             position: absolute;

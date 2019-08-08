@@ -93,7 +93,7 @@
 					.bg("pl2_gray_range@2x");
 					height: 37px;
 					width:269px;
-					margin-left: 22px;
+					margin-left: 24px;
 					margin-top: 8px;
 					margin-bottom: 25px;
 					&.select{

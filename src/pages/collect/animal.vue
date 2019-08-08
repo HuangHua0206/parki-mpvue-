@@ -16,7 +16,11 @@
 				:eng="'战斗力：' + selectedItem.power"
 				:url="'http://parkiland.isxcxbackend1.cn/pl2_'+selectedItem.petname+'.png'"
 			/>
+			
 			<div v-else class="not-select"></div>
+			<div class="attention">
+	       点击宠物卡片更换跟随的宠物，战斗力越高，狩猎怪物越快呢！
+	    </div>
 			<div class="list">
 				<div class="card-list-wrap">
 					<CommonCard
@@ -99,7 +103,25 @@
 			width:100%;
 			height: 100%;
 		}
-		
+		.attention{
+    	position:absolute;
+    	top:33vh;
+    	box-sizing: border-box;
+		width:295px;
+		height: 21px;
+		background: ;
+		border-radius: 6px;
+		background: url("@{cdn}pl2_tips@2x.png") no-repeat 35px 3px rgba(0, 0, 0, 0.5);
+		background-size:12px 15px;
+		color:#fff;
+		font-size:8px;
+		line-height:21px;
+		text-align:center;
+
+		padding-left: 35px;
+		left:50%;
+		transform:translateX(-50%);
+	}
 		.animal-bg{
 			z-index:10;
 			.bg("petcard background");
@@ -142,11 +164,11 @@
 				top: 38px;
 			}
 			.list{
-				height:900px;
+				height:60vh;
 				overflow-y:auto;
 					position: absolute;
 				left: 14px;
-				top: 229px;
+				bottom: 20px;
 			}
 			.card-list-wrap {
 

@@ -71,7 +71,7 @@
 				</div>
 				<div class="list">
 					<div class="list-item" v-for="(item, $index) in shopList" :key="$index" @click.stop="openBuyPop(item)">
-						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+item.prdname+'.png'"  />
+						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_store_'+item.prdname+'.png'"  />
 						<div class="cost">
 							<div class="icon"></div>
 							<div class="money">{{item.cost}}</div>
@@ -97,7 +97,7 @@
 						@touchstart.stop="e => tStart(e, item)"
 			            @touchmove.stop="e => tMove(e, item)"
 			            @touchend.stop="e => tEnd(e, item)"> 	
-						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+item.prdname+'.png'"  />
+						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_store_'+item.prdname+'.png'"  />
 						<div class="num">{{item.amount}}</div>
 						<img class="energy-img" :src="'http://parkiland.isxcxbackend1.cn/pl2_ball_'+item.color+'.png'" />
 			        </div>
@@ -109,7 +109,7 @@
 			<div class="buy-wrap">
 				<div class="close" @click="buyOpen = false"></div>
 				<div class="content">
-					<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+buyContent.prdname+'.png'" />
+					<img :src="'http://parkiland.isxcxbackend1.cn/pl2_store_'+buyContent.prdname+'.png'" />
 					<div class="name">{{buyContent.prdname}}</div>
 					<div class="money">
 						<div class="icon"></div>
@@ -226,15 +226,15 @@ export default {
 			})
 		},
 		fromateTime(remaining) {
-			let m = parseInt((remaining / 60)).toString()
-			if (m.length < 2) {
-				m = '0' + m
-			}
-			let s = (remaining % 60).toString()
-			if (s.length < 2) {
-				s = '0' + s
-			}
-			return m + ' : ' +s
+			let h = parseInt((remaining / 60)).toString()
+			// if (m.length < 2) {
+			// 	m = '0' + m
+			// }
+			let m = (remaining % 60).toString()
+			// if (s.length < 2) {
+			// 	s = '0' + s
+			// }
+			return h + 'h' +m + 'min'
 		},
 		listenSocket() {
 			 const userinfo = storage.getStorage('userinfo') || {}
@@ -293,7 +293,13 @@ export default {
 		},
 		cancelBuild() {
 			this.index = -1
-			this.isBuild = false
+		 	this.tentShow = false
+		 	this.imgDown = false
+		 	this.tend = false
+		 	 this.isBuild = false
+			// this.index = -1
+			// this.tent = false
+			// this.isBuild = false
 		},
 		async deleteBuild() {
 			const userinfo = storage.getStorage('userinfo') || {}
@@ -303,6 +309,7 @@ export default {
 	        })
 	        this.isBuild = false
 	        this.buildList = this.buildList.filter(item => item.location !==  this.deleteIndex)
+	        this.deleteIndex = -1
 	        // this.getData()
 		},
 		hasbuildurl(_index) {
@@ -540,7 +547,7 @@ console.log(777)
 	onHide() {
 		console.log('onHideonHideonHide')
 		this.listenColseSocket()
-		this.pageReset()
+		// this.pageReset()
 	},
 	onUnload() {
 		this.pageReset()
@@ -914,16 +921,17 @@ console.log(777)
 					position:absolute;
 					left:50%;
 					bottom:5px;
+					color: #fff;
 					transform: translateX(-50%);
-					border: 3rpx solid #000;
+					//border: 3rpx solid #000;
 					border-radius:6px;
-					width:25px;
-					height:12rpx;
+					width:45px;
+					height:20rpx;
 					text-align:center;
 					font-size:12rpx;
-					line-height:12rpx;
+					line-height:20rpx;
 				//	z-index:100;
-					background:#fff;
+					background:rgba(0, 0, 0, 0.5);
 				}
 				.energy{
 					z-index:10;
