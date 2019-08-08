@@ -228,15 +228,9 @@ export default {
 			})
 		},
 		fromateTime(remaining) {
-			let h = parseInt((remaining / 60)).toString()
-			// if (m.length < 2) {
-			// 	m = '0' + m
-			// }
-			let m = (remaining % 60).toString()
-			// if (s.length < 2) {
-			// 	s = '0' + s
-			// }
-			return h + 'h' +m + 'min'
+			const h = parseInt((remaining / 60)).toString()
+			const m = (remaining % 60).toString()
+			return h + 'h' + m + 'min'
 		},
 		listenSocket() {
 		      this.socketTask = getApp().globalData.socketTask;
