@@ -405,8 +405,6 @@
 		           	 		this.which = 'earth'
 		           	 	}
 		           	 	this.FIRST_EARTH = false
-		           	 //	this.$tip.toast('地震来了，不能收集绿色能量啦~')
-		           	 	// beaconNearby = beaconNearby.filter(item => item.major !== 103)
 		           	 }
 		           	 if ((now.status === 1 && now.eventname === 'startsuperenergy') || 
 		           	 	 (now.status === 4 && now.eventname === 'startsuperenergy')) {
@@ -417,15 +415,8 @@
 		           	 		console.log('其他玩家被触发超级能量')
 		           	 		this.player = now.player
 		           	 		// // 其他玩家被触发超级能量
-		           	 		// amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
 		           	 	} else {
 		           	 		console.log('自己手环被触发超级能量')
-		           	 		// 自己手环被触发超级能量
-		           	 		// if (now.remaining) {
-		           	 		// 	this.remain = now.remaining
-		           	 		// }
-		           	 		// if (now.noticecountedown)
-		           	 		// this.integral = now.integral
 		           	 		this.which= 'my-super' // 弹窗遮罩界面
 		           	 	}
 		           	 }
@@ -503,12 +494,7 @@
 					this.collects[index] = ''
 					this.IS_SENDING = false
 				},200);
-				
-				// setTimeout(() => { 
-					
-					
-				// },500);
-				
+			
 				this.bags[`bagShow${index+1}`] = false
 				this.getBagsData()
 			},
@@ -935,22 +921,6 @@
 	from{opacity: 1;top:50%;}
 	to{opacity: 0;top:-30%;}
 }
-// .for(@list){  
-//     .loop(@index:1) when ( @index<=length(@list) ){  
-//         @item:extract(@list, @index);  
-//         .each(@item);//这里的each相当于一个抽象方法，谁调用for谁来实现  
-//         .loop( @index + 1 );  
-//     }  
-//     .loop();  
-// }
-// .loop(@i) when (@i < length(@bgcardList)+1){    
-// 	.backgroundcard(extract(@bgcardList, @i),extract(@bgcardList, @i));    
-// 	.loop(@i+1);
-// }.loop(1);
-// .ml-loop(@max,@i:1) when (length(@max)>=@i){
-//     @{i}% { background-image: url("@{cdn}star@{i}.gif")); }
-//     .ml-loop(@max,(@i+1));
-// }
 
 @keyframes starsAnimation {
 	// .ml-loop(60);

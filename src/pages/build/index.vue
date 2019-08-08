@@ -186,6 +186,10 @@ export default {
 			const arr = this.buildList.map(item => item.location)
 		//	console.log(arr)
 			return arr
+		},
+		openid() {
+			const userinfo = storage.getStorage('userinfo') || {}
+			return userinfo.openid
 		}
 		
 	},
@@ -210,10 +214,8 @@ export default {
 			// })
 		},
 		async collectEnergy(build) {
-			console.log('uihuijhkjhk')
-			const userinfo = storage.getStorage('userinfo') || {}
 			const resultData = await collectBallsService({
-				openid: userinfo.openid,
+				openid: this.openid,
 				uniqueid: build.uniqueid
 			})
 			if (resultData && resultData.errmsg) return
@@ -237,13 +239,12 @@ export default {
 			return h + 'h' +m + 'min'
 		},
 		listenSocket() {
-			 const userinfo = storage.getStorage('userinfo') || {}
 		      this.socketTask = getApp().globalData.socketTask;
 		      if (!this.socketTask || this.socketTask.readyState !=1){
 		        console.info("重新連接")
 		        this.socketTask = wx.connectSocket({
 		        	//url: 'wss://www.isxcxbackend1.cn/websocket'
-		         url: 'wss://www.j4ckma.cn/parki/ws?openid='+userinfo.openid
+		         url: 'wss://www.j4ckma.cn/parki/ws?openid='+this.openid
 		        })
 		        getApp().globalData.socketTask = this.socketTask;
 		      }
@@ -302,9 +303,8 @@ export default {
 			// this.isBuild = false
 		},
 		async deleteBuild() {
-			const userinfo = storage.getStorage('userinfo') || {}
 	        const resultData = await removeService({
-	        	openid: userinfo.openid,
+	        	openid: this.openid,
 	        	uniqueid: this.buildList.filter(item => item.location ===  this.deleteIndex)[0].uniqueid
 	        })
 	        this.isBuild = false
@@ -324,9 +324,7 @@ export default {
 		},
 
 		async getMy(type) {
-			
-			const userinfo = storage.getStorage('userinfo') || {}
-			const resultData = await myListService({ type, openid: userinfo.openid })
+			const resultData = await myListService({ type, openid: this.openid })
 			if (resultData && resultData.data) {
 				this.myList = resultData.data
 			} else {
@@ -334,8 +332,7 @@ export default {
 			}
 		},
 		async getData(from) {
-			const userinfo = storage.getStorage('userinfo') || {}
-			const resultData = await buildListService({openid: userinfo.openid})
+			const resultData = await buildListService({openid: this.openid})
 			if (resultData && resultData.data) {
 				const list = []
 				let _buildList = JSON.parse(JSON.stringify(this.buildList))
@@ -435,9 +432,8 @@ console.log(777)
 			console.log(this.buyNum)
 		},
 		async buyBuild() {
-			const userinfo = storage.getStorage('userinfo') || {}
 			const resultData = await buyService({
-				openid: userinfo.openid,
+				openid: this.openid,
 				prdid: this.buyContent.prdid,
 				prdname: this.buyContent.prdname,
 				amount: this.buyNum
@@ -453,9 +449,8 @@ console.log(777)
 		},
 		async confrimBuild(item) {
 			console.log(item)
-			const userinfo = storage.getStorage('userinfo') || {}
 			const resultData = await buildService({
-				openid: userinfo.openid,
+				openid: this.openid,
 				prdid: this.buildContent.prdid,
 				prdname: this.buildContent.prdname,
 				location: this.index
