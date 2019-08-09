@@ -69,3 +69,23 @@ export function collectBallsService(data) {
 		data
 	})
 }
+
+// 好友列表接口
+export function friendListService(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/parki/friends',
+		method: 'post',
+		data
+	})
+}
+
+// 赠送能量
+export function giveEnergyService(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/parki/gift',
+		method: 'post',
+		data
+	})
+}

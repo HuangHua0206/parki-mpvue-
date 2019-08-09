@@ -1,6 +1,6 @@
 <template>
   <div class="energy-pop-wrap" >
-  	<div class="mask" ></div>
+<!--   	<div class="mask" ></div> -->
   	<div class="energy-wrap">
 		<CommonDescription 
 			ctxtL="注意：您绑定的手环变成了神奇能量"

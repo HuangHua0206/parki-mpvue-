@@ -1,6 +1,6 @@
 <template>
   <div class="energy-pop-wrap" @click="$emit('closePop')">
-  	<div class="mask" ></div>
+<!--   	<div class="mask" ></div> -->
   	<div class="energy-wrap">
 		<CommonDescription 
 			:ctxtL="'注意：玩家'+player+'的'"

@@ -1,6 +1,6 @@
 <template>
 	<div class="email-pop-wrap">
-		<div class="mask" @click="$emit('closePop')"></div>
+<!-- 		<div class="mask" @click="$emit('closePop')"></div> -->
 		<div class="email-bg">
 			<div class="logo"></div>
 			<ul class="email-list">

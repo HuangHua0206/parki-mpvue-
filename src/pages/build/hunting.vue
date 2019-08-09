@@ -1,6 +1,6 @@
 <template>
-	<div class="hunting-list-wrap" @click="$emit('closePop')">
-		<div class="mask" ></div>
+	<div class="hunting-list-wrap"  >
+	 
 		<div class="hunting">
 			<div class="logo"></div>
 			<div class="info">

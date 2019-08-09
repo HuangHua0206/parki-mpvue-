@@ -8,7 +8,7 @@
 	        <div class="left-num">
 	        	{{ integral }}
 	        </div>
-	        <div v-if="share" class="right-num share" ></div>
+	        <div v-if="share" class="right-num share" @click="$emit('rightFunc')" ></div>
 	        <div v-else class="right-num" @click="$emit('openRange')">
 	        	排行榜
 	       <!--  	{{ rightNum }} -->

@@ -1,6 +1,6 @@
 <template>
 	<div class="animal-pop-wrap">
-		<div class="mask" @click="$emit('closePop')"></div>
+<!-- 		<div class="mask" @click="$emit('closePop')"></div> -->
 		<div class="animal-bg">
 			<div class="logo"></div>
 			<div class="text" v-if="selectedItem">

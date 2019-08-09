@@ -1,5 +1,6 @@
 <template>
 	<div class="collect-wrap">
+		<div class="mask" style="z-index:80" @click="which=''" v-if="!!which && which !== 'success' && which !== 'animal'"></div> 
 		<div class="collect-bg"></div>
 		<div class="cloud"></div>
 		<div class="stars"></div>

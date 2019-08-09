@@ -1,34 +1,46 @@
 <template>
-	<div class="friend-list-wrap" @click="$emit('closePop')">
-		<div class="mask" ></div>
+	<div class="friend-list-wrap"  >
+	 
 		<div class="hunting">
 			<div class="logo"></div>
 			<div class="info">
 				<div class="left-txt">每天都可以给在线的好友赠送能量。</div>
 				<div class="right-txt">
 					<span>剩余次数：</span>
-					<span class="num"> 3 </span>
+					<span class="num"> {{left}} </span>
 				</div>
 			</div>
 			<div class="desc">每天0:00刷新次数</div>
 			<ul class="friend-list">
-	  			<li class="item" v-for="(item, $index) in 30" :key="$index">
+	  			<li class="item" v-for="(item, $index) in friendList" :key="$index">
 	  				<div class="avatar">
-				        <img src="http://img5.imgtn.bdimg.com/it/u=3300305952,1328708913&fm=26&gp=0.jpg" />
+				        <img :src="item.avatarurl" />
 				     </div>
 				     <div class="content">
 				     	<div class="user-info">
-				     		<div class="name">HEAVEN</div>
+				     		<div class="name">{{item.nickname}}</div>
 				     		<div class="money">
 								<div class="icon"></div>
-								<div class="cost">+30</div>
+								<div class="cost">+{{item.integral}}</div>
 							</div>
 				     	</div>
 				     	<div class="energy">
-				     		<div class="ball get"></div>
-				     		<div class="ball orange"></div>
-				     		<div class="ball green"></div>
-				     		<div class="ball yellow"></div>
+				     		<div class="ball blue" @click="$emit('giveEnergy', {
+				     			color: '3',
+				     			...item
+				     		})"></div>
+				     		<div class="ball orange" @click="$emit('giveEnergy', {
+				     			color: '1',
+				     			...item
+				     		})"></div>
+				     		<div class="ball green" @click="$emit('giveEnergy', {
+				     			color: '4',
+				     			...item
+				     		})"></div>
+				     		<div class="ball yellow" @click="$emit('giveEnergy', {
+				     			color: '2',
+				     			...item
+				     		})"></div>
 				     	</div>
 				     </div>
 	  			</li>
@@ -38,6 +50,18 @@
 		</div>
 	</div>
 </template>
+<script>
+	export default{
+		props: {
+			friendList: {
+				type: Array
+			},
+			left: {
+				type: Number
+			}
+		}
+	} 
+</script>
 <style type="text/css" lang="less">
 	@import '~less/mixin.less';
 	.friend-list-wrap{
@@ -102,14 +126,15 @@
 					width:269px;
 					margin-left: 22px;
 					margin-bottom: 41rpx;
+					margin-top:10rpx;
 					&.select{
 						.bg("pl2_green_ange@2x");
 					}
 					.avatar{
 				 		position: absolute;
 						left:-22px;
-						top:50%;
-						transform: translateY(-50%);
+						top:-1rpx;
+						// transform: translateY(-50%);
 				    	height: 87rpx;
 				    	width: 87rpx;
 				    	img{

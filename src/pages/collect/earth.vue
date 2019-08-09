@@ -1,6 +1,6 @@
 <template>
   <div class="earth-wrap" @click="$emit('closePop')">
-  	<div class="mask" ></div>
+<!--   	<div class="mask" ></div> -->
   	<div class="earth-wrap">
 		<div class="earth-button">确认</div>  
 	</div>

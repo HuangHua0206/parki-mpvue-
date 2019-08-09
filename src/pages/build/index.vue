@@ -1,9 +1,11 @@
 <template>
 	<div class="build-wrap">
 		<div class="cloud"></div>
+		<div class="mask" style="z-index:60" @click="which=''" v-if="!!which && which !== 'store' && which !== 'my'"></div> 
 		<CommonTop 
 	  		ctxt="搜集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
 	  		:leftNum="9999"
+	  		@rightFunc="which='share'"
 	  		share>
   		</CommonTop>
   		<div @click="goCollect" class="button collect-energy" :class="{'fade-left-in': fadeIn}"  ></div>
@@ -133,7 +135,11 @@
 			<Hunting   @closePop="which = ''"  />
 		</div>
 		<div class="pop-up-right" :class="{fadeUp: which === 'friend'}"> 
-			<Friend   @closePop="which = ''"  />
+			<Friend   @closePop="which = ''"  :friendList="friendList" :left="left" @giveEnergy="giveEnergy"/>
+		</div>
+		<div class="share-pop" v-if="which==='share'">
+			<div class="close" @click="which=''"></div>
+			<div class="btn">确认分享</div>
 		</div>
 		<div style="opacity:0;" class="opacity0-tent"></div>
 	</div>
@@ -150,11 +156,15 @@ import {
 	removeService, 
 	buildListService, 
 	buyService,
-	collectBallsService
+	collectBallsService,
+	friendListService,
+	giveEnergyService
 	 } from 'services/build'
 export default {
 	data() {
 		return {
+			friendList: [],
+			left: 0,
 			positions: [],
 			shopList: [],
 			buildList: [],
@@ -204,14 +214,22 @@ export default {
 		openHunting() {
 			this.which = 'hunting'
 		},
-		openFriend() {
-			console.log(888)
+		async openFriend() {
+			const resultData = await friendListService({ openid: this.openid })
+			if (resultData && resultData.errmsg) return
+			this.friendList = resultData.friends
+			this.left = resultData.left
 			this.which = 'friend'
-			// this.socketTask.send({
-			// 	data: JSON.stringify({
-			// 		test: '测试一下发送websocket内容'
-			// 	})
-			// })
+		},
+		async giveEnergy(param) {
+			const resultData = await friendListService({ 
+				openid: this.openid, 
+				color: param.color,
+				recipient: param.recipient
+			})
+			if (resultData && resultData.errmsg) return
+			this.left = resultData.left	
+			this.$tp.toast('您已赠送成功')
 		},
 		async collectEnergy(build) {
 			const resultData = await collectBallsService({
@@ -372,17 +390,12 @@ export default {
 	      return Math.abs(Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2)));
 	    },
 		tStart(e, item) {
-			console.log(888)
-			console.log(this.tend, this.tentShow, this.imgDown)
 			if (this.tentShow || this.imgDown) return
-console.log(777)
 			this.buildContent = item
-			this.isBuild = true
-			console.log(666, e, item)
 		},
 		tMove(e, item) {
 			if (this.tentShow || this.imgDown) return
-
+			this.isBuild = true
 			this.which = ''
 			let minVal = Infinity;
 	        let _index = -1
@@ -405,8 +418,6 @@ console.log(777)
 		},
 		tEnd(e) {
 			this.tend = true
-			// this.isBuild = false
-			console.log(10000, this.index)
 		},
 		openBuyPop(item) {
 			this.buyContent = item
@@ -421,9 +432,7 @@ console.log(777)
 			this.buyNum -= 1
 		},
 		addNum() {
-			console.log(777)
 			this.buyNum += 1
-			console.log(this.buyNum)
 		},
 		async buyBuild() {
 			const resultData = await buyService({
@@ -1190,6 +1199,37 @@ console.log(777)
 			width:100%;
 			&.fadeUp{
 				right:0;
+			}
+		}
+		.share-pop{
+			z-index:65;
+			position: absolute;
+			left:50%;
+			top:50%;
+			transform: translate(-50%, -50%);
+			.bg('pl2_share_bg');
+			width: 566rpx;
+			height: 866rpx;
+			.close{
+				position: absolute;
+				height: 58rpx;
+				width:58rpx;
+				.bg("pl2_no@2x");
+				position: absolute;
+				right:-10px;
+				top:-10px;
+			}
+			.btn{
+				width: 170rpx;
+				height:89rpx;
+				.bg('pl2_share_btn');
+				left:50%;
+				position: absolute;
+				bottom:79rpx;
+				transform: translateX(-50%);
+				font-size:24rpx;
+				line-height: 80rpx;
+				text-align:center;
 			}
 		}
 	}
