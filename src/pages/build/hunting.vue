@@ -11,9 +11,9 @@
 				</div>
 			</div>
 			<div class="desc">每天0:00刷新次数</div>
-			<div class="card blue"></div>
-			<div class="card green"></div>
-			<div class="card red"></div>
+			<div class="card blue" @click="$emit('selectDragon', 'blue')"></div>
+			<div class="card green" @click="$emit('selectDragon', 'green')"></div>
+			<div class="card red" @click="$emit('selectDragon', 'red')"></div>
 			<div class="close-btn" @click="$emit('closePop')"> </div>
 		</div>
 	</div>
@@ -26,7 +26,7 @@
 		top:0;
 		width: 100%;
 		height: 100%;
-		z-index:65;
+		z-index:81;
 		.hunting{
 			.bg('pl2_hunting_bg');
 			width:614rpx;

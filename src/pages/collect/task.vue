@@ -17,23 +17,6 @@
 					</div>
 					<div class="get-btn" v-if="item.schedule === 1" @click="$emit('earnRewards', item.taskid)">领取奖励</div>
 				</li>
-			<!-- 	<li class="item">
-					<div class="task-name">宠物任务</div>
-					<div class="desc">获得一个4级宠物。</div>
-					<div class="reward">
-						<div class="get">奖励:<span class="integral-icon"> </span><span class="num">80</span> </div>
-						<div class="finish">已完成: 2/10</div>
-					</div>
-				</li> -->
-<!-- 				<li class="item" >
-					<div class="task-name">建造任务</div>
-					<div class="desc">任意种植一棵树。</div>
-					<div class="reward">
-						<div class="get">奖励:<span class="integral-icon"></span><span class="num">200 </span> </div>
-	 
-					</div>
-					<div class="get-btn" v-if="item.schedule === 1">领取奖励</div>
-				</li> -->
 			</ul>
 			<div class="close-btn" @click="$emit('closePop')"> </div>
 		</div>
@@ -119,8 +102,8 @@
 		 			 	color:#010101;
 		 			 }
 		 			 .reward{
-		 			 	margin-top: 21px;
-		 			 	padding-bottom:5px;
+		 			 	margin-top: 18px;
+		 	 
 		 			 	display: flex;
 		 			 	justify-content: space-between;
 		 			 	.get, .finish{
@@ -137,9 +120,9 @@
 			 					height: 17px;
 			 					position: absolute;
 								left:42px;
-								top:-2px;
+								top:0;
 			 					// .bg("pl2_energy_2@2x");
-			 					background: url("@{cdn}pl2_energy_2@2x.png")  center 2px no-repeat;
+			 					background: url("@{cdn}pl2_energy_2@2x.png")  center top no-repeat;
 	    						background-size: 100% 100%;
 			 					// display: inline-block;
 			 					// background-origin: 0 0;

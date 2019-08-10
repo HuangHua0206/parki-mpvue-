@@ -70,7 +70,7 @@
 		top:0;
 		width: 100%;
 		height: 100%;
-		z-index:65;
+		z-index:81;
 		.hunting{
 			.bg('pl2_hunting_bg');
 			width:607rpx;

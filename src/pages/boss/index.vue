@@ -1,13 +1,14 @@
 <template>
   <div class="beat-boss-wrap">
+  	<div class="mask" style="z-index:80" @click="which=''" v-if="!!which"></div> 
   	<CommonTop 
-  		:avatar="avatar" 
   		ctxt="点击屏幕攻击怪兽，一起保护PRAKINLAND"
-  		:leftNum="9999"
-  		:rightNum="9999">
+  		@openRange="getRangeList"
+  		>
   	</CommonTop>
 <!--     <div class="main"> -->
       <div class="ellipse"></div>
+      <div class="boss"></div>
       <div class="collect-btn" @click="goCollect"></div>
       <div class="blood">
         <div class="blood-avatar"></div>
@@ -25,40 +26,52 @@
     		</div >
     		<div class="damage">总伤害 DAMAGE: 555</div>
     	</div>
+    	
     	<div class="right-card">
-    		<img :src="avatar" />
-    		<div class="top">
-    			<div class="left">
-    				<div class="rand green"></div>
-    				<div class="rand orange"></div>
-    				<div class="rand blue"></div>
-    			</div>
-    			<div class="content">小鸡</div>
-    		</div>
-    		<div class="bottom">
-    			<div class="left">LV1</div>
-    			<div class="content">攻击力15</div>
-    		</div>
+    		<image class="img" :src="'http://parkiland.isxcxbackend1.cn/pl2_'+'小鸡'+'.png'" />
+    		<div class="level">1级</div>
+    		<div class="energy">战斗力：8</div>
     	</div>
     </div>
+    <div class="pop-up-bottom" :class="{fadeUp: which === 'range'}">
+			<Range   @closePop="close" :rangeList="rangeList"  />
+		</div>
   </div>
 </template>
 <script>
-// Use Vuex
-const imgOrigin = 'http://parkiland.isxcxbackend1.cn/'
-const DEFAULT_AVATER = imgOrigin + 'pl2_head@2x.png'
 import CommonTop from 'components/top'
+import { rangeService } from 'services/collect'
+import Range from 'pages/collect/range'
 export default {
-	data () {
-	  return {
-	    avatar: 'http://img5.imgtn.bdimg.com/it/u=3300305952,1328708913&fm=26&gp=0.jpg'
-	  }
+	data() {
+		return {
+			rangeList: [],
+			which: ''
+		}
 	},
-	components: { CommonTop },
+	components: { CommonTop, Range },
 	methods: {
+		close() {
+			this.which = ''
+		},
 		goCollect() {
 	    	wx.redirectTo({ url: '/pages/collect/main' });
 		},
+		async getRangeList() {
+			const resultData = await rangeService()
+			if (resultData && resultData.rank) {
+				this.rangeList = resultData.rank
+				this.which = 'range'
+			}
+
+		}
+	},
+	onShow() {
+		console.log('onShow')
+		this.$store.dispatch('getIntergral')
+		//this.getData('created')
+		// this.fadeIn = true
+		//this.listenSocket() // 连接socket
 	}
 }
 </script>
@@ -90,8 +103,17 @@ export default {
 			left:70px;
 			// transform:translateX(-50%);
 
-			bottom:168px;
-			.bg('pl2_shadow@2x')
+			top:70vh;
+			.bg('pl2_shadow@2x');
+		}
+		.boss{
+			.bg('pl2_boss');
+			width:71vw;
+			height:41vh;
+			position:absolute;
+			top:31vh;
+			left:50%;
+			transform:translateX(-50%);
 		}
 		.collect-btn{
 			position: absolute;
@@ -169,7 +191,7 @@ export default {
 					background-size: 15px 15px;
 					color:rgb(255, 186, 0);
 					padding-left: 18px;
-					line-height: 15px;
+					line-height: 18px;
 				}
 
 			}
@@ -186,73 +208,43 @@ export default {
 			}
 		}
 		.right-card{
-			box-sizing: border-box;
+ 
 			width:63px;
 			height: 85px;
-			border:1px solid #000;
+ 
 			border-radius: 6px;
 			padding:1px;
 			position: relative;
-			img{
+			.img{
 				width:100%;
-				height: 100%;
+				height:100%;
+
 			}
-			.top, .bottom{
-				position: absolute;
-				width: 59px;
-				background: rgb(8, 132, 192);
-				height: 12px;
-				display: flex;
-				padding: 0 3px;
-				box-sizing: border-box;
-				justify-content: space-between;
+			.level{
+				position:absolute;
+				left:10rpx;
+				bottom:13rpx;
+				color:#fff;
+				font-size:8px;
 			}
-			.top{
-				top:1px;
-				border-top-left-radius: 6px;
-				border-top-right-radius: 6px;
-				.content{
-					font-size:8px;
-					color:#fff;
-					line-height:12px;
-				}
-				.left{
-					display: flex;
-					align-items: center;
-					.rand{
-						width:6px;
-						height: 6px;
-						border-radius:50%;
-						border: 1px solid #000;
-						&.green{
-							.bg('pl2_ball_green@2x');
-						}
-						&.orange{
-							.bg('pl2_ball_orange@2x');
-						}
-						&.blue{
-							.bg('pl2_ball_blue@2x');
-						}
-					}
-				}
+			.energy{
+				position:absolute;
+				right:10rpx;
+				bottom:15rpx;
+				color:#fff;
+				font-size:5px;
 			}
-			.bottom{ 
-				padding: 0 3px;
-				bottom:1px;
-				.left{
-					line-height:12px;
-					font-size: 10px;
-					color:#fff;
-				}
-				.content{
-					font-size:6px;
-					color:#fff;
-					background: url("@{cdn}pl2_attack@2x.png") no-repeat 0 center;
-					background-size: 6px 6px;
-					padding-left: 7px;
-					line-height:12px;
-				}
-			}
+		}
+	}
+	.pop-up-bottom{
+		transition: 0.5s;
+		position: absolute;
+		bottom:-100%;
+		left:0;
+		height: 100%;
+		width:100%;
+		&.fadeUp{
+			bottom:0;
 		}
 	}
 }

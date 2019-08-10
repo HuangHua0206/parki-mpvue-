@@ -1,0 +1,79 @@
+<template>
+	<div class="hunting-result" :class="{
+		'success': dragonResult === 'success',
+		'fail': dragonResult === 'fail'
+	}">
+		<div class="money" v-if="dragonResult==='success'">
+			<div class="icon"></div>
+			<div class="cost">+30</div>
+		</div>
+		<div class="btn">确认</div>
+	</div>
+</template>
+<script>
+	export default{
+		created() {
+			console.log(this.dragonResult, 'iii')
+		},
+		props: {
+			dragonResult: {
+				type: String
+			}
+		}
+	}
+</script>
+<style lang="less">
+@import '~less/mixin.less';
+	.hunting-result{
+		z-index:102;
+		position: absolute;
+		width: 548rpx;
+		height: 838rpx;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%,-50%);
+		
+		&.success{
+			.bg('pl2_Success@2x');	
+		}
+		&.fail{
+			.bg('pl2_Failure@2x');
+		}
+		.money{
+			position:absolute;
+			top:347rpx;
+			left:50%;
+			transform:translateX(-50%);
+			text-align: right;
+			display:flex;
+			margin-bottom: 10px;
+			justify-content:flex-end;
+		//	margin-top:15px;
+			.icon{
+				.bg("pl2_energy");
+				width:22rpx;
+				height:44rpx;
+				margin-right: 8px;
+			}
+			.cost{
+				height:20px;
+				// line-height: 34rpx;
+				color: #ffad01;
+				line-height: 56rpx;
+				font-size:48rpx;
+			}
+		}
+		.btn{
+			position:absolute;
+			bottom:70rpx;
+			left:50%;
+			transform:translateX(-50%);
+			font-size:24rpx;
+			text-align:center;
+			line-height:80rpx;
+			width:170rpx;
+			height:89rpx;
+			.bg('pl2_set-sure@2x');
+		}
+	}
+</style>

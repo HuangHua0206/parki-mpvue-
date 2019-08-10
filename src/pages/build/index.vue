@@ -1,10 +1,9 @@
 <template>
 	<div class="build-wrap">
 		<div class="cloud"></div>
-		<div class="mask" style="z-index:60" @click="which=''" v-if="!!which && which !== 'store' && which !== 'my'"></div> 
+		<div class="mask" style="z-index:80" @click="which=''" v-if="!!which && which !== 'store' && which !== 'my' || !!dragonResult"></div> 
 		<CommonTop 
 	  		ctxt="搜集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
-	  		:leftNum="9999"
 	  		@rightFunc="which='share'"
 	  		share>
   		</CommonTop>
@@ -132,7 +131,7 @@
 		</div>
 		<!-- 弹窗部分 -->
 		<div class="pop-up-right" :class="{fadeUp: which === 'hunting'}"> 
-			<Hunting   @closePop="which = ''"  />
+			<Hunting   @closePop="which = ''"  @selectDragon="type => dragon = type"/>
 		</div>
 		<div class="pop-up-right" :class="{fadeUp: which === 'friend'}"> 
 			<Friend   @closePop="which = ''"  :friendList="friendList" :left="left" @giveEnergy="giveEnergy"/>
@@ -142,6 +141,12 @@
 			<div class="btn">确认分享</div>
 		</div>
 		<div style="opacity:0;" class="opacity0-tent"></div>
+		<div class="pop-up-right" :class="{fadeUp: !!dragon}"> 
+			<DragonBoss :dragonType="dragon"/>
+		</div>
+		<div class="pop-up-fadein" :class="{fadeUp: !!dragonResult}">
+			<HuntingResult  :dragonResult="dragonResult"/>
+		</div>
 	</div>
 </template>
 <script>
@@ -149,6 +154,8 @@ import CommonTop from 'components/top'
 import storage from 'utils/storage'
 import Hunting from './hunting'
 import Friend from './friend'
+import Dragon from './dragon'
+import Result from './result'
 import { 
 	shopListService, 
 	myListService, 
@@ -163,6 +170,8 @@ import {
 export default {
 	data() {
 		return {
+			dragonResult: '',
+			dragon: '',
 			friendList: [],
 			left: 0,
 			positions: [],
@@ -190,7 +199,7 @@ export default {
 			deleteIndex: -1
 		}
 	},
-	components: { CommonTop, Hunting, Friend },
+	components: { CommonTop, Hunting, Friend, DragonBoss: Dragon, HuntingResult: Result },
 	computed: {
 		hasBuild() {
 			const arr = this.buildList.map(item => item.location)
@@ -391,6 +400,11 @@ export default {
 	    },
 		tStart(e, item) {
 			if (this.tentShow || this.imgDown) return
+			this.index = -1
+		 	this.tentShow = false
+		 	this.imgDown = false
+		 	this.tend = false
+		 	this.isBuild = false
 			this.buildContent = item
 		},
 		tMove(e, item) {
@@ -1199,6 +1213,17 @@ export default {
 			width:100%;
 			&.fadeUp{
 				right:0;
+			}
+		}
+		.pop-up-fadein{
+			display:none;
+			position: absolute;
+			top:0;
+			left:0;
+			height: 100%;
+			width:100%;
+			&.fadeUp{
+				display:block;
 			}
 		}
 		.share-pop{
