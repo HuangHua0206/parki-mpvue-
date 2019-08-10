@@ -69,12 +69,12 @@
 		.rang-bg{
 				z-index:55;
 			.bg("pl2_list@2x");
-			width:347px;
-			height: 506px;
+			width:694rpx;
+			height: 1152rpx;
 			position: absolute;
-			top: 77px;
+			top: 50%;
 			left:50%;
-			transform: translateX(-50%);
+			transform: translate(-50%, -50%);
 			box-sizing: border-box;
 			padding:94px 26px 0;
 			.close-btn{

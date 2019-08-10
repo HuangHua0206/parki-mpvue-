@@ -80,7 +80,8 @@
 			height: 547px;
 			position: absolute;
 			right:0;
-			bottom:14px;
+			top:50%;
+			transform:translateY(-50%);
 			// padding: 0 25px;
 			.logo{
  

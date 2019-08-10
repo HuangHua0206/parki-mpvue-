@@ -77,7 +77,8 @@
 			height:1059rpx;
 			position: absolute;
 			right:0;
-			bottom:27px;
+			top:50%;
+			transform:translateY(-50%);
 			padding:41rpx 25rpx 0 64rpx;
 			.logo{
 				width:110rpx;
