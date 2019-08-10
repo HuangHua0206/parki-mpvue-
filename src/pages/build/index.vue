@@ -1227,7 +1227,7 @@ export default {
 			}
 		}
 		.share-pop{
-			z-index:65;
+			z-index:81;
 			position: absolute;
 			left:50%;
 			top:50%;
