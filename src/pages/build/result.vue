@@ -5,7 +5,7 @@
 	}">
 		<div class="money" v-if="dragonResult==='success'">
 			<div class="icon"></div>
-			<div class="cost">+30</div>
+			<div class="cost">+{{huntingIntegral}}</div>
 		</div>
 		<div class="btn">确认</div>
 	</div>
@@ -18,6 +18,9 @@
 		props: {
 			dragonResult: {
 				type: String
+			},
+			huntingIntegral: {
+				type: Number
 			}
 		}
 	}

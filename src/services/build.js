@@ -99,3 +99,13 @@ export function beforeHuntingService(data) {
 		data
 	})
 }
+
+// 狩猎完成
+export function finishHuntingService(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/parki/monster/reward',
+		method: 'post',
+		data
+	})
+}

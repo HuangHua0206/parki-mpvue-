@@ -141,7 +141,7 @@
 			</div>
 		</div>
 		<!-- 弹窗部分 -->
-		<div class="pop-up-right" :class="{fadeUp: which === 'hunting'}"> 
+		<div class="pop-up-right" :class="{fadeUp: which === 'hunting'}" v-if="!dragonResult"> 
 			<Hunting   @closePop="which = ''"  @selectDragon="selectDragon"/>
 		</div>
 		<div class="pop-up-right" :class="{fadeUp: which === 'friend'}"> 
@@ -152,11 +152,19 @@
 			<div class="btn">确认分享</div>
 		</div>
 		<div style="opacity:0;" class="opacity0-tent"></div>
-		<div class="pop-up-right" :class="{fadeUp: !!dragon}"> 
-			<DragonBoss :dragonType="dragon" :animal="animal" :online="online" @attackMonster="attackMonster" :lastblood="lastblood"/>
+		<div class="pop-up-right" :class="{fadeUp: !!dragon}" v-if="!dragonResult"> 
+			<DragonBoss 
+				:dragonType="dragon" 
+				:animal="animal" 
+				:online="online" 
+				@attackMonster="attackMonster" 
+				:monsterTotalAttack="monsterTotalAttack" 
+				:dragonInfo="dragonInfo" 
+				:timeNum="timeNum" 
+			/>
 		</div>
 		<div class="pop-up-fadein" :class="{fadeUp: !!dragonResult}">
-			<HuntingResult  :dragonResult="dragonResult"/>
+			<HuntingResult  :dragonResult="dragonResult" :huntingIntegral="huntingIntegral"/>
 		</div>
 	</div>
 </template>
@@ -177,7 +185,8 @@ import {
 	collectBallsService,
 	friendListService,
 	giveEnergyService,
-	beforeHuntingService
+	beforeHuntingService,
+	finishHuntingService
 	 } from 'services/build'
 import { 
 	animalListService,
@@ -186,7 +195,10 @@ import {
 export default {
 	data() {
 		return {
-			lastblood: 100,
+			monsterTotalAttack: 0,
+			timeNum: 60,
+			timer: null,
+			// lastblood: 1,
 			online:false,
 			animal: {},
 			dragonInfo: {},
@@ -229,6 +241,18 @@ export default {
 		openid() {
 			const userinfo = storage.getStorage('userinfo') || {}
 			return userinfo.openid
+		},
+		huntingIntegral() {
+			switch (this.dragon) {
+				case 'blue':
+					return 500
+				case 'green':
+					return 1500
+				case 'red':
+					return 3000
+				default:
+				    return 0
+			}
 		}
 	},
 	onShow() {
@@ -239,28 +263,61 @@ export default {
 		this.listenSocket() // 连接socket
 	},
 	methods: {
+		countdown() {
+			if (this.timeNum > 0) {
+				this.timeNum -= 1
+			} else {
+				this.huntingFail()
+				
+			}
+		},
+		huntingFail() {
+			clearInterval(this.timer);
+			if (this.monsterTotalAttack < this.dragonInfo.blood) {
+				console.log('打怪失败结束');
+				this.dragonResult = 'fail'
+				this.dragon = ''
+				this.which = ''
+			}
+		},
 		randNum(num) {
 			return Math.floor((Math.random() * (1.3 - 0.7) + 0.7) * num)
 		},
-		attackMonster(type) {
+		async attackMonster(type) {
 			let totalAttack = 5
 			if (this.animal.power) totalAttack = this.animal.power
 			if (this.online) totalAttack += 5
 
-			const sendData = {
-				monstertype: this.dragonInfo.boss,
-				attackpower: this.randNum(totalAttack)
+			this.monsterTotalAttack += totalAttack
+			if (this.monsterTotalAttack >= this.dragonInfo.blood) {
+				clearInterval(this.timer);
+				console.log('打怪成功结束');
+ 
+				const resultData = await finishHuntingService({ openid:this.openid, integral: this.huntingIntegral  })
+				if (resultData && resultData.errmsg) return 
+				this.$store.dispatch('getIntergral')
+				this.dragonResult = 'success'
+				this.dragon = ''
+				this.which = ''
 			}
-			console.log(sendData, 'sendData')
-			this.socketTask.send({
-				data: JSON.stringify(sendData),
-				fail: err => {
-					console.log(err, 'err')
-				},
-				success: res => {
-					console.log(res, 'res')
-				}
-			})
+			// this.lastblood = (this.dragonInfo.blood * this.lastblood - totalAttack) / this.dragonInfo.blood
+
+
+		// console.log(this.lastblood, 'this.lastblood')
+			// const sendData = {
+			// 	monstertype: this.dragonInfo.boss,
+			// 	attackpower: this.randNum(totalAttack)
+			// }
+			// console.log(sendData, 'sendData')
+			// this.socketTask.send({
+			// 	data: JSON.stringify(sendData),
+			// 	fail: err => {
+			// 		console.log(err, 'err')
+			// 	},
+			// 	success: res => {
+			// 		console.log(res, 'res')
+			// 	}
+			// })
 		},
 		async getAnimal() {
 			const resultData = await animalListService({ openid: this.openid })
@@ -287,6 +344,7 @@ export default {
 			this.dragonInfo = resultData
 			this.getAnimal()
 			this.bandStatus()
+			this.timer = setInterval(this.countdown, 1000);
 		},
 		async openFriend() {
 			const resultData = await friendListService({ openid: this.openid })
@@ -362,10 +420,10 @@ export default {
 					return item
 				}
 			})
-			if (socket.attacktype &&socket.attacktype === this.dragonInfo.boss) {
-				console.log('remaining', socket.remaining)
-				this.lastblood = ((socket.remaining / this.dragonInfo.blood) * 100)
-			}
+			// if (socket.attacktype &&socket.attacktype === this.dragonInfo.boss) {
+			// 	console.log('remaining', socket.remaining)
+			// 	this.lastblood = ((socket.remaining / this.dragonInfo.blood) * 100)
+			// }
 		},
 		cancelDestory() {
 			this.deleteIndex = -1
@@ -633,13 +691,14 @@ export default {
 		}
 	},
 	onHide() {
-		console.log('onHideonHideonHide')
 		this.listenColseSocket()
 		// this.pageReset()
 	},
 	onUnload() {
+		clearInterval(this.timer);
 		this.pageReset()
 		this.fadeIn = false
+		this.huntingFail()
 	}
 }
 </script>

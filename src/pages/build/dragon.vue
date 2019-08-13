@@ -6,21 +6,34 @@
 			'green': dragonType === 'green'
 		}">
 			<div class="cloud"></div>
+<!-- 			<div class="blood">
+		        <div class="blood-avatar" :class="{
+					'red': dragonType === 'red',
+					'blue': dragonType === 'blue',
+					'green': dragonType === 'green'
+				}"></div>
+		        <div class="blood-num" :style="{width: lastblood* 100 + '%'}"></div>
+		        <div class="count-down">
+		        	倒计时 04:22
+		        </div>
+		      </div> -->
 			<div class="blood-wrap">
 				<div class="avatar" :class="{
 					'red': dragonType === 'red',
 					'blue': dragonType === 'blue',
 					'green': dragonType === 'green'
 				}"></div>
-				<div class="blood-grey" :style="{width: lastblood + '%'}">
+				<div class="blood-grey" :style="{width: width + '%'}">
 					
 				</div>
-				<div class="blood-red" :style="{width: lastblood + '%'}">
-						<div class="blood-sunny" :style="{width: lastblood + '%'}"></div>
+				<div class="blood-red" :style="{width: width + '%'}">
+						<div class="blood-sunny" >
+							<div class="sunny" :style="{width: width < 0.1 ? 0 : width + '%'}"></div>
+						</div>
 					</div>
 			</div>
 			<div class="count-down">
-		        	倒计时 04:22
+		        	倒计时 00:{{timeNum}}
 		        </div>
 			<div class="info">
 		    	<div class="left-info">
@@ -28,7 +41,7 @@
 		    			攻击力 ATTACK: {{ animal.power || 5 }}
 		    			<span v-if="online" class="plus">+5</span>
 		    		</div >
-		    		<div class="damage">总伤害 DAMAGE: 555</div>
+		    		<div class="damage">总伤害 DAMAGE: {{ monsterTotalAttack }}</div>
 		    	</div>
 		    	
 		    	<div class="right-card" v-if="animal.petname">
@@ -45,6 +58,17 @@
 		data() {
 			return {}
 		},
+		computed: {
+			width() {
+				console.log(this.dragonInfo);
+				if (this.dragonInfo && this.dragonInfo.blood) {
+					return ((this.dragonInfo.blood - this.monsterTotalAttack) / this.dragonInfo.blood) * 100
+				} else {
+					return 1
+				}
+				
+			}
+		},
 		props: {
 			dragonType: {
 				type: String
@@ -58,7 +82,10 @@
 			online: {
 				type: Boolean
 			},
-			lastblood: {
+			monsterTotalAttack: {
+				type: Number
+			},
+			timeNum: {
 				type: Number
 			}
 		}
@@ -89,6 +116,53 @@
 				height:367rpx;
 				width:100%;
 			}
+			.blood{
+			position: absolute;
+			top:140px;
+			left:50%;
+			width:501rpx;
+			transform: translateX(-50%);
+			.blood-avatar{
+				position: absolute;
+				top:0;
+				left:0;
+				width:46rpx;
+				height: 46rpx;
+				// .bg('pl2_head@2x');
+				z-index:1;
+				&.red{
+						.bg('pl2_Dinosaurredhead@2x');
+					}
+					&.blue{
+						.bg("pl2_Dinosaubluehead@2x");
+					}
+					&.green{
+						.bg("pl2_Dinosaurgreenhead@2x");
+					}
+			}
+			.blood-num{
+				position: absolute;
+				top:4px;
+				left:40rpx;
+				height: 34rpx;
+				
+				.bg('pl2_hunnting0-blood');
+			}
+			.count-down{
+				position: absolute;
+				font-size:9px;
+				left:50%;
+				width:90px;
+				transform: translateX(-50%);
+				top:23px;
+				background: url("@{cdn}pl2_time@2x.png") no-repeat 0 center;
+				background-size:10px 12px; 
+				height: 13px;
+				line-height:18px;
+				font-size:9px;
+				padding-left:16px;
+			}
+		}
 			.blood-wrap{
 				position:absolute;
 				top:253rpx;
@@ -136,20 +210,26 @@
 					height:27rpx;
 					width:100%;
 					// width:10rpx;
-					padding:4rpx 19rpx 0;
+					padding:4rpx 0 0;
 					border:3rpx solid #060501;
 					box-sizing:border-box;
 					border-radius:10px;
 					background:#e60012;
 				 	.blood-sunny{
-				 		// position:absolute;
-				 	// 	top:4rpx;
-						// left:50%;
-						// transform:translateX(-50%);
-				 		background: #f6a6ac;
-				 		width:100%;
+				 		position:absolute;
+				 		top:4rpx;
+						left:50%;
+						transform:translateX(-50%);
+				 		width:467rpx;
 				 		height:3rpx;
-
+						.sunny{
+							position:absolute;
+							left:50%;
+							transform:translateX(-50%);
+							height:3rpx;
+							border-radius:5rpx;
+				 			background: #f6a6ac;
+						}
 				 	}
 
 				}
