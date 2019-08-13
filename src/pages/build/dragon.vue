@@ -1,5 +1,5 @@
 <template>
-	<div class="hunting-dragon-wrap">
+	<div class="hunting-dragon-wrap" @click="$emit('attackMonster', dragonType)">
 		<div class="hunting-dragon" :class="{
 			'red': dragonType === 'red',
 			'blue': dragonType === 'blue',
@@ -12,11 +12,11 @@
 					'blue': dragonType === 'blue',
 					'green': dragonType === 'green'
 				}"></div>
-				<div class="blood-grey">
+				<div class="blood-grey" :style="{width: lastblood + '%'}">
 					
 				</div>
-				<div class="blood-red">
-						<div class="blood-sunny"></div>
+				<div class="blood-red" :style="{width: lastblood + '%'}">
+						<div class="blood-sunny" :style="{width: lastblood + '%'}"></div>
 					</div>
 			</div>
 			<div class="count-down">
@@ -25,16 +25,16 @@
 			<div class="info">
 		    	<div class="left-info">
 		    		<div class="attack">
-		    			攻击力 ATTACK: 15
-		    			<span class="plus">+5</span>
+		    			攻击力 ATTACK: {{ animal.power || 5 }}
+		    			<span v-if="online" class="plus">+5</span>
 		    		</div >
 		    		<div class="damage">总伤害 DAMAGE: 555</div>
 		    	</div>
 		    	
-		    	<div class="right-card">
-		    		<image class="img" :src="'http://parkiland.isxcxbackend1.cn/pl2_'+'小鸡'+'.png'" />
-		    		<div class="level">1级</div>
-		    		<div class="energy">战斗力：8</div>
+		    	<div class="right-card" v-if="animal.petname">
+		    		<image class="img" :src="'http://parkiland.isxcxbackend1.cn/pl2_'+animal.petname+'.png'" />
+		    		<div class="level">{{animal.level}}级</div>
+		    		<div class="energy">战斗力：{{animal.power}}</div>
 		    	</div>
 		    </div>
 		</div>
@@ -48,6 +48,18 @@
 		props: {
 			dragonType: {
 				type: String
+			},
+			dragonInfo: {
+				type: Object
+			},
+			animal: {
+				type: Object
+			},
+			online: {
+				type: Boolean
+			},
+			lastblood: {
+				type: Number
 			}
 		}
 	}

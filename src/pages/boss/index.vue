@@ -85,6 +85,7 @@ export default {
 			if (this.online) totalAttack += 5
 
 			const sendData = {
+				monstertype: 'monster',
 				attackpower: this.randNum(totalAttack)
 			}
 			console.log(sendData, 'sendData')
@@ -115,7 +116,6 @@ export default {
 	      if (!this.socketTask || this.socketTask.readyState !=1){
 	        console.info("重新連接")
 	        this.socketTask = wx.connectSocket({
-	        	//url: 'wss://www.isxcxbackend1.cn/websocket'
 	         url: 'wss://www.j4ckma.cn/parki/ws?openid='+this.openid
 	        })
 	        getApp().globalData.socketTask = this.socketTask;
@@ -130,8 +130,6 @@ export default {
 	        //连接失败
 	        this.socketTask.onError(function() {
 	          console.log("websocket连接失败！");
-	          // _this_this.gsStatus = 1;
-	          // _this.isSlow = false;
 	        });
 	    },
 		socketDeal() {},

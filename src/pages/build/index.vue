@@ -153,7 +153,7 @@
 		</div>
 		<div style="opacity:0;" class="opacity0-tent"></div>
 		<div class="pop-up-right" :class="{fadeUp: !!dragon}"> 
-			<DragonBoss :dragonType="dragon"/>
+			<DragonBoss :dragonType="dragon" :animal="animal" :online="online" @attackMonster="attackMonster" :lastblood="lastblood"/>
 		</div>
 		<div class="pop-up-fadein" :class="{fadeUp: !!dragonResult}">
 			<HuntingResult  :dragonResult="dragonResult"/>
@@ -179,9 +179,17 @@ import {
 	giveEnergyService,
 	beforeHuntingService
 	 } from 'services/build'
+import { 
+	animalListService,
+	bandStatusService 
+} from 'services/collect'
 export default {
 	data() {
 		return {
+			lastblood: 100,
+			online:false,
+			animal: {},
+			dragonInfo: {},
 			dragonResult: '',
 			dragon: '',
 			friendList: [],
@@ -222,7 +230,6 @@ export default {
 			const userinfo = storage.getStorage('userinfo') || {}
 			return userinfo.openid
 		}
-		
 	},
 	onShow() {
 		console.log('onShow')
@@ -232,7 +239,41 @@ export default {
 		this.listenSocket() // 连接socket
 	},
 	methods: {
+		randNum(num) {
+			return Math.floor((Math.random() * (1.3 - 0.7) + 0.7) * num)
+		},
+		attackMonster(type) {
+			let totalAttack = 5
+			if (this.animal.power) totalAttack = this.animal.power
+			if (this.online) totalAttack += 5
 
+			const sendData = {
+				monstertype: this.dragonInfo.boss,
+				attackpower: this.randNum(totalAttack)
+			}
+			console.log(sendData, 'sendData')
+			this.socketTask.send({
+				data: JSON.stringify(sendData),
+				fail: err => {
+					console.log(err, 'err')
+				},
+				success: res => {
+					console.log(res, 'res')
+				}
+			})
+		},
+		async getAnimal() {
+			const resultData = await animalListService({ openid: this.openid })
+			if (resultData && resultData.errmsg) return
+			this.animal = resultData.data.filter(item=>item.selected === 1)[0] || {}
+		console.log(this.animal)
+		},
+		async bandStatus() {
+			const resultData = await bandStatusService({ openid: this.openid })
+ 			if (resultData && resultData.errmsg) return
+			this.online = resultData.data.bindstatus === 1
+ 
+		},
 		openHunting() {
 			this.which = 'hunting'
 		},
@@ -243,6 +284,9 @@ export default {
 			})
 			if (resultData && resultData.errmsg) return
 			this.dragon = type
+			this.dragonInfo = resultData
+			this.getAnimal()
+			this.bandStatus()
 		},
 		async openFriend() {
 			const resultData = await friendListService({ openid: this.openid })
@@ -318,6 +362,10 @@ export default {
 					return item
 				}
 			})
+			if (socket.attacktype &&socket.attacktype === this.dragonInfo.boss) {
+				console.log('remaining', socket.remaining)
+				this.lastblood = ((socket.remaining / this.dragonInfo.blood) * 100)
+			}
 		},
 		cancelDestory() {
 			this.deleteIndex = -1
