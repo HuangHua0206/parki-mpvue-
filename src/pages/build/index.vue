@@ -164,7 +164,11 @@
 			/>
 		</div>
 		<div class="pop-up-fadein" :class="{fadeUp: !!dragonResult}">
-			<HuntingResult  :dragonResult="dragonResult" :huntingIntegral="huntingIntegral"/>
+			<HuntingResult  
+				:dragonResult="dragonResult" 
+				:huntingIntegral="huntingIntegral" 
+				@closePop="dragonResult = ''"
+			/>
 		</div>
 	</div>
 </template>
@@ -195,6 +199,7 @@ import {
 export default {
 	data() {
 		return {
+			huntingIntegral: 0,
 			monsterTotalAttack: 0,
 			timeNum: 60,
 			timer: null,
@@ -242,18 +247,18 @@ export default {
 			const userinfo = storage.getStorage('userinfo') || {}
 			return userinfo.openid
 		},
-		huntingIntegral() {
-			switch (this.dragon) {
-				case 'blue':
-					return 500
-				case 'green':
-					return 1500
-				case 'red':
-					return 3000
-				default:
-				    return 0
-			}
-		}
+		// huntingIntegral() {
+		// 	switch (this.dragon) {
+		// 		case 'blue':
+		// 			return 500
+		// 		case 'green':
+		// 			return 1500
+		// 		case 'red':
+		// 			return 3000
+		// 		default:
+		// 		    return 0
+		// 	}
+		// }
 	},
 	onShow() {
 		console.log('onShow')
@@ -299,6 +304,7 @@ export default {
 				this.dragonResult = 'success'
 				this.dragon = ''
 				this.which = ''
+
 			}
 			// this.lastblood = (this.dragonInfo.blood * this.lastblood - totalAttack) / this.dragonInfo.blood
 
@@ -340,6 +346,18 @@ export default {
 				monster: type + 'dragon'
 			})
 			if (resultData && resultData.errmsg) return
+			
+			switch (type) {
+				case 'blue':
+					this.huntingIntegral = 500
+					break;
+				case 'green':
+					this.huntingIntegral = 1500
+					break;
+				case 'red':
+					this.huntingIntegral = 3000
+					break;
+			}
 			this.dragon = type
 			this.dragonInfo = resultData
 			this.getAnimal()

@@ -7,13 +7,13 @@
 			<div class="icon"></div>
 			<div class="cost">+{{huntingIntegral}}</div>
 		</div>
-		<div class="btn">确认</div>
+		<div class="btn" @click="$emit('closePop')">确认</div>
 	</div>
 </template>
 <script>
 	export default{
 		created() {
-			console.log(this.dragonResult, 'iii')
+			console.log(this.dragonResult, this.huntingIntegral, 'iii')
 		},
 		props: {
 			dragonResult: {

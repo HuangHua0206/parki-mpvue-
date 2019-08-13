@@ -23,12 +23,12 @@
 					'blue': dragonType === 'blue',
 					'green': dragonType === 'green'
 				}"></div>
-				<div class="blood-grey" :style="{width: width + '%'}">
+				<div class="blood-grey" :style="{width: width <=0 ? 0 : width + '%'}">
 					
 				</div>
-				<div class="blood-red" :style="{width: width + '%'}">
+				<div class="blood-red" :style="{width: width <=0 ? 0 : width + '%'}">
 						<div class="blood-sunny" >
-							<div class="sunny" :style="{width: width < 0.1 ? 0 : width + '%'}"></div>
+							<div class="sunny" :style="{width: width < 0.3 ? 0 : width + '%'}"></div>
 						</div>
 					</div>
 			</div>
