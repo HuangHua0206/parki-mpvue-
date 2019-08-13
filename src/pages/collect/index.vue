@@ -391,7 +391,7 @@
 		        const _data = JSON.parse(res.data)
 		        this.SOCKET_INFO = _data
 		        this.socketDeal(_data)
-		      }),
+		      })
 		        //连接失败
 		        this.socketTask.onError(function() {
 		          console.log("websocket连接失败！");

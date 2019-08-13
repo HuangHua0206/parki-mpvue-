@@ -13,6 +13,8 @@
 		<div class="build-store" @click="showStore"></div>
 		<div class="build-my" @click="showMy"></div>
  		
+		<div class="cancel-sestory" v-if="deleteIndex !== -1" @click="cancelDestory"></div>
+
  		<!-- 建造区 -->
 		<div class="area" @longpress="longTap">
 			<div :class="{noBg : !isBuild}" class="mark"></div>
@@ -24,7 +26,7 @@
 				}"  style="text-align: center;line-height:76rpx">   
 					<div class="build-one" v-if="index === ($index+1)"  >
 						<img v-if="!tentShow" :src="'http://parkiland.isxcxbackend1.cn/pl2_'+buildContent.prdname+'.png'" :class="{down : imgDown, 'build-img': tend }"   />
-						<div class="tent" v-show="tentShow">
+						<div class="tent" v-if="tentShow">
 							<div class="progress">
 								<div class="line"></div>
 							</div>
@@ -56,7 +58,7 @@
 						'hasborth': item.remaining !== 0 && !item.remaining,
 						'collect': item.collect
 					}" @click="collectEnergy(item)"></div>
-					<div v-if="deleteIndex === item.location" class="cancel" @click="deleteBuild"></div>
+					<div v-if="deleteIndex === item.location" class="confirm destory" @click="deleteBuild"></div>
 				</div>
 			</div>
 		</div>
@@ -116,7 +118,16 @@
 						<div class="icon"></div>
 						<div class="cost">x {{buyContent.cost}}</div>
 					</div>
+					
 				</div>
+				<div class="desc">
+						<div class="txt">功能：每{{buyContent.ctime}}个小时产生一个</div><div class="energy" :class="{
+							'blue': buyContent.color === '3' ,
+							'yellow': buyContent.color === '2',
+							'green': buyContent.color === '4',
+							'orange': buyContent.color === '1',
+						}"></div><div  class="txt">能量</div>
+					</div>
 				<div class="num-wrap">
 					<div class="sub" @click="subNum"></div>
 					<div class="num">{{buyNum}}</div>
@@ -131,7 +142,7 @@
 		</div>
 		<!-- 弹窗部分 -->
 		<div class="pop-up-right" :class="{fadeUp: which === 'hunting'}"> 
-			<Hunting   @closePop="which = ''"  @selectDragon="type => dragon = type"/>
+			<Hunting   @closePop="which = ''"  @selectDragon="selectDragon"/>
 		</div>
 		<div class="pop-up-right" :class="{fadeUp: which === 'friend'}"> 
 			<Friend   @closePop="which = ''"  :friendList="friendList" :left="left" @giveEnergy="giveEnergy"/>
@@ -165,7 +176,8 @@ import {
 	buyService,
 	collectBallsService,
 	friendListService,
-	giveEnergyService
+	giveEnergyService,
+	beforeHuntingService
 	 } from 'services/build'
 export default {
 	data() {
@@ -179,7 +191,7 @@ export default {
 			buildList: [],
 			myList: [],
 			imgDown:false,
-			tend:false, // 选择完成，送手指，展示建筑掉下来效果
+			tend:false, // 选择完成，松手指，展示建筑掉下来效果
 			index: -1, // 构建第index个建筑
 			tentShow: false,
 			active: '',
@@ -220,8 +232,17 @@ export default {
 		this.listenSocket() // 连接socket
 	},
 	methods: {
+
 		openHunting() {
 			this.which = 'hunting'
+		},
+		async selectDragon(type) {
+			const resultData = await beforeHuntingService({
+				openid: this.openid,
+				monster: type + 'dragon'
+			})
+			if (resultData && resultData.errmsg) return
+			this.dragon = type
 		},
 		async openFriend() {
 			const resultData = await friendListService({ openid: this.openid })
@@ -231,13 +252,14 @@ export default {
 			this.which = 'friend'
 		},
 		async giveEnergy(param) {
-			const resultData = await friendListService({ 
+			const resultData = await giveEnergyService({ 
 				openid: this.openid, 
 				color: param.color,
-				recipient: param.recipient
+				recipient: param.openid
 			})
 			if (resultData && resultData.errmsg) return
 			this.left = resultData.left	
+			this.openFriend()
 			this.$tp.toast('您已赠送成功')
 		},
 		async collectEnergy(build) {
@@ -257,7 +279,7 @@ export default {
 		fromateTime(remaining) {
 			const h = parseInt((remaining / 60)).toString()
 			const m = (remaining % 60).toString()
-			return h + 'h' + m + 'min'
+			return h + 'h ' + m + 'min'
 		},
 		listenSocket() {
 		      this.socketTask = getApp().globalData.socketTask;
@@ -275,7 +297,7 @@ export default {
 		        const _data = JSON.parse(res.data)
 		        this.SOCKET_INFO = _data
 		        this.socketDeal(_data)
-		      }),
+		      })
 		        //连接失败
 		        this.socketTask.onError(function() {
 		          console.log("websocket连接失败！");
@@ -296,6 +318,10 @@ export default {
 					return item
 				}
 			})
+		},
+		cancelDestory() {
+			this.deleteIndex = -1
+			this.isBuild = false
 		},
 		longTap(e) {
 			console.log('长按')
@@ -345,6 +371,7 @@ export default {
 		},
 
 		async getMy(type) {
+ 
 			const resultData = await myListService({ type, openid: this.openid })
 			if (resultData && resultData.data) {
 				this.myList = resultData.data
@@ -431,7 +458,7 @@ export default {
 	        }
 		},
 		tEnd(e) {
-			this.tend = true
+		//	this.tend = true
 		},
 		openBuyPop(item) {
 			this.buyContent = item
@@ -466,6 +493,7 @@ export default {
 		},
 		async confrimBuild(item) {
 			console.log(item)
+			this.tend = true
 			const resultData = await buildService({
 				openid: this.openid,
 				prdid: this.buildContent.prdid,
@@ -739,6 +767,16 @@ export default {
 			right:83px;
 			.bg("pl2_Warehouse@2x");
 		}
+		.cancel-sestory{
+			position: absolute;
+	 
+			.bg('pl2_build_cancel_sestory');
+			width:146rpx;
+			height:91rpx;
+			top:118px;
+			left:50%;
+			transform: translateX(-50%);
+		}
 		.area{
 			
 			width:750rpx;
@@ -853,6 +891,9 @@ export default {
 							position:absolute;
 							right:10rpx;
 							top:0;
+							&.destory{
+								.bg("pl2_build_destory");
+							}
 						}
 						.cancel{
 							z-index:10;
@@ -1127,7 +1168,7 @@ export default {
 				}
 				.content{
 					width:190rpx;
-					margin:89rpx auto 84rpx;
+					margin:89rpx auto 14rpx;
 					img{
 						border:8rpx solid #eee;
 						border-radius:50%;
@@ -1155,7 +1196,33 @@ export default {
 							font-size:16rpx;
 						}
 					}
+
 				}
+				.desc{
+						// width:100%;
+						margin:0 auto 50rpx;
+						font-size:16rpx;
+						line-height: 30rpx;
+						display: flex;
+						justify-content: center;
+						.energy{
+							width:30rpx;
+							height:30rpx;
+							border-radius: 50%;
+							&.yellow{
+								.bg("pl2_ball_yellow@2x");
+							}
+							&.blue{
+								.bg("pl2_ball_blue@2x");
+							}
+							&.green{
+								.bg("pl2_ball_green@2x");
+							}
+							&.orange{
+								.bg("pl2_ball_orange@2x");
+							}
+						}
+					}
 				.num-wrap{
 					padding: 0 139rpx;
 					display:flex;

@@ -89,3 +89,13 @@ export function giveEnergyService(data) {
 		data
 	})
 }
+
+// 狩猎前调接口
+export function beforeHuntingService(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/parki/attack',
+		method: 'post',
+		data
+	})
+}

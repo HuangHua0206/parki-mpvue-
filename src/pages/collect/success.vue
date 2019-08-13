@@ -99,7 +99,7 @@
 			.title{
 				font-size:30px;
 				color:#f9bf2b;
-				margin:40px auto 20px;
+				margin:6vh auto 20px;
 				text-align:center;
 			}
 			.no-animal{

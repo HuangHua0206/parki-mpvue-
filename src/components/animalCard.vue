@@ -96,7 +96,7 @@
         color: #fff;
         font-size: 10px;
  
-         text-shadow:#000 1px 0 0,#000 0 1px 0,#000 -1px 0 0,#000 0 -1px 0;
+    //     text-shadow:#000 1px 0 0,#000 0 1px 0,#000 -1px 0 0,#000 0 -1px 0;
     }
     .update {
         width: 114px;
@@ -110,7 +110,7 @@
         color: #fff;
         font-size: 10px;
         
-        text-shadow:#000 1px 0 0,#000 0 1px 0,#000 -1px 0 0,#000 0 -1px 0;
+     //   text-shadow:#000 1px 0 0,#000 0 1px 0,#000 -1px 0 0,#000 0 -1px 0;
     }
     .other {
         width: 114px !important;
@@ -145,7 +145,7 @@
             text-align: center;
             display: inline-block;
             font-size: 10px;
-            text-shadow:#000 2px 0 0,#000 0 2px 0,#000 -2px 0 0,#000 0 -2px 0;
+        //    text-shadow:#000 2px 0 0,#000 0 2px 0,#000 -2px 0 0,#000 0 -2px 0;
         }
         
     }

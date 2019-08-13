@@ -37,8 +37,9 @@ export default {
 		position: absolute;
 		width:347px;
 		.bg('pl2_earthquake@2x');
-		left: 14px;
-		bottom: 14px;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
 		z-index: 3;
 	.earth-button {
 		.bg('pl2_sure@2x');

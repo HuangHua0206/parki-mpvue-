@@ -8,7 +8,7 @@
   	</CommonTop>
 <!--     <div class="main"> -->
       <div class="ellipse"></div>
-      <div class="boss"></div>
+      <div class="boss" @click="attackBoss"></div>
       <div class="collect-btn" @click="goCollect"></div>
       <div class="blood">
         <div class="blood-avatar"></div>
@@ -21,16 +21,16 @@
     <div class="info">
     	<div class="left-info">
     		<div class="attack">
-    			攻击力 ATTACK: 15
-    			<span class="plus">+5</span>
+    			攻击力 ATTACK: {{ animal.power || 5 }}
+    			<span v-if="online" class="plus">+5</span>
     		</div >
-    		<div class="damage">总伤害 DAMAGE: 555</div>
+    		<div class="damage">总伤害 DAMAGE: 999</div>
     	</div>
     	
-    	<div class="right-card">
-    		<image class="img" :src="'http://parkiland.isxcxbackend1.cn/pl2_'+'小鸡'+'.png'" />
-    		<div class="level">1级</div>
-    		<div class="energy">战斗力：8</div>
+    	<div class="right-card" v-if="animal.petname">
+    		<image class="img" :src="'http://parkiland.isxcxbackend1.cn/pl2_'+animal.petname+'.png'" />
+    		<div class="level">{{animal.level}}级</div>
+    		<div class="energy">战斗力：{{animal.power}}</div>
     	</div>
     </div>
     <div class="pop-up-bottom" :class="{fadeUp: which === 'range'}">
@@ -40,19 +40,32 @@
 </template>
 <script>
 import CommonTop from 'components/top'
-import { rangeService } from 'services/collect'
+import { rangeService, animalListService, bandStatusService } from 'services/collect'
 import Range from 'pages/collect/range'
+import storage from 'utils/storage'
+
 export default {
 	data() {
 		return {
+			online:false,
+			animal: {},
 			rangeList: [],
 			which: ''
+		}
+	},
+	computed: {
+		openid() {
+			const userinfo = storage.getStorage('userinfo') || {}
+			return userinfo.openid
 		}
 	},
 	components: { CommonTop, Range },
 	methods: {
 		close() {
 			this.which = ''
+		},
+		randNum(num) {
+			return Math.floor((Math.random() * (1.3 - 0.7) + 0.7) * num)
 		},
 		goCollect() {
 	    	wx.redirectTo({ url: '/pages/collect/main' });
@@ -64,11 +77,81 @@ export default {
 				this.which = 'range'
 			}
 
-		}
+		},
+		attackBoss() {
+
+			let totalAttack = 5
+			if (this.animal.power) totalAttack = this.animal.power
+			if (this.online) totalAttack += 5
+
+			const sendData = {
+				attackpower: this.randNum(totalAttack)
+			}
+			console.log(sendData, 'sendData')
+			this.socketTask.send({
+				data: JSON.stringify(sendData),
+				fail: err => {
+					console.log(err, 'err')
+				},
+				success: res => {
+					console.log(res, 'res')
+				}
+			})
+		},
+		async getAnimal() {
+			const resultData = await animalListService({ openid: this.openid })
+			if (resultData && resultData.errmsg) return
+			this.animal = resultData.data.filter(item=>item.selected === 1)[0] || {}
+		console.log(this.animal)
+		},
+		async bandStatus() {
+			const resultData = await bandStatusService({ openid: this.openid })
+ 			if (resultData && resultData.errmsg) return
+			this.online = resultData.data.bindstatus === 1
+ 
+		},
+		 listenSocket() {
+	      this.socketTask = getApp().globalData.socketTask;
+	      if (!this.socketTask || this.socketTask.readyState !=1){
+	        console.info("重新連接")
+	        this.socketTask = wx.connectSocket({
+	        	//url: 'wss://www.isxcxbackend1.cn/websocket'
+	         url: 'wss://www.j4ckma.cn/parki/ws?openid='+this.openid
+	        })
+	        getApp().globalData.socketTask = this.socketTask;
+	      }
+	      console.log('this.socketTask', this.socketTask)
+	      this.socketTask.onMessage(res => {
+	        console.log('oooo', res);
+	        const _data = JSON.parse(res.data)
+	        this.SOCKET_INFO = _data
+	        this.socketDeal(_data)
+	      })
+	        //连接失败
+	        this.socketTask.onError(function() {
+	          console.log("websocket连接失败！");
+	          // _this_this.gsStatus = 1;
+	          // _this.isSlow = false;
+	        });
+	    },
+		socketDeal() {},
+		listenColseSocket() {
+			this.socketTask.close()
+			wx.onSocketClose(function(res){
+			  console.log("WebSocket 已关闭！")
+			})
+	    },
+	},
+	onHide() {
+ 
+		this.listenColseSocket()
+		// this.pageReset()
 	},
 	onShow() {
-		console.log('onShow')
+		this.listenSocket()
 		this.$store.dispatch('getIntergral')
+		this.getAnimal()
+		this.bandStatus()
 		//this.getData('created')
 		// this.fadeIn = true
 		//this.listenSocket() // 连接socket
