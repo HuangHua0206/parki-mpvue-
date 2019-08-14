@@ -24,7 +24,7 @@
     			攻击力 ATTACK: {{ animal.power || 5 }}
     			<span v-if="online" class="plus">+5</span>
     		</div >
-    		<div class="damage">总伤害 DAMAGE: 999</div>
+    		<div class="damage">总伤害 DAMAGE: {{totalKill}}</div>
     	</div>
     	
     	<div class="right-card" v-if="animal.petname">
@@ -47,6 +47,7 @@ import storage from 'utils/storage'
 export default {
 	data() {
 		return {
+			totalKill: 0,
 			online:false,
 			animal: {},
 			rangeList: [],
@@ -96,7 +97,10 @@ export default {
 				},
 				success: res => {
 					console.log(res, 'res')
-				}
+				},
+				complete: result => {
+					console.log(result, 'result')
+				},
 			})
 		},
 		async getAnimal() {
@@ -132,7 +136,11 @@ export default {
 	          console.log("websocket连接失败！");
 	        });
 	    },
-		socketDeal() {},
+		socketDeal(socket) {
+			if (socket.eventname === 'noticeattaktotal') {
+				this.totalKill = socket.total
+			}
+		},
 		listenColseSocket() {
 			this.socketTask.close()
 			wx.onSocketClose(function(res){

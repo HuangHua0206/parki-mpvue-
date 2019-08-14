@@ -220,7 +220,7 @@
 				 		top:4rpx;
 						left:50%;
 						transform:translateX(-50%);
-				 		width:467rpx;
+				 		width:450rpx;
 				 		height:3rpx;
 						.sunny{
 							position:absolute;
@@ -228,7 +228,7 @@
 							transform:translateX(-50%);
 							height:3rpx;
 							border-radius:5rpx;
-				 			background: #f6a6ac;
+				 			background: #fff;
 						}
 				 	}
 

@@ -25,7 +25,7 @@
 					'activeRed': index === $index +1 && active === 'forbid'
 				}"  style="text-align: center;line-height:76rpx">   
 					<div class="build-one" v-if="index === ($index+1)"  >
-						<img v-if="!tentShow" :src="'http://parkiland.isxcxbackend1.cn/pl2_'+buildContent.prdname+'.png'" :class="{down : imgDown, 'build-img': tend }"   />
+						<img class="map_img" v-if="!tentShow" :src="'http://parkiland.isxcxbackend1.cn/pl2_map1_'+buildContent.prdname+'.png'" :class="{down : imgDown, 'build-img': tend }"   />
 						<div class="tent" v-show="tentShow">
 							<div class="progress">
 								<div class="line"></div>
@@ -45,7 +45,7 @@
 				>
 				<div class="build-content" >
 					<div class="build-one"  >
-						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_'+item.prdname+'.png'"/>
+						<img class="map_img" :src="'http://parkiland.isxcxbackend1.cn/pl2_map1_'+item.prdname+'.png'"/>
 				<!-- 		<div v-if="!tentShow" class="cancel"></div> -->
 					</div>
 					<div class="time-remaing" v-if="!!item.remaining">{{ item.remainingShow }}</div>
@@ -74,7 +74,7 @@
 				</div>
 				<div class="list">
 					<div class="list-item" v-for="(item, $index) in shopList" :key="$index" @click.stop="openBuyPop(item)">
-						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_store_'+item.prdname+'.png'"  />
+						<img class="store_img"  :src="'http://parkiland.isxcxbackend1.cn/pl2_store1_'+item.prdname+'.png'"  />
 						<div class="cost">
 							<div class="icon"></div>
 							<div class="money">{{item.cost}}</div>
@@ -100,7 +100,7 @@
 						@touchstart.stop="e => tStart(e, item)"
 			            @touchmove.stop="e => tMove(e, item)"
 			            @touchend.stop="e => tEnd(e, item)"> 	
-						<img :src="'http://parkiland.isxcxbackend1.cn/pl2_store_'+item.prdname+'.png'"  />
+						<img class="store_img" :src="'http://parkiland.isxcxbackend1.cn/pl2_store1_'+item.prdname+'.png'"  />
 						<div class="num">{{item.amount}}</div>
 						<img class="energy-img" :src="'http://parkiland.isxcxbackend1.cn/pl2_ball_'+item.color+'.png'" />
 			        </div>
@@ -112,7 +112,7 @@
 			<div class="buy-wrap">
 				<div class="close" @click="buyOpen = false"></div>
 				<div class="content">
-					<img :src="'http://parkiland.isxcxbackend1.cn/pl2_store_'+buyContent.prdname+'.png'" />
+					<img  :src="'http://parkiland.isxcxbackend1.cn/pl2_store1_'+buyContent.prdname+'.png'" />
 					<div class="name">{{buyContent.prdname}}</div>
 					<div class="money">
 						<div class="icon"></div>
@@ -1049,12 +1049,12 @@ export default {
 						position:absolute;
 						left:0;
 						top:0;
-						img{
+						.map_img{
 							position:absolute;
 							left:50%;
 							top:50%;
-							width:127rpx;
-							height:80rpx;
+							width:180rpx;
+							height:180rpx;
 							transform:translate(-50%,-50%);
 							&.build-img{
 								top:-1500rpx;
@@ -1225,21 +1225,21 @@ export default {
 						&div:nth-child(4n+0){
 							margin-right:0;
 						}
-						img{
+						.store_img{
 							position: absolute;
 							left:50%;
 							top:50%;
 							transform: translate(-50%, -50%);
-							height:50%;
-							width:50%;
+							height:80%;
+							width:80%;
 						}
 						.energy-img{
 							position: absolute;
 							width:33rpx;
 							height:33rpx;
 							border-radius: 50%;
-							left:30rpx;
-							top:30rpx;
+							left:20rpx;
+							top:20rpx;
 						}
 						.num{
 							font-size:21rpx;
