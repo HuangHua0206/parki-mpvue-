@@ -26,7 +26,7 @@
 				}"  style="text-align: center;line-height:76rpx">   
 					<div class="build-one" v-if="index === ($index+1)"  >
 						<img v-if="!tentShow" :src="'http://parkiland.isxcxbackend1.cn/pl2_'+buildContent.prdname+'.png'" :class="{down : imgDown, 'build-img': tend }"   />
-						<div class="tent" v-if="tentShow">
+						<div class="tent" v-show="tentShow">
 							<div class="progress">
 								<div class="line"></div>
 							</div>
@@ -272,6 +272,7 @@ export default {
 			if (this.timeNum > 0) {
 				this.timeNum -= 1
 			} else {
+				this.dragonResult = 'fail'
 				this.huntingFail()
 				
 			}
@@ -280,7 +281,9 @@ export default {
 			clearInterval(this.timer);
 			if (this.monsterTotalAttack < this.dragonInfo.blood) {
 				console.log('打怪失败结束');
-				this.dragonResult = 'fail'
+				this.huntingIntegral = 0
+				this.monsterTotalAttack = 0
+				this.timeNum = 60
 				this.dragon = ''
 				this.which = ''
 			}
@@ -304,6 +307,9 @@ export default {
 				this.dragonResult = 'success'
 				this.dragon = ''
 				this.which = ''
+				// this.huntingIntegral = 0
+				this.monsterTotalAttack = 0
+				this.timeNum = 60
 
 			}
 			// this.lastblood = (this.dragonInfo.blood * this.lastblood - totalAttack) / this.dragonInfo.blood
@@ -341,6 +347,8 @@ export default {
 			this.which = 'hunting'
 		},
 		async selectDragon(type) {
+			
+			clearInterval(this.timer);
 			const resultData = await beforeHuntingService({
 				openid: this.openid,
 				monster: type + 'dragon'
