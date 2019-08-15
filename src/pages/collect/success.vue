@@ -17,13 +17,13 @@
 			 		</div>
 					
 				</div>
-				<div class="money">
+				<div class="money" v-if="!!integral">
 					<div class="icon"></div>
 					<div class="cost">{{integral}}</div>
 				</div>
 			</div>
 			<div class="no-animal" v-else>
-				<div class="money">
+				<div class="money" v-if="!!integral">
 					<div class="icon"></div>
 					<div class="cost">{{integral}}</div>
 				</div>

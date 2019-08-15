@@ -6,18 +6,18 @@
 			'green': dragonType === 'green'
 		}">
 			<div class="cloud"></div>
-<!-- 			<div class="blood">
+			<div class="blood">
 		        <div class="blood-avatar" :class="{
 					'red': dragonType === 'red',
 					'blue': dragonType === 'blue',
 					'green': dragonType === 'green'
 				}"></div>
-		        <div class="blood-num" :style="{width: lastblood* 100 + '%'}"></div>
+		        <div class="blood-num" :style="{width: width <=0 ? 0 : width + '%'}"></div>
 		        <div class="count-down">
-		        	倒计时 04:22
+		        	倒计时 {{timeNum}}
 		        </div>
-		      </div> -->
-			<div class="blood-wrap">
+		      </div>
+<!-- 			<div class="blood-wrap">
 				<div class="avatar" :class="{
 					'red': dragonType === 'red',
 					'blue': dragonType === 'blue',
@@ -34,7 +34,7 @@
 			</div>
 			<div class="count-down">
 		        	倒计时 00:{{timeNum}}
-		        </div>
+		        </div> -->
 			<div class="info">
 		    	<div class="left-info">
 		    		<div class="attack">
@@ -120,7 +120,7 @@
 			position: absolute;
 			top:140px;
 			left:50%;
-			width:501rpx;
+			width:470rpx;
 			transform: translateX(-50%);
 			.blood-avatar{
 				position: absolute;
@@ -147,6 +147,9 @@
 				height: 34rpx;
 				
 				.bg('pl2_hunnting0-blood');
+				background-size: cover;
+				border-right: 2px solid #000;
+				border-radius: 8px;
 			}
 			.count-down{
 				position: absolute;

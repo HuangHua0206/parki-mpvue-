@@ -17,7 +17,7 @@
 			</div>
 			<div class="band" >
 				<div class="img"  @click="openScan"></div>
-				<div class="desc">已绑定XXXX</div>
+				<div class="desc">未绑定</div>
 			</div>
 			</div>
 			<div class="close-btn" @click="$emit('closePop')"> </div>

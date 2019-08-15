@@ -1,12 +1,16 @@
 <template>
 	<div class="build-wrap">
 		<div class="cloud"></div>
-		<div class="mask" style="z-index:80" @click="which=''" v-if="!!which && which !== 'store' && which !== 'my' || !!dragonResult"></div> 
+		<div class="mask" style="z-index:80" @click="which=''" v-if="!!which && which !== 'store' && which !== 'my' && which !== 'share-has-animal' || !!dragonResult"></div> 
 		<CommonTop 
 	  		ctxt="搜集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
 	  		@rightFunc="which='share'"
 	  		share>
   		</CommonTop>
+  		<div style="z-index: 61;position: absolute;width:100%;height:100%;left:0;top:0;" v-if="which==='share-has-animal'">
+  			<Success @resetData=""   :pet="share"></Success>
+  		</div>
+  		
   		<div @click="goCollect" class="button collect-energy" :class="{'fade-left-in': fadeIn}"  ></div>
 		<div class="button hunting-button" :class="{'fade-right-in': fadeIn}" @click="openHunting"></div>
 		<div class="button friend-button" style="z-index:60"  :class="{'fade-right-in': fadeIn}" @click="openFriend"></div>
@@ -48,13 +52,13 @@
 						<img class="map_img" :src="'http://parkiland.isxcxbackend1.cn/pl2_map1_'+item.prdname+'.png'"/>
 				<!-- 		<div v-if="!tentShow" class="cancel"></div> -->
 					</div>
-					<div class="time-remaing" v-if="!!item.remaining">{{ item.remainingShow }}</div>
+					<div class="time-remaing" v-if="item.remaining > 0">{{ item.remainingShow }}</div>
 					<div class="energy" :class="{
 						'blue': item.color === '3' ,
 						'yellow': item.color === '2',
 						'green': item.color === '4',
 						'orange': item.color === '1',
-						'borth': item.remaining === 0,
+						'borth': item.remaining <= 0,
 						'hasborth': item.remaining !== 0 && !item.remaining,
 						'collect': item.collect
 					}" @click="collectEnergy(item)"></div>
@@ -142,14 +146,14 @@
 		</div>
 		<!-- 弹窗部分 -->
 		<div class="pop-up-right" :class="{fadeUp: which === 'hunting'}" v-if="!dragonResult"> 
-			<Hunting   @closePop="which = ''"  @selectDragon="selectDragon"/>
+			<Hunting   @closePop="which = ''"  @selectDragon="selectDragon" :huntingRecord="huntingRecord"/>
 		</div>
 		<div class="pop-up-right" :class="{fadeUp: which === 'friend'}"> 
 			<Friend   @closePop="which = ''"  :friendList="friendList" :left="left" @giveEnergy="giveEnergy"/>
 		</div>
 		<div class="share-pop" v-if="which==='share'">
 			<div class="close" @click="which=''"></div>
-			<div class="btn">确认分享</div>
+			<button class="btn" @click="confirmShare" open-type="share">确认分享</button>
 		</div>
 		<div style="opacity:0;" class="opacity0-tent"></div>
 		<div class="pop-up-right" :class="{fadeUp: !!dragon}" v-if="!dragonResult"> 
@@ -174,6 +178,7 @@
 </template>
 <script>
 import CommonTop from 'components/top'
+import Success from 'pages/collect/success'
 import storage from 'utils/storage'
 import Hunting from './hunting'
 import Friend from './friend'
@@ -190,7 +195,9 @@ import {
 	friendListService,
 	giveEnergyService,
 	beforeHuntingService,
-	finishHuntingService
+	finishHuntingService,
+	shareService,
+	huntingRecordService
 	 } from 'services/build'
 import { 
 	animalListService,
@@ -199,6 +206,8 @@ import {
 export default {
 	data() {
 		return {
+			huntingRecord: 3,
+			share: {},
 			huntingIntegral: 0,
 			monsterTotalAttack: 0,
 			timeNum: 60,
@@ -236,7 +245,7 @@ export default {
 			deleteIndex: -1
 		}
 	},
-	components: { CommonTop, Hunting, Friend, DragonBoss: Dragon, HuntingResult: Result },
+	components: { CommonTop, Hunting, Friend, DragonBoss: Dragon, HuntingResult: Result, Success },
 	computed: {
 		hasBuild() {
 			const arr = this.buildList.map(item => item.location)
@@ -247,27 +256,46 @@ export default {
 			const userinfo = storage.getStorage('userinfo') || {}
 			return userinfo.openid
 		},
-		// huntingIntegral() {
-		// 	switch (this.dragon) {
-		// 		case 'blue':
-		// 			return 500
-		// 		case 'green':
-		// 			return 1500
-		// 		case 'red':
-		// 			return 3000
-		// 		default:
-		// 		    return 0
-		// 	}
-		// }
 	},
 	onShow() {
 		console.log('onShow')
 		this.$store.dispatch('getIntergral')
 		this.getData('created')
-		// this.fadeIn = true
+		this.playBgMusic()
 		this.listenSocket() // 连接socket
 	},
+	onShareAppMessage(res) {
+		console.log(res, 'res')
+		return {
+			title: '快来Parki Land一起玩耍吧~',
+			path: '/pages/first/main',
+			success: resSu => {
+				console.log('成功', resSu)
+			},
+			fail: function (res) {
+	          // 分享失败
+	          console.log(res)
+	        }
+		}
+		
+		// wx.getShareInfo()
+	},
 	methods: {
+		playClickMusic() {
+			wx.playBackgroundAudio({
+			    dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
+			})
+			wx.getBackgroundAudioManager().onEnded(() => this.playBgMusic())
+		},
+		playBgMusic() {
+			const playFunc = ()=> {
+		  		wx.playBackgroundAudio({
+				    dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_build.mp3'
+				})
+		  	}
+		  	playFunc()
+			wx.getBackgroundAudioManager().onEnded(() => playFunc())
+		},
 		countdown() {
 			if (this.timeNum > 0) {
 				this.timeNum -= 1
@@ -276,6 +304,24 @@ export default {
 				this.huntingFail()
 				
 			}
+		},
+		async confirmShare() {
+			// console.log(888);
+			// wx.showShareMenu({
+			//   withShareTicket: true
+			// })
+			// return
+			// onShareAppMessage()
+			const resultData = await shareService({ openid: this.openid })
+			if (resultData  && resultData.errmsg) return
+			this.share = resultData
+			if (this.share.petid) {
+				this.which = 'share-has-animal'
+			} else {
+				this.$tip.toast('分享成功')
+				this.which = ''
+			}
+			
 		},
 		huntingFail() {
 			clearInterval(this.timer);
@@ -312,24 +358,6 @@ export default {
 				this.timeNum = 60
 
 			}
-			// this.lastblood = (this.dragonInfo.blood * this.lastblood - totalAttack) / this.dragonInfo.blood
-
-
-		// console.log(this.lastblood, 'this.lastblood')
-			// const sendData = {
-			// 	monstertype: this.dragonInfo.boss,
-			// 	attackpower: this.randNum(totalAttack)
-			// }
-			// console.log(sendData, 'sendData')
-			// this.socketTask.send({
-			// 	data: JSON.stringify(sendData),
-			// 	fail: err => {
-			// 		console.log(err, 'err')
-			// 	},
-			// 	success: res => {
-			// 		console.log(res, 'res')
-			// 	}
-			// })
 		},
 		async getAnimal() {
 			const resultData = await animalListService({ openid: this.openid })
@@ -343,12 +371,19 @@ export default {
 			this.online = resultData.data.bindstatus === 1
  
 		},
-		openHunting() {
+		async openHunting() {
+			const resultData = await huntingRecordService({ openid: this.openid })
+			if (resultData && resultData.errmsg) return
+			this.huntingRecord = resultData.left
 			this.which = 'hunting'
 		},
 		async selectDragon(type) {
 			
 			clearInterval(this.timer);
+			if (this.huntingRecord <=0 ) {
+				this.$tip.toast('您今日3次狩猎机会已使用完，明天再来哦')
+				return
+			}
 			const resultData = await beforeHuntingService({
 				openid: this.openid,
 				monster: type + 'dragon'
@@ -446,18 +481,12 @@ export default {
 					return item
 				}
 			})
-			// if (socket.attacktype &&socket.attacktype === this.dragonInfo.boss) {
-			// 	console.log('remaining', socket.remaining)
-			// 	this.lastblood = ((socket.remaining / this.dragonInfo.blood) * 100)
-			// }
 		},
 		cancelDestory() {
 			this.deleteIndex = -1
 			this.isBuild = false
 		},
 		longTap(e) {
-			console.log('长按')
-
 			let minVal = Infinity;
 	        let _index = -1
 	        //拿到两点之间最小的距离与菱形索引
@@ -718,7 +747,7 @@ export default {
 	},
 	onHide() {
 		this.listenColseSocket()
-		// this.pageReset()
+		wx.stopBackgroundAudio()
 	},
 	onUnload() {
 		clearInterval(this.timer);

@@ -318,6 +318,21 @@
 			}
 		},
 		methods: {
+			playClickMusic() {
+				wx.playBackgroundAudio({
+				  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
+				})
+				wx.getBackgroundAudioManager().onEnded(() => this.playBgMusic())
+			},
+			playBgMusic() {
+				const playFunc = ()=> {
+			  		wx.playBackgroundAudio({
+					  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_collect.mp3'
+					})
+			  	}
+			  	playFunc()
+				wx.getBackgroundAudioManager().onEnded(() => playFunc())
+			},
 			async earnRewards(taskid) {
 				const resultData = await earnRewardService({
 					taskid,
@@ -876,6 +891,7 @@
 			await this.getCollect() // 查询收集状态
 			await this.getBagsData() // 查询背包数量
 			this.openBlueTooth() // 连接蓝牙
+			this.playBgMusic()
 		},
 		mounted() {
 			this.fadeIn = true
@@ -886,6 +902,7 @@
 			clearInterval(this.timer)
 		    wx.stopBeaconDiscovery();
 		    this.pageReset()
+		    wx.stopBackgroundAudio()
 		  },
 		
 		onUnload() {
