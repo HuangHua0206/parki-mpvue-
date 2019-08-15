@@ -12,7 +12,7 @@
 					<div class="task-name">{{item.taskname}}</div>
 					<div class="desc">{{item.taskcontent}}。</div>
 					<div class="reward">
-						<div class="get">奖励:<span class="integral-icon"></span> <span class="num">200</span> </div>
+						<div class="get">奖励:<span class="integral-icon"></span> <span class="num">{{ item.taskid === 10 ? '四级宠物卡' : 200}}</span> </div>
 <!-- 						<div class="finish">已完成: {{ item.sequence}} / {{ item.schedule}}</div> -->
 					</div>
 					<div class="get-btn" v-if="item.schedule === 1" @click="$emit('earnRewards', item.taskid)">领取奖励</div>

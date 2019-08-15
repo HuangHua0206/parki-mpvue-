@@ -7,7 +7,7 @@
         </div>
         <div :class="progress" v-if="progress === 'max' || progress === 'update'" @click="upgrade(progress)">{{text}}</div>
         <div class="animalCard-level">{{level}}</div>
-        <div class="animalCard-eng">{{eng}}</div>
+        <div class="animalCard-eng" v-if="eng">{{eng}}</div>
         <div class="animalCard-new" v-if="isnew"></div>
         <div class="animalCard-ok" v-if="isok"></div>
         <div class="select-wrap" v-if="selected">

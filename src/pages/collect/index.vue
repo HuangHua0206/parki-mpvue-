@@ -252,6 +252,7 @@
 		data () {
 		  return {
 		  	clickVoice: null,
+		  	plusMoneyVoice: null,
 		  	animalList: [],
 		  	rangeList: [],
 		  	taskList: [],
@@ -331,13 +332,22 @@
 			},
 			readEamil() {
 				this.clickVoicePlay()
+				this.plusMoneyVoicePlay()
 			},
 			playClickMusic() {
+				wx.setInnerAudioOption({
+					obeyMuteSwitch: false
+				})
 				this.clickVoice = wx.createInnerAudioContext() 
 				this.clickVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
+				this.plusMoneyVoice = wx.createInnerAudioContext()
+				this.plusMoneyVoice.src='http://parkiland.isxcxbackend1.cn/pl2_integral_add.mp3'
 			},
 			clickVoicePlay() {
 				this.clickVoice.play()
+			},
+			plusMoneyVoicePlay() {
+				this.plusMoneyVoice.play()
 			},
 			playBgMusic() {
 				const playFunc = ()=> {
@@ -355,6 +365,7 @@
 					openid: this.openid
 				})
 				if (resultData && resultData.errmsg) return
+					this.plusMoneyVoicePlay()
 				this.$tip.toast('领取成功，奖励200积分')
 				this.getTaskList()
 				this.$store.dispatch('getIntergral')
@@ -374,6 +385,7 @@
 			openEmial() {
 				this.clickVoicePlay()
 				this.which = 'email'
+				
 			},
 			openBracelet() {
 				this.clickVoicePlay()
@@ -388,13 +400,14 @@
 			},
 			async reward() {
 				this.rewardRequest()
-				setTimeout(() => {
-					this.$store.commit('changeIntegral', this.$store.state.integral + 2)
-				}, 4000)
+				// setTimeout(() => {
+				// 	this.$store.commit('changeIntegral', this.$store.state.integral + 2)
+				// }, 4000)
 				this.timer = setInterval(
 					 () => {
 					 	this.rewardRequest()
 					 	this.$store.commit('changeIntegral', this.$store.state.integral + 2)
+					 	this.plusMoneyVoicePlay()
 					 }
 					, 5000)
 			},
@@ -671,6 +684,7 @@
 			       	this.video[`energyShow4`] = false
 			       	this.ISENDING = false
 		       }, 5000);
+
 		        this.$store.dispatch('getIntergral')
 		    },
 		    // 普通能量收集
@@ -712,6 +726,7 @@
 		      		// this.ISENDING = true
 		      		setTimeout(()=>{ 
 		      			this.together = true
+		      			this.plusMoneyVoicePlay()
 		      		}, 3500)
 		      	}
 		       setTimeout(() => {
@@ -757,11 +772,13 @@
 			       		case 101:
 			       			this.finish.integral = resultData.data.integral
 			       			 this.$store.dispatch('getIntergral')
+			       			  // this.plusMoneyVoicePlay()
 			       			return true 
 			       		case 102:
 			       			this.finish.integral = resultData.data.integral
 			       			this.finish.pet = resultData.data.pet
 			       			 this.$store.dispatch('getIntergral')
+			       			  // this.plusMoneyVoicePlay()
 			       			return true 
 			       }
 			   } else {
@@ -807,6 +824,7 @@
 		      		this.bags.bagShow3 = true
 		      		// this.ISENDING = true
 		      		setTimeout(()=>{ 
+		      			this.plusMoneyVoicePlay()
 		      			this.together = true
 		      		}, 1000)
 		      	}

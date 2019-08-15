@@ -8,7 +8,7 @@
 	  		share>
   		</CommonTop>
   		<div style="z-index: 61;position: absolute;width:100%;height:100%;left:0;top:0;" v-if="which==='share-has-animal'">
-  			<Success @resetData=""   :pet="share"></Success>
+  			<Success @resetData="closeMask"   :pet="share"></Success>
   		</div>
   		
   		<div @click="goCollect" class="button collect-energy" :class="{'fade-left-in': fadeIn}"  ></div>
@@ -206,6 +206,8 @@ import {
 export default {
 	data() {
 		return {
+			showEnergyVoice: null,
+			plusMoneyVoice: null,
 			clickVoice: null,
 			huntingRecord: 3,
 			share: {},
@@ -286,11 +288,24 @@ export default {
 			this.which=''
 		},
 		playClickMusic() {
+			wx.setInnerAudioOption({
+					obeyMuteSwitch: false
+				})
 			this.clickVoice = wx.createInnerAudioContext() 
 			this.clickVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
+			this.plusMoneyVoice = wx.createInnerAudioContext()
+			this.plusMoneyVoice.src='http://parkiland.isxcxbackend1.cn/pl2_integral_add.mp3'
+			this.showEnergyVoice = wx.createInnerAudioContext()
+			this.showEnergyVoice.src='http://parkiland.isxcxbackend1.cn/pl2_show_energy.mp3'
 		},
 		clickVoicePlay() {
 			this.clickVoice.play()
+		},
+		plusMoneyVoicePlay() {
+			this.plusMoneyVoice.play()
+		},
+		showEnergyVoicePlay() {
+			this.showEnergyVoice.play()
 		},
 		playBgMusic() {
 			const playFunc = ()=> {
@@ -317,6 +332,7 @@ export default {
 			this.share = resultData
 			if (this.share.petid) {
 				this.which = 'share-has-animal'
+
 			} else {
 				this.$tip.toast('分享成功')
 				this.which = ''
@@ -350,6 +366,7 @@ export default {
 				const resultData = await finishHuntingService({ openid:this.openid, integral: this.huntingIntegral  })
 				if (resultData && resultData.errmsg) return 
 				this.$store.dispatch('getIntergral')
+				this.plusMoneyVoicePlay()
 				this.dragonResult = 'success'
 				this.dragon = ''
 				this.which = ''
@@ -481,6 +498,9 @@ export default {
 		    },
 		socketDeal(socket){
 			console.log('socket', socket)
+			if (socket.remaining <= 0) {
+				this.showEnergyVoicePlay()
+			}
 			this.buildList = this.buildList.map(item => {
 				if (socket.location === item.location) {
 					return {
@@ -494,6 +514,7 @@ export default {
 			})
 		},
 		cancelDestory() {
+
 			this.deleteIndex = -1
 			this.isBuild = false
 		},
@@ -526,6 +547,8 @@ export default {
 	        	openid: this.openid,
 	        	uniqueid: this.buildList.filter(item => item.location ===  this.deleteIndex)[0].uniqueid
 	        })
+	        if (resultData && resultData.errmsg) return
+	        this.plusMoneyVoicePlay()
 	        this.isBuild = false
 	        this.buildList = this.buildList.filter(item => item.location !==  this.deleteIndex)
 	        this.deleteIndex = -1

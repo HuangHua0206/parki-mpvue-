@@ -10,7 +10,7 @@
 			 			<CommonCard
 						text="2/4"
 						:level="pet.level+'级'"
-						:eng="'战斗力：' + pet.power"
+						:eng="pet.power ? '战斗力：' + pet.power : null"
 						className="card-list"
 						:url="'http://parkiland.isxcxbackend1.cn/pl2_'+pet.petname+'.png'"
 					/>
