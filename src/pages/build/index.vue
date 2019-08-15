@@ -442,6 +442,7 @@ export default {
 			this.which = 'friend'
 		},
 		async giveEnergy(param) {
+			this.clickVoicePlay()
 			const resultData = await giveEnergyService({ 
 				openid: this.openid, 
 				color: param.color,
