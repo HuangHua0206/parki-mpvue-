@@ -269,13 +269,7 @@ export default {
 		return {
 			title: '快来Parki Land一起玩耍吧~',
 			path: '/pages/first/main',
-			success: resSu => {
-				console.log('成功', resSu)
-			},
-			fail: function (res) {
-	          // 分享失败
-	          console.log(res)
-	        }
+			imageUrl: '',
 		}
 		
 		// wx.getShareInfo()
@@ -592,7 +586,7 @@ export default {
 		 	this.tentShow = false
 		 	this.imgDown = false
 		 	this.tend = false
-		 	this.isBuild = false
+		 	// this.isBuild = false
 			this.buildContent = item
 		},
 		tMove(e, item) {
