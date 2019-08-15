@@ -269,7 +269,7 @@ export default {
 		return {
 			title: '快来Parki Land一起玩耍吧~',
 			path: '/pages/first/main',
-			imageUrl: '',
+			imageUrl: 'http://parkiland.isxcxbackend1.cn/pl2_share_bg.jpg',
 		}
 		
 		// wx.getShareInfo()

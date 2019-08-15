@@ -555,7 +555,7 @@
 		           	 	}
 		           	 	// amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
 		           	 }
-		           amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
+		         
 		           	 if (amazingEnergy) { // 神奇能量触发(神奇能量触发时，检测到神奇能量优先收集神奇能量)
 		           	 	this.superEnergyCollect(amazingEnergy)
 		           	 	return
@@ -720,7 +720,7 @@
 			   }
 		    },
 		    async getBagEnergy(color, num) {
-		    	if (!num) return // 数量为0时点击无效
+		    	if (!num || this.reset) return // 数量为0时点击无效
 		    	if (this.ISENDING) return
 		    	this.ISENDING = true
 		       if (this.collects.includes(color)) {
