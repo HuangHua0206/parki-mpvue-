@@ -109,3 +109,24 @@ export function finishHuntingService(data) {
 		data
 	})
 }
+
+// 狩猎完成
+export function huntingRecordService(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/parki/huntrecord/query',
+		method: 'post',
+		data
+	})
+}
+
+
+// 分享
+export function shareService(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/parki/share',
+		method: 'post',
+		data
+	})
+}

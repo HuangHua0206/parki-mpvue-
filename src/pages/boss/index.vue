@@ -1,20 +1,22 @@
 <template>
   <div class="beat-boss-wrap">
-  	<div class="mask" style="z-index:80" @click="which=''" v-if="!!which"></div> 
+  	<div class="mask" style="z-index:80" @click="clickVoicePlay();which=''" v-if="!!which"></div> 
   	<CommonTop 
   		ctxt="点击屏幕攻击怪兽，一起保护PRAKINLAND"
   		@openRange="getRangeList"
   		>
   	</CommonTop>
 <!--     <div class="main"> -->
-      <div class="ellipse"></div>
-      <div class="boss" @click="attackBoss"></div>
+     
+      <div class="boss" @click="attackBoss">
+      	 <div class="ellipse"></div>
+      </div>
       <div class="collect-btn" @click="goCollect"></div>
       <div class="blood">
         <div class="blood-avatar"></div>
-        <div class="blood-num"></div>
+        <div class="blood-num" :style="{width: bloodWith + '%'}"></div>
         <div class="count-down">
-        	倒计时 04:22
+        	倒计时 {{formTime}}
         </div>
       </div>
 <!--     </div> -->
@@ -24,7 +26,7 @@
     			攻击力 ATTACK: {{ animal.power || 5 }}
     			<span v-if="online" class="plus">+5</span>
     		</div >
-    		<div class="damage">总伤害 DAMAGE: 999</div>
+    		<div class="damage">总伤害 DAMAGE: {{totalKill}}</div>
     	</div>
     	
     	<div class="right-card" v-if="animal.petname">
@@ -34,19 +36,32 @@
     	</div>
     </div>
     <div class="pop-up-bottom" :class="{fadeUp: which === 'range'}">
-			<Range   @closePop="close" :rangeList="rangeList"  />
-		</div>
+		<Range   @closePop="close" :rangeList="rangeList"  />
+	</div>
+	<div class="pop-up-fadein" :class="{fadeUp: which === 'success' || which === 'fail'}">
+		<BossResult  
+			:result="which"
+			@clickVoicePlay="clickVoicePlay"
+		/>
+	</div>
   </div>
 </template>
 <script>
 import CommonTop from 'components/top'
 import { rangeService, animalListService, bandStatusService } from 'services/collect'
+import { totalBloodService } from 'services/boss'
 import Range from 'pages/collect/range'
 import storage from 'utils/storage'
+import Result from './result'
 
 export default {
 	data() {
 		return {
+			clickVoice: null,
+			totalblood: -1,
+			leftblood: 20000,
+			lefttime: 180,
+			totalKill: 0,
 			online:false,
 			animal: {},
 			rangeList: [],
@@ -54,23 +69,64 @@ export default {
 		}
 	},
 	computed: {
+		bloodWith() {
+			return (this.leftblood / this.totalblood) * 100
+		},
 		openid() {
 			const userinfo = storage.getStorage('userinfo') || {}
 			return userinfo.openid
+		},
+		formTime() {
+			let m = parseInt((this.lefttime / 60)).toString()
+			if (m.length < 2) {
+				m = '0' + m
+			}
+			let s = (this.lefttime % 60).toString()
+			if (s.length < 2) {
+				s = '0' + s
+			}
+			return m + ' : ' +s
 		}
 	},
-	components: { CommonTop, Range },
+	components: { CommonTop, Range, BossResult: Result },
 	methods: {
+		async getTotalBlood() {
+			const resultData = await totalBloodService()
+			if (resultData && resultData.errmsg) return
+			this.totalblood = resultData.blood
+		},
+		playClickMusic() {
+			wx.setInnerAudioOption({
+					obeyMuteSwitch: false
+				})
+			this.clickVoice = wx.createInnerAudioContext() 
+			this.clickVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
+		},
+		clickVoicePlay() {
+			this.clickVoice.play()
+		},
+		playBgMusic() {
+			const playFunc = ()=> {
+		  		wx.playBackgroundAudio({
+				  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_boss.mp3'
+				})
+		  	}
+		  	playFunc()
+			wx.getBackgroundAudioManager().onEnded(() => playFunc())
+		},
 		close() {
+			this.clickVoicePlay()
 			this.which = ''
 		},
 		randNum(num) {
 			return Math.floor((Math.random() * (1.3 - 0.7) + 0.7) * num)
 		},
 		goCollect() {
+			this.clickVoicePlay()
 	    	wx.redirectTo({ url: '/pages/collect/main' });
 		},
 		async getRangeList() {
+			this.clickVoicePlay()
 			const resultData = await rangeService()
 			if (resultData && resultData.rank) {
 				this.rangeList = resultData.rank
@@ -88,6 +144,20 @@ export default {
 				monstertype: 'monster',
 				attackpower: this.randNum(totalAttack)
 			}
+
+
+			// this.leftblood -= sendData.attackpower * 20
+			// if (this.lefttime <=0 && this.leftblood > 0) {
+			// 		this.which = 'fail'
+			// 	}
+			// 	if (this.leftblood <=0 && this.lefttime > 0) {
+			// 		this.which = 'success'
+			// 		this.$store.dispatch('getIntergral')
+			// 	}
+			// 	return
+
+
+
 			console.log(sendData, 'sendData')
 			this.socketTask.send({
 				data: JSON.stringify(sendData),
@@ -96,7 +166,10 @@ export default {
 				},
 				success: res => {
 					console.log(res, 'res')
-				}
+				},
+				complete: result => {
+					console.log(result, 'result')
+				},
 			})
 		},
 		async getAnimal() {
@@ -132,7 +205,22 @@ export default {
 	          console.log("websocket连接失败！");
 	        });
 	    },
-		socketDeal() {},
+		socketDeal(socket) {
+			if (socket.eventname === 'noticeattaktotal') {
+				this.totalKill = socket.total
+			}
+			if (socket.eventname === 'noticemonstercountdown') {
+				this.lefttime = socket.lefttime
+				this.leftblood = socket.leftblood
+				if (this.lefttime <=0 && this.leftblood > 0) {
+					this.which = 'fail'
+				}
+				if (this.leftblood <=0 && this.lefttime > 0) {
+					this.which = 'success'
+					this.$store.dispatch('getIntergral')
+				}
+			}
+		},
 		listenColseSocket() {
 			this.socketTask.close()
 			wx.onSocketClose(function(res){
@@ -141,11 +229,15 @@ export default {
 	    },
 	},
 	onHide() {
- 
+ 		wx.stopBackgroundAudio()
 		this.listenColseSocket()
-		// this.pageReset()
+		this.playBgMusic()
 	},
+
 	onShow() {
+		this.playClickMusic()
+		this.playBgMusic()
+		this.getTotalBlood()
 		this.listenSocket()
 		this.$store.dispatch('getIntergral')
 		this.getAnimal()
@@ -153,7 +245,10 @@ export default {
 		//this.getData('created')
 		// this.fadeIn = true
 		//this.listenSocket() // 连接socket
-	}
+	},
+	onUnload() {
+		this.which = ''
+	},
 }
 </script>
 
@@ -175,26 +270,30 @@ export default {
 	// 	top:127px;
 	// 	position: absolute;
 	// 	height: 321px;
-		.ellipse{
-			position: absolute;
-			width:255px;
-			height: 20px;
-			// background:rgba(135,210,125,0.6);
-			// border-radius:50%;
-			left:70px;
-			// transform:translateX(-50%);
-
-			top:70vh;
-			.bg('pl2_shadow@2x');
-		}
+		
 		.boss{
 			.bg('pl2_boss');
-			width:71vw;
-			height:41vh;
+			width:533rpx;
+			height:448rpx;
 			position:absolute;
-			top:31vh;
+			bottom:30vh;
 			left:50%;
 			transform:translateX(-50%);
+			.ellipse{
+				position: absolute;
+				width:255px;
+				height: 20px;
+				bottom:-10px;
+				left:50%;
+
+				// background:rgba(135,210,125,0.6);
+				// border-radius:50%;
+				// left:70px;
+				transform:translateX(-50%);
+
+				// top:70vh;
+				.bg('pl2_shadow@2x');
+			}
 		}
 		.collect-btn{
 			position: absolute;
@@ -206,8 +305,9 @@ export default {
 		}
 		.blood{
 			position: absolute;
-			top:140px;
+			top:20vh;
 			left:125px;
+			width:132px;
 			// transform: translateX(-50%);
 			.blood-avatar{
 				position: absolute;
@@ -219,12 +319,15 @@ export default {
 				z-index:1
 			}
 			.blood-num{
+				border-right: 2px solid #000;
+				border-radius: 8px;
 				position: absolute;
 				top:4px;
 				left:16px;
 				height: 12px;
-				width:150px;
+				// width:150px;
 				.bg('pl2_blood@2x');
+				background-size: cover;
 			}
 			.count-down{
 				position: absolute;
@@ -326,6 +429,17 @@ export default {
 		width:100%;
 		&.fadeUp{
 			bottom:0;
+		}
+	}
+	.pop-up-fadein{
+		display:none;
+		position: absolute;
+		top:0;
+		left:0;
+		height: 100%;
+		width:100%;
+		&.fadeUp{
+			display:block;
 		}
 	}
 }

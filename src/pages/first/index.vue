@@ -9,6 +9,7 @@
 	      @getuserinfo="getUserInfo"
      	  v-if="true"
         ></button>
+
         <div class="process-loading" v-if="percent!==100"></div>
         <div class="process-wrap"><div :style="{width: percent+'%'}"></div></div>
       <!--   <image :src="item" v-for="(item, index) in imgList" v-show="false" @load="preLoadImg" :key="index" />
@@ -23,6 +24,7 @@
 	export default{
 		data() {
 		    return {
+		      clickVoice: null,
 		      openId: null,
 		      warning: true,
 		      gameId: null,
@@ -35,13 +37,30 @@
 		      userInfo: null //用户信息
 		    };
 		  },
+		  onShow() {
+		  	this.playBgMusic()
+		  	this.playClickMusic()
+		  },
 		methods: {
+			playClickMusic() {
+				wx.setInnerAudioOption({
+					obeyMuteSwitch: false
+				})
+				this.clickVoice = wx.createInnerAudioContext() 
+				this.clickVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
+				// this.clickVoice.play()
+			},
+			playBgMusic() {
+				const playFunc = ()=> {
+			  		wx.playBackgroundAudio({
+					  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_login.mp3'
+					})
+			  	}
+			  	playFunc()
+				wx.getBackgroundAudioManager().onEnded(() => playFunc())
+			},
 			getUserInfo() {
-				const _this = this;
-			      // if (_this.status == 1) {
-			      //   return;
-			      // }
-			      // _this.status = 1;
+				this.clickVoice.play()
 				 wx.login({
 			        success: res1 => {
 			          wx.getUserInfo({
@@ -49,9 +68,6 @@
 			              this.login(res2.userInfo, res1.code)
 			            }
 			          });
-			        },
-			        fail: () => {
-			          // _this.status = 0;
 			        },
 			        complete: () => {
 			          wx.hideLoading();
@@ -100,12 +116,13 @@
 		        	this.percent = 100;
 		        	// this.callBack();
 		        }
+			},
+			onHide() {
+				wx.stopBackgroundAudio()
 			}
 		},
 		mounted() {
-			// this.preLoadImg(() => {
-			// 	console.log(111);
-			// });
+			
 		},
 	}
 </script>

@@ -1,29 +1,29 @@
 <template>
 	<div class="success-pop-wrap">
-		<div class="mask" >
-			<div class="title">恭喜您获得了</div>
+		<div class="mask" @click="$emit('resetData')">
+			<div class="title" >恭喜您获得了</div>
 			
-			<div class="animal" v-if="!!pet">
+			<div class="animal"   v-if="!!pet">
 				<div class="bg1">
 					<div class="bg2"></div>
 			 		<div class="card">
 			 			<CommonCard
 						text="2/4"
 						:level="pet.level+'级'"
-						:eng="'战斗力：' + pet.power"
+						:eng="pet.power ? '战斗力：' + pet.power : null"
 						className="card-list"
 						:url="'http://parkiland.isxcxbackend1.cn/pl2_'+pet.petname+'.png'"
 					/>
 			 		</div>
 					
 				</div>
-				<div class="money">
+				<div class="money" v-if="!!integral">
 					<div class="icon"></div>
 					<div class="cost">{{integral}}</div>
 				</div>
 			</div>
-			<div class="no-animal" v-else>
-				<div class="money">
+			<div class="no-animal"  v-else>
+				<div class="money" v-if="!!integral">
 					<div class="icon"></div>
 					<div class="cost">{{integral}}</div>
 				</div>

@@ -7,7 +7,7 @@
 				<div class="left-txt">利用宠物狩猎怪物可以获得大量奖励。</div>
 				<div class="right-txt">
 					<span>剩余次数：</span>
-					<span class="num"> 3 </span>
+					<span class="num"> {{huntingRecord}} </span>
 				</div>
 			</div>
 			<div class="desc">每天0:00刷新次数</div>
@@ -18,16 +18,26 @@
 		</div>
 	</div>
 </template>
+<script>
+	export default {
+		props: {
+			huntingRecord: {
+				type: Number
+			}
+		}
+	}
+</script>
 <style type="text/css" lang="less">
 	@import '~less/mixin.less';
-	.hunting-list-wrap{
-		position: absolute;
-		left:0;
-		top:0;
-		width: 100%;
-		height: 100%;
-		z-index:81;
-		.hunting{
+	// .hunting-list-wrap{
+	// 	position: absolute;
+	// 	left:0;
+	// 	top:0;
+	// 	width: 100%;
+	// 	height: 100%;
+		
+		.hunting-list-wrap{
+			z-index:81;
 			.bg('pl2_hunting_bg');
 			width:614rpx;
 			height:1094rpx;
@@ -99,5 +109,5 @@
 			}
 		}
 		
-	}
+	// }
 </style>

@@ -1,9 +1,10 @@
 import request from 'services/request'
 
-export function testService(data) {
+// 商店查询
+export function totalBloodService(data) {
 	return request({
 		testUrl: '/static/json/list.json',
-		url: '',
+		url: '/parki/blood/query',
 		method: 'get',
 		data
 	})

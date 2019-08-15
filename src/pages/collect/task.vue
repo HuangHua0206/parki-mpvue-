@@ -12,7 +12,7 @@
 					<div class="task-name">{{item.taskname}}</div>
 					<div class="desc">{{item.taskcontent}}。</div>
 					<div class="reward">
-						<div class="get">奖励:<span class="integral-icon"></span> <span class="num">200</span> </div>
+						<div class="get">奖励:<span v-if="item.taskid != 10" class="integral-icon"></span> <span class="num" :style="{marginLeft: item.taskid != 10 ? '25px' : '3px'}">{{ item.taskid === 10 ? '四级宠物卡' : 200}}</span> </div>
 <!-- 						<div class="finish">已完成: {{ item.sequence}} / {{ item.schedule}}</div> -->
 					</div>
 					<div class="get-btn" v-if="item.schedule === 1" @click="$emit('earnRewards', item.taskid)">领取奖励</div>
@@ -36,22 +36,22 @@
 </script>
 <style lang="less">
 @import "~less/mixin.less";
-	.task-pop-wrap{
-		z-index:100;
-		position: absolute;
-		width:100%;
-	    height: 100%;
-		.mask{
-			left:0;
-			top:0;
-			position: absolute;
-			.bg("pl2_blackhalf@2x");
-			width:100%;
-			height: 100%;
-		}
+	// .{
 		
-		.email-bg{
-			z-index:10;
+	// 	position: absolute;
+	// 	width:100%;
+	//     height: 100%;
+	// 	.mask{
+	// 		left:0;
+	// 		top:0;
+	// 		position: absolute;
+	// 		.bg("pl2_blackhalf@2x");
+	// 		width:100%;
+	// 		height: 100%;
+	// 	}
+		
+		.task-pop-wrap{
+			z-index:100;
 			.bg("pl2_mailbot@2x");
 			width:306px;
 			height: 547px;
@@ -158,5 +158,5 @@
 			}
 		}
 
-	}
+	// }
 </style>

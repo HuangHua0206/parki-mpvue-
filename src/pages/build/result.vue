@@ -7,6 +7,7 @@
 			<div class="icon"></div>
 			<div class="cost">+{{huntingIntegral}}</div>
 		</div>
+		<div class="close-btn" @click="$emit('closePop')"></div>
 		<div class="btn" @click="$emit('closePop')">确认</div>
 	</div>
 </template>
@@ -65,6 +66,14 @@
 				line-height: 44rpx;
 				font-size:48rpx;
 			}
+		}
+		.close-btn{
+			width:30px;
+			height: 30px;
+			.bg("pl2_no@2x");
+			position: absolute;
+			right:-10px;
+			top:-10px;
 		}
 		.btn{
 			position:absolute;
