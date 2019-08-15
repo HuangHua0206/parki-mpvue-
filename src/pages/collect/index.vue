@@ -720,7 +720,7 @@
 			   }
 		    },
 		    async getBagEnergy(color, num) {
-		    	if (!num || this.reset) return // 数量为0时点击无效
+		    	if (!num) return // 数量为0时点击无效
 		    	if (this.ISENDING) return
 		    	this.ISENDING = true
 		       if (this.collects.includes(color)) {
