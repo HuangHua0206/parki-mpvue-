@@ -96,6 +96,9 @@ export default {
 			this.totalblood = resultData.blood
 		},
 		playClickMusic() {
+			wx.setInnerAudioOption({
+					obeyMuteSwitch: false
+				})
 			this.clickVoice = wx.createInnerAudioContext() 
 			this.clickVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
 		},
