@@ -1,10 +1,10 @@
 <template>
 	<div class="build-wrap">
 		<div class="cloud"></div>
-		<div class="mask" style="z-index:80" @click="which=''" v-if="!!which && which !== 'store' && which !== 'my' && which !== 'share-has-animal' || !!dragonResult"></div> 
+		<div class="mask" style="z-index:80" @click="closeMask" v-if="!!which && which !== 'share-has-animal' || !!dragonResult"></div> 
 		<CommonTop 
 	  		ctxt="搜集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
-	  		@rightFunc="which='share'"
+	  		@rightFunc="showSharePop"
 	  		share>
   		</CommonTop>
   		<div style="z-index: 61;position: absolute;width:100%;height:100%;left:0;top:0;" v-if="which==='share-has-animal'">
@@ -68,16 +68,16 @@
 		</div>
 
 		<!-- 建造--选择区域 -->
-		<div class="pop-up-bottom" :class="{fadeUp: which === 'store'}" @click="which=''">
+		<div class="pop-up-bottom" :class="{fadeUp: which === 'store'}" >
 <!-- 			<div class="mask" @click="which=''"></div> -->
 			<div class="store common">
 				<div class="titles">
-					<div class="title-item" :class="{active: storeType === 1}" @click.stop="storeType = 1">建筑</div>
-					<div class="title-item" :class="{active: storeType === 2}" @click.stop="storeType = 2">Parki建筑</div>
-					<div class="title-item" :class="{active: storeType === 3}" @click.stop="storeType = 3">自然</div>
+					<div class="title-item" :class="{active: storeType === 1}" @click.stop="clickVoicePlay();storeType = 1">建筑</div>
+					<div class="title-item" :class="{active: storeType === 2}" @click.stop="clickVoicePlay();storeType = 2">Parki建筑</div>
+					<div class="title-item" :class="{active: storeType === 3}" @click.stop="clickVoicePlay();storeType = 3">自然</div>
 				</div>
 				<div class="list">
-					<div class="list-item" v-for="(item, $index) in shopList" :key="$index" @click.stop="openBuyPop(item)">
+					<div class="list-item" v-for="(item, $index) in shopList" :key="$index" @click.stop="clickVoicePlay();openBuyPop(item)">
 						<img class="store_img"  :src="'http://parkiland.isxcxbackend1.cn/pl2_store1_'+item.prdname+'.png'"  />
 						<div class="cost">
 							<div class="icon"></div>
@@ -88,13 +88,13 @@
 				</div>
 			</div>
 		</div>
-		<div class="pop-up-bottom" :class="{fadeUp: which === 'my'}" @click="which=''">
+		<div class="pop-up-bottom" :class="{fadeUp: which === 'my'}"   >
 		<!-- 	<div class="mask" @click="which=''"></div> -->
-			<div class="my common">
+			<div class="my common" >
 				<div class="titles">
-					<div class="title-item" :class="{active: myType === 1}" @click.stop="myType = 1">建筑</div>
-					<div class="title-item" :class="{active: myType === 2}" @click.stop="myType = 2">Parki建筑</div>
-					<div class="title-item" :class="{active: myType === 3}" @click.stop="myType = 3">自然</div>
+					<div class="title-item" :class="{active: myType === 1}" @click.stop="clickVoicePlay();myType = 1">建筑</div>
+					<div class="title-item" :class="{active: myType === 2}" @click.stop="clickVoicePlay();myType = 2">Parki建筑</div>
+					<div class="title-item" :class="{active: myType === 3}" @click.stop="clickVoicePlay();myType = 3">自然</div>
 				</div>
 				<div class="list">
 					<div class="list-item" 
@@ -111,10 +111,10 @@
 				</div>
 			</div>
 		</div>
-		<div class="buy-pop" v-if="buyOpen" >
+		<div class="buy-pop" v-if="buyOpen"  >
 			<div class="mask"></div>
 			<div class="buy-wrap">
-				<div class="close" @click="buyOpen = false"></div>
+				<div class="close" @click="clickVoicePlay();buyOpen = false"></div>
 				<div class="content">
 					<img  :src="'http://parkiland.isxcxbackend1.cn/pl2_store1_'+buyContent.prdname+'.png'" />
 					<div class="name">{{buyContent.prdname}}</div>
@@ -133,26 +133,26 @@
 						}"></div><div  class="txt">能量</div>
 					</div>
 				<div class="num-wrap">
-					<div class="sub" @click="subNum"></div>
+					<div class="sub" @click="clickVoicePlay();subNum()"></div>
 					<div class="num">{{buyNum}}</div>
-					<div class="add" @click="addNum"></div>
+					<div class="add" @click="clickVoicePlay();addNum()"></div>
 				</div>
 				<div class="total">
 					一共花费<div class="icon"></div>
 						<div class="cost">{{buyNum * buyContent.cost}}</div>
 				</div>
-				<div class="buy-btn" @click="buyBuild">购买</div>
+				<div class="buy-btn" @click="clickVoicePlay();buyBuild()">购买</div>
 			</div>
 		</div>
 		<!-- 弹窗部分 -->
 		<div class="pop-up-right" :class="{fadeUp: which === 'hunting'}" v-if="!dragonResult"> 
-			<Hunting   @closePop="which = ''"  @selectDragon="selectDragon" :huntingRecord="huntingRecord"/>
+			<Hunting   @closePop="closeMask"  @selectDragon="selectDragon" :huntingRecord="huntingRecord"/>
 		</div>
 		<div class="pop-up-right" :class="{fadeUp: which === 'friend'}"> 
-			<Friend   @closePop="which = ''"  :friendList="friendList" :left="left" @giveEnergy="giveEnergy"/>
+			<Friend   @closePop="closeMask"  :friendList="friendList" :left="left" @giveEnergy="giveEnergy"/>
 		</div>
-		<div class="share-pop" v-if="which==='share'">
-			<div class="close" @click="which=''"></div>
+		<div class="share-pop" v-if="which === 'share'">
+			<div class="close" @click="closeMask"></div>
 			<button class="btn" @click="confirmShare" open-type="share">确认分享</button>
 		</div>
 		<div style="opacity:0;" class="opacity0-tent"></div>
@@ -171,7 +171,7 @@
 			<HuntingResult  
 				:dragonResult="dragonResult" 
 				:huntingIntegral="huntingIntegral" 
-				@closePop="dragonResult = ''"
+				@closePop="closeHuntingResult"
 			/>
 		</div>
 	</div>
@@ -206,6 +206,7 @@ import {
 export default {
 	data() {
 		return {
+			clickVoice: null,
 			huntingRecord: 3,
 			share: {},
 			huntingIntegral: 0,
@@ -262,6 +263,7 @@ export default {
 		this.$store.dispatch('getIntergral')
 		this.getData('created')
 		this.playBgMusic()
+		this.playClickMusic()
 		this.listenSocket() // 连接socket
 	},
 	onShareAppMessage(res) {
@@ -275,11 +277,20 @@ export default {
 		// wx.getShareInfo()
 	},
 	methods: {
+		closeHuntingResult() {
+			this.clickVoicePlay()
+			this.dragonResult = ''
+		},
+		closeMask() {
+			this.clickVoicePlay()
+			this.which=''
+		},
 		playClickMusic() {
-			wx.playBackgroundAudio({
-			    dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
-			})
-			wx.getBackgroundAudioManager().onEnded(() => this.playBgMusic())
+			this.clickVoice = wx.createInnerAudioContext() 
+			this.clickVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
+		},
+		clickVoicePlay() {
+			this.clickVoice.play()
 		},
 		playBgMusic() {
 			const playFunc = ()=> {
@@ -300,12 +311,7 @@ export default {
 			}
 		},
 		async confirmShare() {
-			// console.log(888);
-			// wx.showShareMenu({
-			//   withShareTicket: true
-			// })
-			// return
-			// onShareAppMessage()
+			this.clickVoicePlay()
 			const resultData = await shareService({ openid: this.openid })
 			if (resultData  && resultData.errmsg) return
 			this.share = resultData
@@ -353,6 +359,10 @@ export default {
 
 			}
 		},
+		showSharePop() {
+			this.clickVoicePlay()
+			this.which='share';
+		},
 		async getAnimal() {
 			const resultData = await animalListService({ openid: this.openid })
 			if (resultData && resultData.errmsg) return
@@ -366,13 +376,14 @@ export default {
  
 		},
 		async openHunting() {
+			this.clickVoicePlay()
 			const resultData = await huntingRecordService({ openid: this.openid })
 			if (resultData && resultData.errmsg) return
 			this.huntingRecord = resultData.left
 			this.which = 'hunting'
 		},
 		async selectDragon(type) {
-			
+			this.clickVoicePlay()
 			clearInterval(this.timer);
 			if (this.huntingRecord <=0 ) {
 				this.$tip.toast('您今日3次狩猎机会已使用完，明天再来哦')
@@ -401,7 +412,12 @@ export default {
 			this.bandStatus()
 			this.timer = setInterval(this.countdown, 1000);
 		},
-		async openFriend() {
+		openFriend() {
+			this.clickVoicePlay()
+			this.getFriendList()
+		},
+		async getFriendList() {
+
 			const resultData = await friendListService({ openid: this.openid })
 			if (resultData && resultData.errmsg) return
 			this.friendList = resultData.friends
@@ -416,10 +432,11 @@ export default {
 			})
 			if (resultData && resultData.errmsg) return
 			this.left = resultData.left	
-			this.openFriend()
+			this.getFriendList()
 			this.$tp.toast('您已赠送成功')
 		},
 		async collectEnergy(build) {
+			this.clickVoicePlay()
 			const resultData = await collectBallsService({
 				openid: this.openid,
 				uniqueid: build.uniqueid
@@ -566,14 +583,17 @@ export default {
 			}
 		},
 		showStore() {
+			this.clickVoicePlay()
 			this.getStore(this.storeType)
 			this.which='store'
 		},
 		showMy() {
+			this.clickVoicePlay()
 			this.getMy(this.myType)
 			this.which='my'
 		},
 		goCollect() {
+			this.clickVoicePlay()
 	    	wx.redirectTo({ url: '/pages/collect/main' });
 		},
 	    //两点间距离公式
@@ -1184,7 +1204,7 @@ export default {
 			}
 		}
 		.pop-up-bottom{
-			z-index:65;
+			z-index:85;
 			transition: 0.5s;
 			position: absolute;
 			bottom:-100%;
@@ -1300,7 +1320,7 @@ export default {
 			}
 		}
 		.buy-pop{
-			z-index:80;
+			z-index:90;
 			position:absolute;
 			left:0;
 			height:0;

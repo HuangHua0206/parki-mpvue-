@@ -1,20 +1,26 @@
 <template>
 	<div class="collect-wrap">
-		<div class="mask" style="z-index:80" @click="which=''" v-if="!!which && which !== 'success' && which !== 'animal'"></div> 
+		<div class="mask" style="z-index:80" @click="closeMask" v-if="!!which && which !== 'success' && which !== 'animal'"></div> 
 		<div class="collect-bg"></div>
 		<div class="cloud"></div>
 		<div class="stars"></div>
 		<div class="toast"  :class="{show: toast==='repeat'}"></div>
-		<Success @resetData="resetData" v-if="together" :integral="finish.integral" :pet="finish.pet"></Success>
+		<Success 
+			@resetData="resetData" 
+			v-if="together" 
+			:integral="finish.integral" 
+			:pet="finish.pet"
+			@clickVoicePlay="clickVoicePlay"
+			></Success>
 		<CommonTop 
 	  		ctxt="搜集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
 	  		:rightNum="9999"
 	  		@openRange="getRangeList"
 	  		>
 	  	</CommonTop>
-		<div class="button task-button" :class="{'fade-left-in': fadeIn}" @click="getTaskList"></div>
-		<div class="button email-button" :class="{'fade-left-in': fadeIn}" @click="which = 'email'"></div>
-		<div class="button animal-button" :class="{'fade-right-in': fadeIn}" @click="getAnimaList"></div>
+		<div class="button task-button" :class="{'fade-left-in': fadeIn}" @click="openTask"></div>
+		<div class="button email-button" :class="{'fade-left-in': fadeIn}" @click="openEmial"></div>
+		<div class="button animal-button" :class="{'fade-right-in': fadeIn}" @click="openAnimal"></div>
 		<div class="button online-button"  :class="{
 			'fade-right-in': fadeIn,
 			'z-index-top': online
@@ -30,7 +36,7 @@
 		<div class="button offline-button" :class="{
 			'fade-right-in': fadeIn,
 			'z-index-top': !online
-		}" @click="which = 'bracelet'">
+		}" @click="openBracelet">
 			<div class="progress-mask" >
 	<!-- 			<div class="progress hasBracelet"   >
 					<div class="sunny hasBracelet"    ></div>
@@ -64,7 +70,7 @@
 				<div class="num two"></div>
 				<div  class="num three"></div>
 			</div>
-			<div class="plus has-bg"  @click="energyIn = !energyIn"></div>
+			<div class="plus has-bg"  @click="showEnergyBag"></div>
 		</div>
 		<div class="nums-wrap" style="z-index: 45;">
 			<div class="one-three">
@@ -98,12 +104,12 @@
 					</div>
 				</div>
 			</div>
-			<div class="plus"  @click="energyIn = !energyIn"></div>
+			<div class="plus"  @click="showEnergyBag"></div>
 		</div>
 		<div class="world" >
 			<div class="boss" v-if="worldEvent === 'boss'" @click="goBoss"></div>
-			<div class="amazing" v-if="worldEvent === 'super'" @click="which='super'"></div>
-			<div class="earth" v-if="worldEvent === 'earth'" @click="which='earth'"></div>
+			<div class="amazing" v-if="worldEvent === 'super'" @click="showSuper"></div>
+			<div class="earth" v-if="worldEvent === 'earth'" @click="showEarth"></div>
 		</div>
 		<!-- 能量背包-->
 		<div   class="energy-wrap" :class="{fadeUp: energyIn}">
@@ -131,7 +137,7 @@
 		<div   class="my-home" @click="goBulid" :class="{fadeUp: energyIn}"></div>
 		<!-- 弹窗部分 -->
 		<div class="pop-up-left" :class="{fadeUp: which === 'email'}"> 
-			<Email   @closePop="close"  />
+			<Email   @closePop="close"  @readEamil="readEamil"/>
 		</div>
 		<div class="pop-up-left" :class="{fadeUp: which === 'task'}">
 			<Task    @closePop="close"  :taskList="taskList" @earnRewards="earnRewards"/>
@@ -140,7 +146,7 @@
 			<Range   @closePop="close" :rangeList="rangeList"  />
 		</div>
 		<div class="pop-up-right" :class="{fadeUp: which === 'bracelet'}">
-			<Bracelet   @closePop="close"  @reward="reward" />
+			<Bracelet   @closePop="close"  @reward="reward" @clickVoicePlay="clickVoicePlay"/>
 		</div>
 		<div class="pop-up-right" :class="{fadeUp: which === 'animal'}">
 			<Animal   @closePop="close"   :animalList="animalList" @selectAnimal="selectAnimal" @upgrade="upgrade"/>
@@ -245,6 +251,7 @@
 	export default{
 		data () {
 		  return {
+		  	clickVoice: null,
 		  	animalList: [],
 		  	rangeList: [],
 		  	taskList: [],
@@ -318,11 +325,19 @@
 			}
 		},
 		methods: {
+			closeMask() {
+				this.clickVoicePlay()
+				this.which=''
+			},
+			readEamil() {
+				this.clickVoicePlay()
+			},
 			playClickMusic() {
-				wx.playBackgroundAudio({
-				  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
-				})
-				wx.getBackgroundAudioManager().onEnded(() => this.playBgMusic())
+				this.clickVoice = wx.createInnerAudioContext() 
+				this.clickVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
+			},
+			clickVoicePlay() {
+				this.clickVoice.play()
 			},
 			playBgMusic() {
 				const playFunc = ()=> {
@@ -334,6 +349,7 @@
 				wx.getBackgroundAudioManager().onEnded(() => playFunc())
 			},
 			async earnRewards(taskid) {
+				this.clickVoicePlay()
 				const resultData = await earnRewardService({
 					taskid,
 					openid: this.openid
@@ -342,6 +358,26 @@
 				this.$tip.toast('领取成功，奖励200积分')
 				this.getTaskList()
 				this.$store.dispatch('getIntergral')
+			},
+			showEnergyBag() {
+				this.clickVoicePlay()
+				this.energyIn = !this.energyIn 
+			},
+			openTask() {
+				this.clickVoicePlay()
+				this.getTaskList()
+			},
+			openAnimal() {
+				this.clickVoicePlay()
+				this.getAnimaList()
+			},
+			openEmial() {
+				this.clickVoicePlay()
+				this.which = 'email'
+			},
+			openBracelet() {
+				this.clickVoicePlay()
+				this.which = 'bracelet'
 			},
 			async getTaskList() {
 				const resultData = await taskService({openid: this.openid})
@@ -363,6 +399,7 @@
 					, 5000)
 			},
 			async getRangeList() {
+				this.clickVoicePlay()
 				const resultData = await rangeService()
 				if (resultData && resultData.rank) {
 					this.rangeList = resultData.rank
@@ -371,7 +408,7 @@
 
 			}, 
 			async upgrade(item) {
-				console.log('2')
+				this.clickVoicePlay()
 				const resultData = await upgradeAnimalService({
 					petid: item.petid,
 					openid: this.openid
@@ -379,10 +416,12 @@
 				if (resultData && resultData.errmsg) return
 				this.getAnimaList()
 			},
+
 			rewardRequest() {
 				reward2Service({openid: this.openid})
 			},
 			async selectAnimal(petid){
+				this.clickVoicePlay()
 				const resultData = await changeAnimalService({
 					petid,
 					openid: this.openid,
@@ -464,9 +503,18 @@
 		           	 }
 		    },
 			goBoss() {
+				this.clickVoicePlay()
 				wx.redirectTo({
 					url: '/pages/boss/main'
 				});
+			},
+			showSuper() {
+				this.clickVoicePlay()
+				this.which='super'
+			},
+			showEarth() {
+				this.clickVoicePlay()
+				this.which='earth'
 			},
 			async bandStatus() {
 				const resultData = await bandStatusService({ openid: this.openid })
@@ -480,6 +528,7 @@
 			},
 			// 关闭界面弹窗
 			close(param) {
+				this.clickVoicePlay()
 				if (param === 'bind') this.online = true
 				this.which = ''
 			},
@@ -720,6 +769,7 @@
 			   }
 		    },
 		    async getBagEnergy(color, num) {
+		    	this.clickVoicePlay()
 		    	if (!num || this.reset) return // 数量为0时点击无效
 		    	if (this.ISENDING) return
 		    	this.ISENDING = true
@@ -763,6 +813,7 @@
 
 		    },
 		    goBulid() {
+		    	this.clickVoicePlay()
 		    	wx.redirectTo({
 					url: '/pages/build/main'
 				});
@@ -847,6 +898,7 @@
 				})
 		    },
 		     resetData() {
+		     	this.clickVoicePlay()
 		    	this.reset = true // 重置时不再出现背包消失的效果
 		    	this.together = false
 			  	this.index = 0 // 第index个位置发生能量变化
@@ -883,6 +935,7 @@
 		},
 		async onShow() {
 			console.log('onShow')
+			this.playClickMusic()
 			this.$store.dispatch('getIntergral')
 			this.which = ''
 			this.worldEvent = ''

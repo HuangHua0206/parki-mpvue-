@@ -31,7 +31,7 @@
 	export default{
 		methods: {
 			openScan() {
-				console.log('扫码')
+				this.$emit('clickVoicePlay')
 				wx.scanCode({
 					onlyFromCamera:true,
 					scanType: ['qrCode'],
@@ -59,22 +59,22 @@
 </script>
 <style lang="less">
 @import "~less/mixin.less";
-	.bracelet-pop-wrap{
-		z-index:100;
-		position: absolute;
-		width:100%;
-	    height: 100%;
-		.mask{
-			left:0;
-			top:0;
-			position: absolute;
-			.bg("pl2_blackhalf@2x");
-			width:100%;
-			height: 100%;
-		}
+	// .{
+	// 	z-index:100;
+	// 	position: absolute;
+	// 	width:100%;
+	//     height: 100%;
+	// 	.mask{
+	// 		left:0;
+	// 		top:0;
+	// 		position: absolute;
+	// 		.bg("pl2_blackhalf@2x");
+	// 		width:100%;
+	// 		height: 100%;
+	// 	}
 		
-		.bracelet-bg{
-			z-index:10;
+		.bracelet-pop-wrap{
+			z-index:100;
 			.bg("pl2_Bracelet_yellow@2x");
 			width:306px;
 			height: 547px;
@@ -146,5 +146,5 @@
 			}
 		}
 
-	}
+	// }
 </style>

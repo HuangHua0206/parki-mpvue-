@@ -29,14 +29,15 @@
 </script>
 <style type="text/css" lang="less">
 	@import '~less/mixin.less';
-	.hunting-list-wrap{
-		position: absolute;
-		left:0;
-		top:0;
-		width: 100%;
-		height: 100%;
-		z-index:81;
-		.hunting{
+	// .hunting-list-wrap{
+	// 	position: absolute;
+	// 	left:0;
+	// 	top:0;
+	// 	width: 100%;
+	// 	height: 100%;
+		
+		.hunting-list-wrap{
+			z-index:81;
 			.bg('pl2_hunting_bg');
 			width:614rpx;
 			height:1094rpx;
@@ -108,5 +109,5 @@
 			}
 		}
 		
-	}
+	// }
 </style>

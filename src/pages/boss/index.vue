@@ -1,6 +1,6 @@
 <template>
   <div class="beat-boss-wrap">
-  	<div class="mask" style="z-index:80" @click="which=''" v-if="!!which"></div> 
+  	<div class="mask" style="z-index:80" @click="clickVoicePlay();which=''" v-if="!!which"></div> 
   	<CommonTop 
   		ctxt="点击屏幕攻击怪兽，一起保护PRAKINLAND"
   		@openRange="getRangeList"
@@ -41,6 +41,7 @@
 	<div class="pop-up-fadein" :class="{fadeUp: which === 'success' || which === 'fail'}">
 		<BossResult  
 			:result="which"
+			@clickVoicePlay="clickVoicePlay"
 		/>
 	</div>
   </div>
@@ -56,6 +57,7 @@ import Result from './result'
 export default {
 	data() {
 		return {
+			clickVoice: null,
 			totalblood: -1,
 			leftblood: 20000,
 			lefttime: 180,
@@ -94,10 +96,11 @@ export default {
 			this.totalblood = resultData.blood
 		},
 		playClickMusic() {
-			wx.playBackgroundAudio({
-			  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
-			})
-			wx.getBackgroundAudioManager().onEnded(() => this.playBgMusic())
+			this.clickVoice = wx.createInnerAudioContext() 
+			this.clickVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
+		},
+		clickVoicePlay() {
+			this.clickVoice.play()
 		},
 		playBgMusic() {
 			const playFunc = ()=> {
@@ -109,15 +112,18 @@ export default {
 			wx.getBackgroundAudioManager().onEnded(() => playFunc())
 		},
 		close() {
+			this.clickVoicePlay()
 			this.which = ''
 		},
 		randNum(num) {
 			return Math.floor((Math.random() * (1.3 - 0.7) + 0.7) * num)
 		},
 		goCollect() {
+			this.clickVoicePlay()
 	    	wx.redirectTo({ url: '/pages/collect/main' });
 		},
 		async getRangeList() {
+			this.clickVoicePlay()
 			const resultData = await rangeService()
 			if (resultData && resultData.rank) {
 				this.rangeList = resultData.rank
@@ -226,6 +232,8 @@ export default {
 	},
 
 	onShow() {
+		this.playClickMusic()
+		this.playBgMusic()
 		this.getTotalBlood()
 		this.listenSocket()
 		this.$store.dispatch('getIntergral')

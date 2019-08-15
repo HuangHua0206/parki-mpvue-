@@ -22,7 +22,7 @@
 		},
 		methods: {
 			goCollect() {
-				
+				this.$emit('clickVoicePlay')
 		    	wx.redirectTo({ url: '/pages/collect/main' });
 			}
 		}

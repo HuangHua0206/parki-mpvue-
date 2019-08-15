@@ -1,9 +1,9 @@
 <template>
 	<div class="success-pop-wrap">
-		<div class="mask" >
-			<div class="title">恭喜您获得了</div>
+		<div class="mask" @click="$emit('resetData')">
+			<div class="title" >恭喜您获得了</div>
 			
-			<div class="animal" v-if="!!pet">
+			<div class="animal"   v-if="!!pet">
 				<div class="bg1">
 					<div class="bg2"></div>
 			 		<div class="card">
@@ -22,7 +22,7 @@
 					<div class="cost">{{integral}}</div>
 				</div>
 			</div>
-			<div class="no-animal" v-else>
+			<div class="no-animal"  v-else>
 				<div class="money" v-if="!!integral">
 					<div class="icon"></div>
 					<div class="cost">{{integral}}</div>

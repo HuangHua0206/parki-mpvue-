@@ -50,24 +50,24 @@
 </script>
 <style lang="less">
 @import "~less/mixin.less";
-	.range-pop-wrap{
- 		position: absolute;
+	// .{
+ // 		position: absolute;
  
-			width:100%;
-			height: 100%;
-		z-index:100;
-		.mask{
- 
-			left:0;
-			top:0;
-			position: absolute;
-			.bg("pl2_blackhalf@2x");
-			width:100%;
-			height: 100%;
-		}
+	// 		width:100%;
+	// 		height: 100%;
 		
-		.rang-bg{
-				z-index:55;
+	// 	.mask{
+ 
+	// 		left:0;
+	// 		top:0;
+	// 		position: absolute;
+	// 		.bg("pl2_blackhalf@2x");
+	// 		width:100%;
+	// 		height: 100%;
+	// 	}
+		
+		.range-pop-wrap{
+			z-index:100;
 			.bg("pl2_list@2x");
 			width:694rpx;
 			height: 1152rpx;
@@ -149,5 +149,5 @@
 				}
 			}
 		}
-	}
+	// }
 </style>

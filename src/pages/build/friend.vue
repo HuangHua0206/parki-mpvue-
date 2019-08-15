@@ -64,14 +64,15 @@
 </script>
 <style type="text/css" lang="less">
 	@import '~less/mixin.less';
-	.friend-list-wrap{
-		position: absolute;
-		left:0;
-		top:0;
-		width: 100%;
-		height: 100%;
-		z-index:81;
-		.hunting{
+	// .{
+	// 	position: absolute;
+	// 	left:0;
+	// 	top:0;
+	// 	width: 100%;
+	// 	height: 100%;
+		
+		.friend-list-wrap{
+			z-index:81;
 			.bg('pl2_hunting_bg');
 			width:607rpx;
 			height:1059rpx;
@@ -223,5 +224,5 @@
 			}
 		}
 		
-	}
+	// }
 </style>

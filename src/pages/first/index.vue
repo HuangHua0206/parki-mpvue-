@@ -24,6 +24,7 @@
 	export default{
 		data() {
 		    return {
+		      clickVoice: null,
 		      openId: null,
 		      warning: true,
 		      gameId: null,
@@ -38,13 +39,13 @@
 		  },
 		  onShow() {
 		  	this.playBgMusic()
+		  	this.playClickMusic()
 		  },
 		methods: {
 			playClickMusic() {
-				wx.playBackgroundAudio({
-				  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
-				})
-				// wx.getBackgroundAudioManager().onEnded(() => this.playBgMusic())
+				this.clickVoice = wx.createInnerAudioContext() 
+				this.clickVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
+				// this.clickVoice.play()
 			},
 			playBgMusic() {
 				const playFunc = ()=> {
@@ -56,7 +57,7 @@
 				wx.getBackgroundAudioManager().onEnded(() => playFunc())
 			},
 			getUserInfo() {
-				this.playClickMusic()
+				this.clickVoice.play()
 				 wx.login({
 			        success: res1 => {
 			          wx.getUserInfo({
