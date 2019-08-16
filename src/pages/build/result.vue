@@ -63,7 +63,7 @@
 				height:20px;
 				// line-height: 34rpx;
 				color: #ffad01;
-				line-height: 56rpx;
+				line-height: 44rpx;
 				font-size:48rpx;
 			}
 		}
