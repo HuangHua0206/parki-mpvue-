@@ -251,6 +251,7 @@
 	export default{
 		data () {
 		  return {
+		  	getAnimalVoice: null,
 		  	clickVoice: null,
 		  	plusMoneyVoice: null,
 		  	animalList: [],
@@ -342,6 +343,8 @@
 				this.clickVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
 				this.plusMoneyVoice = wx.createInnerAudioContext()
 				this.plusMoneyVoice.src='http://parkiland.isxcxbackend1.cn/pl2_integral_add.mp3'
+				this.getAnimalVoice = wx.createInnerAudioContext()
+				this.getAnimalVoice.src='http://parkiland.isxcxbackend1.cn/pl2_hunting_success_getanimal.mp3'
 			},
 			clickVoicePlay() {
 				this.clickVoice.play()
@@ -349,10 +352,34 @@
 			plusMoneyVoicePlay() {
 				this.plusMoneyVoice.play()
 			},
+			getAnimalVoicePlay() {
+				this.getAnimalVoice.play()
+			},
 			playBgMusic() {
 				const playFunc = ()=> {
 			  		wx.playBackgroundAudio({
+			  		  title: '收集背景乐',
 					  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_collect.mp3'
+					})
+			  	}
+			  	playFunc()
+				wx.getBackgroundAudioManager().onEnded(() => playFunc())
+			},
+			playEarthBgMusic() {
+				const playFunc = ()=> {
+			  		wx.playBackgroundAudio({
+			  		  title: '地震背景乐',
+					  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_earth.mp3'
+					})
+			  	}
+			  	playFunc()
+				wx.getBackgroundAudioManager().onEnded(() => playFunc())
+			},
+			playSuperBgMusic() {
+				const playFunc = ()=> {
+			  		wx.playBackgroundAudio({
+			  		  title: '超级能量背景乐',
+					  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_super.mp3'
 					})
 			  	}
 			  	playFunc()
@@ -492,6 +519,7 @@
 		           	 	this.remaining = now.remaining
 		           	 }
 		           	 if (now.eventname === 'getsuperintegral') {
+		           	 	this.plusMoneyVoicePlay()
 		           	 	this.integral = now.integral
 		           	 }
 		           	 if (now.status === 1 && now.eventname === 'allowcollectgreen') {
@@ -826,6 +854,9 @@
 		      		setTimeout(()=>{ 
 		      			this.plusMoneyVoicePlay()
 		      			this.together = true
+		      			if (!!this.finish.pet) {
+		      				this.getAnimalVoicePlay()
+		      			}
 		      		}, 1000)
 		      	}
 
@@ -838,6 +869,7 @@
 		    },
 		    pageReset() {
 				clearInterval(this.timer)
+				
 				// this.resetData()
 				this.FIRST_EARTH = true
 				// this.resetData()
@@ -977,7 +1009,24 @@
 		  },
 		
 		onUnload() {
+			this.getAnimalVoice = null
+			this.clickVoice = null
+		  	this.plusMoneyVoice = null
 			this.pageReset()
+		},
+		watch: {
+			which: {
+				handler(newValue, oldValue) {
+					console.log('newValue', newValue)
+					if (newValue === 'earth' && this.worldEvent === 'earth') {
+						this.playEarthBgMusic()
+					} else if ((newValue === 'my-super' || newValue === 'super') && this.worldEvent === 'super') {
+						this.playSuperBgMusic()
+					} else {
+						this.playBgMusic()
+					}
+				}
+			}
 		},
 		components: { CommonTop, Email, Task, Range, Bracelet, Animal, Success, Amazing, Earth, SuperMe },
 	}

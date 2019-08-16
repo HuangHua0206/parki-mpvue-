@@ -101,13 +101,29 @@ export default {
 				})
 			this.clickVoice = wx.createInnerAudioContext() 
 			this.clickVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
+			this.huntingClickVoice = wx.createInnerAudioContext()
+			this.huntingClickVoice.src='http://parkiland.isxcxbackend1.cn/pl2_hunting_click.mp3'
+			this.getAnimalVoice = wx.createInnerAudioContext()
+			this.getAnimalVoice.src='http://parkiland.isxcxbackend1.cn/pl2_hunting_success_getanimal.mp3'
+			this.huntingFailVoice = wx.createInnerAudioContext()
+			this.huntingFailVoice.src='http://parkiland.isxcxbackend1.cn/pl2_hunting_fail.mp3'
 		},
 		clickVoicePlay() {
 			this.clickVoice.play()
 		},
+		huntingClickVoicePlay() {
+			this.huntingClickVoice.play()
+		},
+		getAnimalVoicePlay() {
+			this.getAnimalVoice.play()
+		},
+		huntingFailVoicePlay() {
+			this.huntingFailVoice.play()
+		},
 		playBgMusic() {
 			const playFunc = ()=> {
 		  		wx.playBackgroundAudio({
+		  		  title: '打怪背景乐',
 				  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_boss.mp3'
 				})
 		  	}
@@ -135,7 +151,7 @@ export default {
 
 		},
 		attackBoss() {
-
+			this.huntingClickVoicePlay()
 			let totalAttack = 5
 			if (this.animal.power) totalAttack = this.animal.power
 			if (this.online) totalAttack += 5
@@ -213,9 +229,11 @@ export default {
 				this.lefttime = socket.lefttime
 				this.leftblood = socket.leftblood
 				if (this.lefttime <=0 && this.leftblood > 0) {
+					this.huntingFailVoicePlay()
 					this.which = 'fail'
 				}
 				if (this.leftblood <=0 && this.lefttime > 0) {
+					this.getAnimalVoicePlay()
 					this.which = 'success'
 					this.$store.dispatch('getIntergral')
 				}

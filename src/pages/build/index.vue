@@ -206,9 +206,11 @@ import {
 export default {
 	data() {
 		return {
+			huntingClickVoice: null,
 			showEnergyVoice: null,
 			plusMoneyVoice: null,
 			clickVoice: null,
+			getBuildVoice: null,
 			huntingRecord: 3,
 			share: {},
 			huntingIntegral: 0,
@@ -287,6 +289,7 @@ export default {
 			this.clickVoicePlay()
 			this.which=''
 		},
+		// 提前注册音频
 		playClickMusic() {
 			wx.setInnerAudioOption({
 					obeyMuteSwitch: false
@@ -297,7 +300,18 @@ export default {
 			this.plusMoneyVoice.src='http://parkiland.isxcxbackend1.cn/pl2_integral_add.mp3'
 			this.showEnergyVoice = wx.createInnerAudioContext()
 			this.showEnergyVoice.src='http://parkiland.isxcxbackend1.cn/pl2_show_energy.mp3'
+			this.getBuildVoice = wx.createInnerAudioContext()
+			this.getBuildVoice.src='http://parkiland.isxcxbackend1.cn/pl2_get_build.mp3'
+			this.tentShowVoice = wx.createInnerAudioContext()
+			this.tentShowVoice.src='http://parkiland.isxcxbackend1.cn/pl2_tent.mp3'
+			this.huntingClickVoice = wx.createInnerAudioContext()
+			this.huntingClickVoice.src='http://parkiland.isxcxbackend1.cn/pl2_hunting_click.mp3'
+			this.getAnimalVoice = wx.createInnerAudioContext()
+			this.getAnimalVoice.src='http://parkiland.isxcxbackend1.cn/pl2_hunting_success_getanimal.mp3'
+			this.huntingFailVoice = wx.createInnerAudioContext()
+			this.huntingFailVoice.src='http://parkiland.isxcxbackend1.cn/pl2_hunting_fail.mp3'
 		},
+		// 音频播放
 		clickVoicePlay() {
 			this.clickVoice.play()
 		},
@@ -307,10 +321,37 @@ export default {
 		showEnergyVoicePlay() {
 			this.showEnergyVoice.play()
 		},
+		getBuildVoicePlay() {
+			this.getBuildVoice.play()
+		},
+		tentshowVoicePlay() {
+			this.tentShowVoice.play()
+		},
+		huntingClickVoicePlay() {
+			this.huntingClickVoice.play()
+		},
+		getAnimalVoicePlay() {
+			this.getAnimalVoice.play()
+		},
+		huntingFailVoicePlay() {
+			this.huntingFailVoice.play()
+		},
 		playBgMusic() {
 			const playFunc = ()=> {
 		  		wx.playBackgroundAudio({
+		  			 title: '建造背景乐',
 				    dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_build.mp3'
+				})
+		  	}
+		  	playFunc()
+		  	console.log(wx.getBackgroundAudioManager(), 'wx.getBackgroundAudioManager()')
+			wx.getBackgroundAudioManager().onEnded(() => playFunc())
+		},
+		playHuntingBgMusic() {
+			const playFunc = ()=> {
+		  		wx.playBackgroundAudio({
+		  			title: '狩猎背景乐',
+				    dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_boss.mp3'
 				})
 		  	}
 		  	playFunc()
@@ -332,7 +373,7 @@ export default {
 			this.share = resultData
 			if (this.share.petid) {
 				this.which = 'share-has-animal'
-
+				this.getAnimalVoicePlay()
 			} else {
 				this.$tip.toast('分享成功')
 				this.which = ''
@@ -343,6 +384,7 @@ export default {
 			clearInterval(this.timer);
 			if (this.monsterTotalAttack < this.dragonInfo.blood) {
 				console.log('打怪失败结束');
+				this.huntingFailVoicePlay()
 				this.huntingIntegral = 0
 				this.monsterTotalAttack = 0
 				this.timeNum = 60
@@ -354,6 +396,7 @@ export default {
 			return Math.floor((Math.random() * (1.3 - 0.7) + 0.7) * num)
 		},
 		async attackMonster(type) {
+			this.huntingClickVoicePlay()
 			let totalAttack = 5
 			if (this.animal.power) totalAttack = this.animal.power
 			if (this.online) totalAttack += 5
@@ -362,7 +405,7 @@ export default {
 			if (this.monsterTotalAttack >= this.dragonInfo.blood) {
 				clearInterval(this.timer);
 				console.log('打怪成功结束');
- 
+ 				this.getAnimalVoicePlay()
 				const resultData = await finishHuntingService({ openid:this.openid, integral: this.huntingIntegral  })
 				if (resultData && resultData.errmsg) return 
 				this.$store.dispatch('getIntergral')
@@ -398,6 +441,7 @@ export default {
 			if (resultData && resultData.errmsg) return
 			this.huntingRecord = resultData.left
 			this.which = 'hunting'
+
 		},
 		async selectDragon(type) {
 			this.clickVoicePlay()
@@ -471,7 +515,8 @@ export default {
 		fromateTime(remaining) {
 			const h = parseInt((remaining / 60)).toString()
 			const m = (remaining % 60).toString()
-			return h + 'h ' + m + 'min'
+			if ( h > 0) return h + 'h ' + m + 'min'
+			return  m + 'min'
 		},
 		listenSocket() {
 		      this.socketTask = getApp().globalData.socketTask;
@@ -515,7 +560,7 @@ export default {
 			})
 		},
 		cancelDestory() {
-
+			this.clickVoicePlay()
 			this.deleteIndex = -1
 			this.isBuild = false
 		},
@@ -534,14 +579,12 @@ export default {
 			this.isBuild = true
 		},
 		cancelBuild() {
+			this.clickVoicePlay()
 			this.index = -1
 		 	this.tentShow = false
 		 	this.imgDown = false
 		 	this.tend = false
 		 	 this.isBuild = false
-			// this.index = -1
-			// this.tent = false
-			// this.isBuild = false
 		},
 		async deleteBuild() {
 	        const resultData = await removeService({
@@ -550,6 +593,7 @@ export default {
 	        })
 	        if (resultData && resultData.errmsg) return
 	        this.plusMoneyVoicePlay()
+	    	this.$store.dispatch('getIntergral')
 	        this.isBuild = false
 	        this.buildList = this.buildList.filter(item => item.location !==  this.deleteIndex)
 	        this.deleteIndex = -1
@@ -687,10 +731,12 @@ export default {
 				return
 			}
 			this.$tip.toast(`您已成功购买${this.buyContent.prdname}${this.buyNum}个`)
+			this.getBuildVoicePlay()
 			this.$store.dispatch('getIntergral')
 			this.buyOpen = false
 		},
 		async confrimBuild(item) {
+			this.clickVoicePlay()
 			console.log(item)
 			this.tend = true
 			const resultData = await buildService({
@@ -702,11 +748,15 @@ export default {
 			if (resultData && resultData.uniqueid) {
 				 this.imgDown = true
 
-				 setTimeout(()=>this.tentShow = true, 1000)
+				 setTimeout(()=> {
+				 	this.tentShow = true
+				 	this.tentshowVoicePlay()
+				 }, 1000)
 				 setTimeout(() => this.getData('add'), 3500)
 				 // setTimeout(() => , 3000)
 				 this.isBuild = false
 				 setTimeout(() => {
+				 	this.getBuildVoicePlay()
 				 	this.index = -1
 				 	this.tentShow = false
 				 	this.imgDown = false
@@ -768,9 +818,6 @@ export default {
 	          });
 	        });
 	},
-	// onUnload() {
-
-	// },
 	watch: {
 		storeType: {
 			handler(newVal, oldVal) {
@@ -781,6 +828,16 @@ export default {
 			handler(newVal, oldVal) {
 				this.getMy(newVal)
 			}
+		},
+		dragon: {
+			handler(newVal, oldVal) {
+				console.log(newVal, 'newVal');
+				if (!!newVal && this.which === 'hunting') {
+					this.playHuntingBgMusic()
+				} else {
+					this.playBgMusic()
+				}
+			}
 		}
 	},
 	onHide() {
@@ -788,7 +845,12 @@ export default {
 		wx.stopBackgroundAudio()
 	},
 	onUnload() {
-		clearInterval(this.timer);
+		this.huntingClickVoice= null
+		this.showEnergyVoice= null,
+		this.plusMoneyVoice= null
+		this.clickVoice= null
+		this.getBuildVoice=null
+		clearInterval(this.timer)
 		this.pageReset()
 		this.fadeIn = false
 		this.huntingFail()

@@ -53,6 +53,7 @@
 			playBgMusic() {
 				const playFunc = ()=> {
 			  		wx.playBackgroundAudio({
+			  			 title: '登录背景乐',
 					  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_login.mp3'
 					})
 			  	}
@@ -116,14 +117,15 @@
 		        	this.percent = 100;
 		        	// this.callBack();
 		        }
-			},
-			onHide() {
-				wx.stopBackgroundAudio()
 			}
-		},
-		mounted() {
 			
 		},
+		onHide() {
+			wx.stopBackgroundAudio()
+		},
+		onUnload() {
+			this.clickVoice = null
+		}
 	}
 </script>
 <style lang="less">
