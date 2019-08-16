@@ -495,7 +495,7 @@ export default {
 			if (resultData && resultData.errmsg) return
 			this.left = resultData.left	
 			this.getFriendList()
-			this.$tp.toast('您已赠送成功')
+			this.$tip.toast('您已赠送成功')
 		},
 		async collectEnergy(build) {
 			this.clickVoicePlay()
