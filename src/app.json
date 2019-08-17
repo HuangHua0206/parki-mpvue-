@@ -1,18 +1,24 @@
 {
   "pages": [
-   "pages/first/main",
+    "pages/first/main",
     "pages/collect/main",
-     
-    
- 
-    "pages/build/main",
+   
+   
    
     
+   
+   
+     
+   
+  
+   
+   
+    "pages/build/main",
+     
     
-    "pages/earth/main",
-    "pages/energy/main",
-    "pages/boss/main",
-    "pages/counter/main"
+    "pages/boss/main"
+    
+   
   ],
   "window": {
     "navigationBarTitleText": "Parki",
@@ -20,5 +26,8 @@
     "navigationBarBackgroundColor": "#fff",
     "navigationBarTitleText": "WeChat",
     "navigationBarTextStyle": "black"
-  }
+  },
+  "requiredBackgroundModes": [
+      "audio"
+    ]
 }

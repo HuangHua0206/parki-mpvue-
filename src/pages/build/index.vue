@@ -3,7 +3,7 @@
 		<div class="cloud"></div>
 		<div class="mask" style="z-index:80" @click="closeMask" v-if="!!which && which !== 'share-has-animal' || !!dragonResult"></div> 
 		<CommonTop 
-	  		ctxt="搜集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
+	  		ctxt="收集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
 	  		@rightFunc="showSharePop"
 	  		share>
   		</CommonTop>
@@ -206,6 +206,7 @@ import {
 export default {
 	data() {
 		return {
+			buildBgVoice: null,
 			huntingClickVoice: null,
 			showEnergyVoice: null,
 			plusMoneyVoice: null,
@@ -266,8 +267,8 @@ export default {
 		console.log('onShow')
 		this.$store.dispatch('getIntergral')
 		this.getData('created')
-		this.playBgMusic()
 		this.playClickMusic()
+		 this.playBgMusic()
 		this.listenSocket() // 连接socket
 	},
 	onShareAppMessage(res) {
@@ -280,6 +281,11 @@ export default {
 		
 		// wx.getShareInfo()
 	},
+	// onLoad() {
+	// 	this.playClickMusic()
+	// 	this.playBgMusic()
+		
+	// },
 	methods: {
 		closeHuntingResult() {
 			this.clickVoicePlay()
@@ -294,22 +300,24 @@ export default {
 			wx.setInnerAudioOption({
 					obeyMuteSwitch: false
 				})
-			this.clickVoice = wx.createInnerAudioContext() 
+			this.clickVoice = wx.createInnerAudioContext('click') 
 			this.clickVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
-			this.plusMoneyVoice = wx.createInnerAudioContext()
+			this.plusMoneyVoice = wx.createInnerAudioContext('plusMoney')
 			this.plusMoneyVoice.src='http://parkiland.isxcxbackend1.cn/pl2_integral_add.mp3'
-			this.showEnergyVoice = wx.createInnerAudioContext()
+			this.showEnergyVoice = wx.createInnerAudioContext('showEnergy')
 			this.showEnergyVoice.src='http://parkiland.isxcxbackend1.cn/pl2_show_energy.mp3'
-			this.getBuildVoice = wx.createInnerAudioContext()
+			this.getBuildVoice = wx.createInnerAudioContext('getBuild')
 			this.getBuildVoice.src='http://parkiland.isxcxbackend1.cn/pl2_get_build.mp3'
-			this.tentShowVoice = wx.createInnerAudioContext()
+			this.tentShowVoice = wx.createInnerAudioContext('tentShow')
 			this.tentShowVoice.src='http://parkiland.isxcxbackend1.cn/pl2_tent.mp3'
-			this.huntingClickVoice = wx.createInnerAudioContext()
+			this.huntingClickVoice = wx.createInnerAudioContext('huntingClick')
 			this.huntingClickVoice.src='http://parkiland.isxcxbackend1.cn/pl2_hunting_click.mp3'
-			this.getAnimalVoice = wx.createInnerAudioContext()
+			this.getAnimalVoice = wx.createInnerAudioContext('getAnimal')
 			this.getAnimalVoice.src='http://parkiland.isxcxbackend1.cn/pl2_hunting_success_getanimal.mp3'
-			this.huntingFailVoice = wx.createInnerAudioContext()
+			this.huntingFailVoice = wx.createInnerAudioContext('huntingFail')
 			this.huntingFailVoice.src='http://parkiland.isxcxbackend1.cn/pl2_hunting_fail.mp3'
+			this.buildBgVoice = wx.createInnerAudioContext('buildBg')
+			
 		},
 		// 音频播放
 		clickVoicePlay() {
@@ -337,25 +345,14 @@ export default {
 			this.huntingFailVoice.play()
 		},
 		playBgMusic() {
-			const playFunc = ()=> {
-		  		wx.playBackgroundAudio({
-		  			 title: '建造背景乐',
-				    dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_build.mp3'
-				})
-		  	}
-		  	playFunc()
-		  	console.log(wx.getBackgroundAudioManager(), 'wx.getBackgroundAudioManager()')
-			wx.getBackgroundAudioManager().onEnded(() => playFunc())
+			this.buildBgVoice.src='http://parkiland.isxcxbackend1.cn/pl2_bg_build.mp3'
+			this.buildBgVoice.play()
+			this.buildBgVoice.loop = true
 		},
 		playHuntingBgMusic() {
-			const playFunc = ()=> {
-		  		wx.playBackgroundAudio({
-		  			title: '狩猎背景乐',
-				    dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_boss.mp3'
-				})
-		  	}
-		  	playFunc()
-			wx.getBackgroundAudioManager().onEnded(() => playFunc())
+			this.buildBgVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_bg_boss.mp3'
+			this.buildBgVoice.play()
+			this.buildBgVoice.loop = true
 		},
 		countdown() {
 			if (this.timeNum > 0) {
@@ -845,11 +842,15 @@ export default {
 		wx.stopBackgroundAudio()
 	},
 	onUnload() {
-		this.huntingClickVoice= null
-		this.showEnergyVoice= null,
-		this.plusMoneyVoice= null
-		this.clickVoice= null
-		this.getBuildVoice=null
+		this.clickVoice.destroy()
+		this.plusMoneyVoice.destroy()
+		this.showEnergyVoice.destroy()
+		this.getBuildVoice.destroy()
+		this.tentShowVoice.destroy()
+		this.huntingClickVoice.destroy()
+		this.getAnimalVoice.destroy()
+		this.huntingFailVoice.destroy()
+		this.buildBgVoice.destroy()
 		clearInterval(this.timer)
 		this.pageReset()
 		this.fadeIn = false

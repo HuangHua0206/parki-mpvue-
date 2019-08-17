@@ -8,10 +8,10 @@
 					<i class="red-icon"></i>
 					<div class="content">恭喜你获得了手机排行第3名，奖励<span class="integral-icon"></span>{{item.intergral}}。</div>
 					<div class="desc">
-						<div class="time">{{item.time | formTime('{y}-{m}-{d}')}}</div>
+						<div class="time">{{item.ctime | formTime('{y}-{m}-{d}')}}</div>
 						<div class="send">发送人： PARKI系统</div>
 					</div>
-					<div class="get-btn" @click="$emit('readEamil', item)">领取</div>
+					<div v-if="item.received === 0" class="get-btn" @click="$emit('readEamil', item)">领取</div>
 				</li>
 			</ul>
 			<div class="close-btn" @click="$emit('closePop')"> </div>
@@ -104,8 +104,12 @@
 				margin: 0 auto;
 				width:258px;
 				margin-top: 15px;
+				overflow-y: auto;
+				overflow-x: hidden;
+				height:420px;
 		 		.item{
-
+		 			margin: 5px 0 10px 5px;
+					// margin-bottom: 10px;
 		 			width:100%;
 					height: 96px;
 		 			.bg("pl2_frame@2x");

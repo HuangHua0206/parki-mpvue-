@@ -13,7 +13,7 @@
 			@clickVoicePlay="clickVoicePlay"
 			></Success>
 		<CommonTop 
-	  		ctxt="搜集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
+	  		ctxt="收集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
 	  		:rightNum="9999"
 	  		@openRange="getRangeList"
 	  		>
@@ -217,6 +217,10 @@
 			}"/>
 			<div class="super-num" v-if="video.superfinish" ></div>
 		</div>
+	<!-- 	<audio id="collect-bg"loop></audio> -->
+<!-- 	<audio  id="click" src="http://parkiland.isxcxbackend1.cn/pl2_click.mp3"  ></audio> -->
+<!-- 	<audio  id="collectBg" src="http://parkiland.isxcxbackend1.cn/pl2_bg_collect.mp3"   loop></audio> -->
+
 	</div>
 	
 </template>
@@ -351,18 +355,17 @@
 				wx.setInnerAudioOption({
 					obeyMuteSwitch: false
 				})
-				this.clickVoice = wx.createInnerAudioContext() 
-				this.clickVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
-				this.plusMoneyVoice = wx.createInnerAudioContext()
+				this.clickVoice = wx.createInnerAudioContext('click') 
+			    this.clickVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
+				this.plusMoneyVoice = wx.createInnerAudioContext('plusMoney')
 				this.plusMoneyVoice.src='http://parkiland.isxcxbackend1.cn/pl2_integral_add.mp3'
-				this.getAnimalVoice = wx.createInnerAudioContext()
+				this.getAnimalVoice = wx.createInnerAudioContext('getAnimal')
 				this.getAnimalVoice.src='http://parkiland.isxcxbackend1.cn/pl2_hunting_success_getanimal.mp3'
+				this.collectBg = wx.createInnerAudioContext('collectBg') 
+				
 			},
 			clickVoicePlay() {
 				this.clickVoice.play()
-				this.clickVoice.onEnded(() => {
-					this.clickVoice.destroy()
-				})
 			},
 			plusMoneyVoicePlay() {
 				this.plusMoneyVoice.play()
@@ -371,47 +374,26 @@
 				this.getAnimalVoice.play()
 			},
 			playBgMusic() {
-				wx.setInnerAudioOption({
-					obeyMuteSwitch: false
-				})
-				this.collectBg = wx.createInnerAudioContext() 
 				this.collectBg.src = 'http://parkiland.isxcxbackend1.cn/pl2_bg_collect.mp3'
 				this.collectBg.play()
-				//console.log('InnerAudioContext', this.clickVoice.InnerAudioContext, this.collectBg.InnerAudioContext)
-				this.collectBg.onEnded(() => {
-					this.collectBg.destroy()
-					console.log(888);
-					this.playBgMusic()
-				})
-
+				this.collectBg.loop = true
+			},
+			playBackBgMusic() {
+				this.collectBg.src = 'http://parkiland.isxcxbackend1.cn/pl2_bg_collect.mp3'
+			},
+			playEarthBgMusic() {
+				this.collectBg.src = 'http://parkiland.isxcxbackend1.cn/pl2_bg_earth.mp3'
+			},
+			playSuperBgMusic() {
+				this.collectBg.src = 'http://parkiland.isxcxbackend1.cn/pl2_bg_super.mp3'
 				// const playFunc = ()=> {
 			 //  		wx.playBackgroundAudio({
-			 //  		  title: '收集背景乐',
-				// 	  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_collect.mp3'
+			 //  		  title: '超级能量背景乐',
+				// 	  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_super.mp3'
 				// 	})
 			 //  	}
 			 //  	playFunc()
 				// wx.getBackgroundAudioManager().onEnded(() => playFunc())
-			},
-			playEarthBgMusic() {
-				const playFunc = ()=> {
-			  		wx.playBackgroundAudio({
-			  		  title: '地震背景乐',
-					  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_earth.mp3'
-					})
-			  	}
-			  	playFunc()
-				wx.getBackgroundAudioManager().onEnded(() => playFunc())
-			},
-			playSuperBgMusic() {
-				const playFunc = ()=> {
-			  		wx.playBackgroundAudio({
-			  		  title: '超级能量背景乐',
-					  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_super.mp3'
-					})
-			  	}
-			  	playFunc()
-				wx.getBackgroundAudioManager().onEnded(() => playFunc())
 			},
 			async earnRewards(taskid) {
 				this.clickVoicePlay()
@@ -623,7 +605,9 @@
 
 			},
 			async deleteEnergy(index) {
+
 				if (!this.collects[index]) return
+				this.clickVoicePlay()
 				this.IS_SENDING = true
 				this.bags['initshow'+(index+1)] = false
 				const ok = await this.requestCollect(this.collects[index], 1, 2, index + 1)
@@ -1021,6 +1005,7 @@
 		async onShow() {
 			console.log('onShow')
 			this.playClickMusic()
+		 	this.playBgMusic()
 			this.$store.dispatch('getIntergral')
 			this.which = ''
 			this.worldEvent = ''
@@ -1029,7 +1014,7 @@
 			await this.getCollect() // 查询收集状态
 			await this.getBagsData() // 查询背包数量
 			this.openBlueTooth() // 连接蓝牙
-			this.playBgMusic()
+			//this.playBgMusic()
 		},
 		mounted() {
 			this.fadeIn = true
@@ -1044,9 +1029,10 @@
 		  },
 		
 		onUnload() {
-			this.getAnimalVoice = null
-			this.clickVoice = null
-		  	this.plusMoneyVoice = null
+			this.clickVoice.destroy()
+			this.plusMoneyVoice.destroy()
+			this.getAnimalVoice.destroy()
+			this.collectBg.destroy() 
 			this.pageReset()
 		},
 		watch: {

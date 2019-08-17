@@ -7,14 +7,14 @@
 	      open-type="getUserInfo"
 	      lang="zh_CN"
 	      @getuserinfo="getUserInfo"
-     	 v-if="percent >= 100"
+    
         ></button>
 
         <div class="process-loading" v-if="percent <100"></div>
         <div class="process-wrap"><div  :style="{width: percent+'%'}"></div></div>
         <image :src="item" v-for="(item, index) in imgList" v-show="false" @load="preLoadImg" :key="index" />
        <video :src="item" v-for="(item, index) in videoList" v-show="false" @progress="preLoadImg" muted :key="index" />
-		 
+	 
 	</div>
 </template>
 <script>
@@ -24,6 +24,7 @@
 	export default{
 		data() {
 		    return {
+		    	loginBgVoice: null,
 		      clickVoice: null,
 		      openId: null,
 		      warning: true,
@@ -37,20 +38,29 @@
 		      userInfo: null //用户信息
 		    };
 		  },
-		  onShow() {
-		  	this.playBgMusic()
+		onShow() {
 		  	this.playClickMusic()
-		  },
+		  	this.playBgMusic()
+		  	
+		},
+		onUnload() {
+		  	this.clickVoice.destroy()
+		  	this.loginBgVoice.destroy()
+		},
 		methods: {
 			playClickMusic() {
 				wx.setInnerAudioOption({
 					obeyMuteSwitch: false
 				})
-				this.clickVoice = wx.createInnerAudioContext() 
+				this.clickVoice = wx.createInnerAudioContext('click') 
 				this.clickVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
+				this.loginBgVoice = wx.createInnerAudioContext('loginBg') 
+				this.loginBgVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_bg_login.mp3'
 				// this.clickVoice.play()
 			},
 			playBgMusic() {
+				this.loginBgVoice.play()
+				this.loginBgVoice.loop=true
 				// const playFunc = ()=> {
 			 //  		wx.playBackgroundAudio({
 			 //  			 title: '登录背景乐',
@@ -118,9 +128,6 @@
 		},
 		onHide() {
 			wx.stopBackgroundAudio()
-		},
-		onUnload() {
-			this.clickVoice = null
 		}
 	}
 </script>

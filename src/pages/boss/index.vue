@@ -41,6 +41,8 @@
 	<div class="pop-up-fadein" :class="{fadeUp: which === 'success' || which === 'fail'}">
 		<BossResult  
 			:result="which"
+			:totalKill="totalKill"
+			:totalblood="totalblood"
 			@clickVoicePlay="clickVoicePlay"
 		/>
 	</div>
@@ -57,6 +59,7 @@ import Result from './result'
 export default {
 	data() {
 		return {
+			bossBgVoice: null,
 			clickVoice: null,
 			totalblood: -1,
 			leftblood: 20000,
@@ -88,6 +91,11 @@ export default {
 			return m + ' : ' +s
 		}
 	},
+	// onLoad() {
+	// 	this.playClickMusic()
+	// 	this.playBgMusic()
+		
+	// },
 	components: { CommonTop, Range, BossResult: Result },
 	methods: {
 		async getTotalBlood() {
@@ -107,6 +115,8 @@ export default {
 			this.getAnimalVoice.src='http://parkiland.isxcxbackend1.cn/pl2_hunting_success_getanimal.mp3'
 			this.huntingFailVoice = wx.createInnerAudioContext()
 			this.huntingFailVoice.src='http://parkiland.isxcxbackend1.cn/pl2_hunting_fail.mp3'
+			this.bossBgVoice = wx.createInnerAudioContext()
+			this.bossBgVoice.src='http://parkiland.isxcxbackend1.cn/pl2_bg_boss.mp3'
 		},
 		clickVoicePlay() {
 			this.clickVoice.play()
@@ -121,14 +131,16 @@ export default {
 			this.huntingFailVoice.play()
 		},
 		playBgMusic() {
-			const playFunc = ()=> {
-		  		wx.playBackgroundAudio({
-		  		  title: '打怪背景乐',
-				  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_boss.mp3'
-				})
-		  	}
-		  	playFunc()
-			wx.getBackgroundAudioManager().onEnded(() => playFunc())
+			this.bossBgVoice.play()
+			this.bossBgVoice.loop=true
+			// const playFunc = ()=> {
+		 //  		wx.playBackgroundAudio({
+		 //  		  title: '打怪背景乐',
+			// 	  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_boss.mp3'
+			// 	})
+		 //  	}
+		 //  	playFunc()
+			// wx.getBackgroundAudioManager().onEnded(() => playFunc())
 		},
 		close() {
 			this.clickVoicePlay()
@@ -266,6 +278,11 @@ export default {
 	},
 	onUnload() {
 		this.which = ''
+		this.clickVoice.destroy()
+		this.huntingClickVoice.destroy()
+		this.getAnimalVoice.destroy()
+		this.huntingFailVoice.destroy()
+		this.bossBgVoice.destroy()
 	},
 }
 </script>

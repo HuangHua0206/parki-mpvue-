@@ -6,8 +6,8 @@
 		<div class="content" v-if="result === 'success'">
 			<p>在所有人的努力下</p>
 			<p style="margin-bottom: 20px;">怪兽被击退了，家园被守护</p>
-			<p>你对怪兽的伤害为99%</p>
-			<p>你获得了999积分作为奖励</p>
+			<p>你对怪兽的伤害为{{hert }}%</p>
+			<p>你获得了{{totalKill}}积分作为奖励</p>
 		</div>
 		<div class="close-btn" @click="goCollect"></div>
 		<div class="btn" @click="goCollect">确认</div>
@@ -18,6 +18,23 @@
 		props: {
 			result: {
 				type: String
+			},
+			totalKill: {
+				type: Number
+			},
+			totalblood: {
+				type: Number
+			}
+		},
+		computed: {
+			hert() {
+				if (this.totalblood && this.totalKill) {
+					return Math.floor((this.totalKill/this.totalblood ) * 100)
+				} else {
+					return 0
+				}
+				
+				
 			}
 		},
 		methods: {
