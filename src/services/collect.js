@@ -146,3 +146,24 @@ export function upgradeAnimalService(data) {
 		data
 	})
 }
+
+
+// 邮件列表
+export function emailListService(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/parki/email/query',
+		method: 'post',
+		data
+	})
+}
+
+// 邮件领取奖励
+export function emailRewardService(data) {
+	return request({
+		testUrl: '/static/json/list.json',
+		url: '/parki/email/reward',
+		method: 'post',
+		data
+	})
+}

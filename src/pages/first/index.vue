@@ -7,20 +7,20 @@
 	      open-type="getUserInfo"
 	      lang="zh_CN"
 	      @getuserinfo="getUserInfo"
-     	  v-if="true"
+     	 v-if="percent >= 100"
         ></button>
 
-        <div class="process-loading" v-if="percent!==100"></div>
-        <div class="process-wrap"><div :style="{width: percent+'%'}"></div></div>
-      <!--   <image :src="item" v-for="(item, index) in imgList" v-show="false" @load="preLoadImg" :key="index" />
-       <video :src="item" v-for="(item, index) in videoList" v-show="false" @progress="preLoadImg" muted :key="index" /> -->
+        <div class="process-loading" v-if="percent <100"></div>
+        <div class="process-wrap"><div  :style="{width: percent+'%'}"></div></div>
+        <image :src="item" v-for="(item, index) in imgList" v-show="false" @load="preLoadImg" :key="index" />
+       <video :src="item" v-for="(item, index) in videoList" v-show="false" @progress="preLoadImg" muted :key="index" />
 		 
 	</div>
 </template>
 <script>
 	import { loginService } from 'services/login';
 	import storage from 'utils/storage';
-	import { imgList, videoList } from './config';
+	import { imgList, videoList, audioList } from './config';
 	export default{
 		data() {
 		    return {
@@ -51,14 +51,14 @@
 				// this.clickVoice.play()
 			},
 			playBgMusic() {
-				const playFunc = ()=> {
-			  		wx.playBackgroundAudio({
-			  			 title: '登录背景乐',
-					  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_login.mp3'
-					})
-			  	}
-			  	playFunc()
-				wx.getBackgroundAudioManager().onEnded(() => playFunc())
+				// const playFunc = ()=> {
+			 //  		wx.playBackgroundAudio({
+			 //  			 title: '登录背景乐',
+				// 	  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_login.mp3'
+				// 	})
+			 //  	}
+			 //  	playFunc()
+				// wx.getBackgroundAudioManager().onEnded(() => playFunc())
 			},
 			getUserInfo() {
 				this.clickVoice.play()
@@ -95,13 +95,10 @@
 				}
 				
 			},
-			// callBack() {
-			// 	console.log(111);
-			// },
 			preLoadImg(e) {
-				console.log(2222);
 				const imgLen = imgList.length;
 				const videoLen = videoList.length;
+				const audioLen = audioList.length;
 				const tLen = imgLen + videoLen;
 				if(e.detail) {
 					if(e.detail === 100) {
@@ -113,9 +110,8 @@
 		    		this.percent = (this.prenum / tLen) * 100;
 				}
 				
-		        if(this.prenum === tLen) {
+		        if(this.prenum >= tLen) {
 		        	this.percent = 100;
-		        	// this.callBack();
 		        }
 			}
 			
@@ -193,16 +189,19 @@
 			width: 80%;
 			position: absolute;
 			bottom: 230px;
+			overflow:hidden;
 			left: 50%;
+			padding:3px 2px 5px;
+			box-sizing: border-box;
 			transform: translateX(-50%);
 			height: 16px;
 			padding-top: 2px;
 			padding-left: 2px;
 			// border: 1px solid #fff;
-			// border-radius: 8px;
+			border-radius: 8px;
 			.bg("pl2-progress-mask@2x", top);
 			div {
-				height: 11px;
+				height: 100%;
 				border-radius: 4px;
 				background: orange;
 				// width: 20px;

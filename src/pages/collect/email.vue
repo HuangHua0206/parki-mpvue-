@@ -4,14 +4,14 @@
 		<div class="email-bg">
 			<div class="logo"></div>
 			<ul class="email-list">
-				<li class="item">
+				<li class="item" v-for="(item, $index) in emailList" :key="$index">
 					<i class="red-icon"></i>
-					<div class="content">恭喜你获得了手机排行第3名，奖励<span class="integral-icon"></span>300。</div>
+					<div class="content">恭喜你获得了手机排行第3名，奖励<span class="integral-icon"></span>{{item.intergral}}。</div>
 					<div class="desc">
-						<div class="time">时间： 2019/10/01</div>
+						<div class="time">{{item.time | formTime('{y}-{m}-{d}')}}</div>
 						<div class="send">发送人： PARKI系统</div>
 					</div>
-					<div class="get-btn" @click="$emit('readEamil')">领取</div>
+					<div class="get-btn" @click="$emit('readEamil', item)">领取</div>
 				</li>
 			</ul>
 			<div class="close-btn" @click="$emit('closePop')"> </div>
@@ -21,6 +21,48 @@
 </template>
 <script>
 	export default{
+		props:{
+			emailList: {
+				type:Array
+			}
+		},
+		filters: {
+			formTime(time, cFormat) {
+				if (arguments.length === 0) {
+				    return null
+				  }
+
+				  if ((time + '').length === 10) {
+				    time = +time * 1000
+				  }
+
+				  const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
+				  let date
+				  if (typeof time === 'object') {
+				    date = time
+				  } else {
+				    date = new Date(parseInt(time))
+				  }
+				  const formatObj = {
+				    y: date.getFullYear(),
+				    m: date.getMonth() + 1,
+				    d: date.getDate(),
+				    h: date.getHours(),
+				    i: date.getMinutes(),
+				    s: date.getSeconds(),
+				    a: date.getDay()
+				  }
+				  const time_str = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result, key) => {
+				    let value = formatObj[key]
+				    if (key === 'a') return ['一', '二', '三', '四', '五', '六', '日'][value - 1]
+				    if (result.length > 0 && value < 10) {
+				      value = '0' + value
+				    }
+				    return value || 0
+				  })
+				  return time_str
+			}
+		},
 		methods: {
 		}
 	}

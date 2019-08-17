@@ -137,7 +137,7 @@
 		<div   class="my-home" @click="goBulid" :class="{fadeUp: energyIn}"></div>
 		<!-- 弹窗部分 -->
 		<div class="pop-up-left" :class="{fadeUp: which === 'email'}"> 
-			<Email   @closePop="close"  @readEamil="readEamil"/>
+			<Email   @closePop="close"  @readEamil="readEamil" :emailList="emailList"/>
 		</div>
 		<div class="pop-up-left" :class="{fadeUp: which === 'task'}">
 			<Task    @closePop="close"  :taskList="taskList" @earnRewards="earnRewards"/>
@@ -244,16 +244,20 @@
 		rangeService,
 		taskService,
 		earnRewardService,
-		upgradeAnimalService
+		upgradeAnimalService,
+		emailListService,
+		emailRewardService
 	} from 'services/collect'
 	import ENERGY_CONFIG from './energy.js'
 	
 	export default{
 		data () {
 		  return {
+		  	collectBg: null,
 		  	getAnimalVoice: null,
 		  	clickVoice: null,
 		  	plusMoneyVoice: null,
+		  	emailList: [],
 		  	animalList: [],
 		  	rangeList: [],
 		  	taskList: [],
@@ -331,9 +335,17 @@
 				this.clickVoicePlay()
 				this.which=''
 			},
-			readEamil() {
+			async readEamil(item) {
 				this.clickVoicePlay()
+				const resultData = await emailRewardService({
+					openid:this.openid,
+					id: item.id,
+					integral: item.integral
+				})
+				if (resultData && resultData.errmsg) return
 				this.plusMoneyVoicePlay()
+				this.$tip.toast('领取成功')
+				this.getEmailList()
 			},
 			playClickMusic() {
 				wx.setInnerAudioOption({
@@ -348,6 +360,9 @@
 			},
 			clickVoicePlay() {
 				this.clickVoice.play()
+				this.clickVoice.onEnded(() => {
+					this.clickVoice.destroy()
+				})
 			},
 			plusMoneyVoicePlay() {
 				this.plusMoneyVoice.play()
@@ -356,14 +371,27 @@
 				this.getAnimalVoice.play()
 			},
 			playBgMusic() {
-				const playFunc = ()=> {
-			  		wx.playBackgroundAudio({
-			  		  title: '收集背景乐',
-					  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_collect.mp3'
-					})
-			  	}
-			  	playFunc()
-				wx.getBackgroundAudioManager().onEnded(() => playFunc())
+				wx.setInnerAudioOption({
+					obeyMuteSwitch: false
+				})
+				this.collectBg = wx.createInnerAudioContext() 
+				this.collectBg.src = 'http://parkiland.isxcxbackend1.cn/pl2_bg_collect.mp3'
+				this.collectBg.play()
+				//console.log('InnerAudioContext', this.clickVoice.InnerAudioContext, this.collectBg.InnerAudioContext)
+				this.collectBg.onEnded(() => {
+					this.collectBg.destroy()
+					console.log(888);
+					this.playBgMusic()
+				})
+
+				// const playFunc = ()=> {
+			 //  		wx.playBackgroundAudio({
+			 //  		  title: '收集背景乐',
+				// 	  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_collect.mp3'
+				// 	})
+			 //  	}
+			 //  	playFunc()
+				// wx.getBackgroundAudioManager().onEnded(() => playFunc())
 			},
 			playEarthBgMusic() {
 				const playFunc = ()=> {
@@ -411,8 +439,15 @@
 			},
 			openEmial() {
 				this.clickVoicePlay()
-				this.which = 'email'
+				this.getEmailList()
 				
+				
+			},
+			async getEmailList() {
+				const resultData = await emailListService({ openid: this.openid })
+				if(resultData && resultData.errmsg) return
+				this.emailList = resultData.emails || []
+			    this.which = 'email'
 			},
 			openBracelet() {
 				this.clickVoicePlay()
