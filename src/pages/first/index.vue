@@ -45,6 +45,7 @@
 		  	
 		},
 		onUnload() {
+			this.prenum = 0
 		  	this.clickVoice.destroy()
 		  	this.loginBgVoice.destroy()
 		},
