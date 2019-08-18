@@ -7,13 +7,14 @@
 	      open-type="getUserInfo"
 	      lang="zh_CN"
 	      @getuserinfo="getUserInfo"
-    
+    		v-if="percent >=100"
         ></button>
 
-        <div class="process-loading" v-if="percent <100"></div>
+        <div class="process-loading" v-else></div>
         <div class="process-wrap"><div  :style="{width: percent+'%'}"></div></div>
-        <image :src="item" v-for="(item, index) in imgList" v-show="false" @load="preLoadImg" :key="index" />
-       <video :src="item" v-for="(item, index) in videoList" v-show="false" @progress="preLoadImg" muted :key="index" />
+         <video :src="item" v-for="(item, index) in videoList" style="opacity:0;position: absolute;bottom:-100%;"  @error="testError"  muted :key="index" autoplay @ended="vedioEnd"/>
+        <image :src="item" v-for="(item, index) in imgList" v-show="false" @load="preLoadImg" @error="testError" :key="index" />
+      
 	 
 	</div>
 </template>
@@ -48,6 +49,7 @@
 		  	this.loginBgVoice.destroy()
 		},
 		methods: {
+			
 			playClickMusic() {
 				wx.setInnerAudioOption({
 					obeyMuteSwitch: false
@@ -56,19 +58,10 @@
 				this.clickVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_click.mp3'
 				this.loginBgVoice = wx.createInnerAudioContext('loginBg') 
 				this.loginBgVoice.src = 'http://parkiland.isxcxbackend1.cn/pl2_bg_login.mp3'
-				// this.clickVoice.play()
 			},
 			playBgMusic() {
 				this.loginBgVoice.play()
 				this.loginBgVoice.loop=true
-				// const playFunc = ()=> {
-			 //  		wx.playBackgroundAudio({
-			 //  			 title: '登录背景乐',
-				// 	  dataUrl: 'http://parkiland.isxcxbackend1.cn/pl2_bg_login.mp3'
-				// 	})
-			 //  	}
-			 //  	playFunc()
-				// wx.getBackgroundAudioManager().onEnded(() => playFunc())
 			},
 			getUserInfo() {
 				this.clickVoice.play()
@@ -106,28 +99,44 @@
 				
 			},
 			preLoadImg(e) {
-				const imgLen = imgList.length;
-				const videoLen = videoList.length;
-				const audioLen = audioList.length;
-				const tLen = imgLen + videoLen;
-				if(e.detail) {
-					if(e.detail === 100) {
-						this.prenum += 1;
-		    			this.percent = (this.prenum / tLen) * 100;
-					}
-				} else {
-					this.prenum += 1;
-		    		this.percent = (this.prenum / tLen) * 100;
-				}
-				
-		        if(this.prenum >= tLen) {
-		        	this.percent = 100;
-		        }
+				this.prenum += 1;
+			},
+			testError(e) {
+				console.log(888, e)
+				this.prenum += 1;
+			},
+			// preLoadVedio(e) {
+			// 	console.log('vedio99999')
+			// 	console.log('vedio', e.detail)
+			// 	if(e.detail === 100) {
+			// 		this.prenum += 1;
+			// 	}
+			// },
+			vedioEnd(e) {
+				this.prenum += 1
+				console.log('end', e)
 			}
 			
 		},
 		onHide() {
+			this.prenum = 0
 			wx.stopBackgroundAudio()
+		},
+		watch: {
+			prenum: {
+				handler(newValue, oldValue) {
+
+					const imgLen = imgList.length;
+					const videoLen = videoList.length;
+					const audioLen = audioList.length;
+					const tLen = imgLen;
+				//	console.log(newValue, 'newValue',imgLen, videoLen)
+					this.percent = (newValue / tLen) * 100;
+					if(newValue >= tLen - 1) {
+			        	this.percent = 100;
+			        }
+				}
+			}
 		}
 	}
 </script>

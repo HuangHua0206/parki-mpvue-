@@ -13,7 +13,7 @@
 			@clickVoicePlay="clickVoicePlay"
 			></Success>
 		<CommonTop 
-	  		ctxt="收集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
+	  		:ctxt="tips[tip]"
 	  		:rightNum="9999"
 	  		@openRange="getRangeList"
 	  		>
@@ -253,10 +253,13 @@
 		emailRewardService
 	} from 'services/collect'
 	import ENERGY_CONFIG from './energy.js'
-	
+	import tips from './tip'
 	export default{
 		data () {
 		  return {
+		  	tips,
+			tip: 0,
+			tipTimer: null,
 		  	collectBg: null,
 		  	getAnimalVoice: null,
 		  	clickVoice: null,
@@ -335,6 +338,13 @@
 			}
 		},
 		methods: {
+			tipNum() {
+				if (this.tip >= tips.length -1 ) {
+					this.tip = 0
+				} else {
+					this.tip +=1
+				}
+			},
 			closeMask() {
 				this.clickVoicePlay()
 				this.which=''
@@ -378,14 +388,16 @@
 				this.collectBg.play()
 				this.collectBg.loop = true
 			},
-			playBackBgMusic() {
-				this.collectBg.src = 'http://parkiland.isxcxbackend1.cn/pl2_bg_collect.mp3'
-			},
+ 
 			playEarthBgMusic() {
 				this.collectBg.src = 'http://parkiland.isxcxbackend1.cn/pl2_bg_earth.mp3'
+				this.collectBg.loop = true
+				this.collectBg.play()
 			},
 			playSuperBgMusic() {
 				this.collectBg.src = 'http://parkiland.isxcxbackend1.cn/pl2_bg_super.mp3'
+				this.collectBg.play()
+				this.collectBg.loop = true
 				// const playFunc = ()=> {
 			 //  		wx.playBackgroundAudio({
 			 //  		  title: '超级能量背景乐',
@@ -511,15 +523,14 @@
 		        });
 		    },
 		    socketDeal(now) {
-		    	if (now.status === 0 && now.eventname === 'prohibitedcollectgreen') {
+		    	if (now.eventname === 'prohibitedcollectgreen') {
 		           	 	this.worldEvent = 'earth'
 		           	 	if (this.FIRST_EARTH) { // 第一次接收到服务端推送时自动弹出地震告知弹窗，以后需要用户自行点击按钮
 		           	 		this.which = 'earth'
 		           	 	}
 		           	 	this.FIRST_EARTH = false
 		           	 }
-		           	 if ((now.status === 1 && now.eventname === 'startsuperenergy') || 
-		           	 	 (now.status === 4 && now.eventname === 'startsuperenergy')) {
+		           	 if (now.eventname === 'startsuperenergy') {
 		           	 		this.FIRST_EARTH = true
 		           	 		this.worldEvent = 'super'
 		           	 	// 触发了神奇能量（当自己被触发神奇能量，其他人被触发神奇能量）
@@ -653,11 +664,10 @@
 		           	 let amazingEnergy = null
 		           	// amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
 		           	 // socket处理（世界事件）
-		           	 if (this.SOCKET_INFO.status === 0 && this.SOCKET_INFO.eventname === 'prohibitedcollectgreen') {
+		           	 if (this.SOCKET_INFO.eventname === 'prohibitedcollectgreen') {
 		           	 	beaconNearby = beaconNearby.filter(item => item.major !== 103)
 		           	 }
-		           	 if ((this.SOCKET_INFO.status === 1 && this.SOCKET_INFO.eventname === 'startsuperenergy') || 
-		           	 	 (this.SOCKET_INFO.status === 4 && this.SOCKET_INFO.eventname === 'startsuperenergy')) {
+		           	 if (this.SOCKET_INFO.eventname === 'startsuperenergy') {
 		           	 	// 触发了神奇能量（当自己被触发神奇能量，其他人被触发神奇能量）
 		           	 	if (this.openid != this.SOCKET_INFO.openid) {
 		           	 		amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
@@ -891,6 +901,7 @@
 				
 				// this.resetData()
 				this.FIRST_EARTH = true
+				this.tip=0
 				// this.resetData()
 				// this.fadeIn = false
 				this.animalList= []
@@ -1005,7 +1016,15 @@
 		async onShow() {
 			console.log('onShow')
 			this.playClickMusic()
-		 	this.playBgMusic()
+		 	// this.playBgMusic()
+		 	// 考虑从后台进入时可能存在 正在进行世界事件
+		 	if (this.which === 'earth' && this.worldEvent === 'earth') {
+				this.playEarthBgMusic()
+			} else if ((this.which === 'my-super' || this.which === 'super') && this.worldEvent === 'super') {
+				this.playSuperBgMusic()
+			} else {
+				this.playBgMusic()
+			}
 			this.$store.dispatch('getIntergral')
 			this.which = ''
 			this.worldEvent = ''
@@ -1018,17 +1037,20 @@
 		},
 		mounted() {
 			this.fadeIn = true
+			this.tipTimer = setInterval(this.tipNum, 10000)
 		},
 		onHide() {
 			console.log('onHideonHideonHide')
 			this.listenColseSocket()
 			clearInterval(this.timer)
 		    wx.stopBeaconDiscovery();
-		    this.pageReset()
-		    wx.stopBackgroundAudio()
+		    // this.pageReset()
+		    // wx.stopBackgroundAudio()
+		    clearInterval(this.tipTimer)
 		  },
 		
 		onUnload() {
+			clearInterval(this.tipTimer)
 			this.clickVoice.destroy()
 			this.plusMoneyVoice.destroy()
 			this.getAnimalVoice.destroy()
@@ -1040,6 +1062,7 @@
 				handler(newValue, oldValue) {
 					console.log('newValue', newValue)
 					if (newValue === 'earth' && this.worldEvent === 'earth') {
+						console.log('ea')
 						this.playEarthBgMusic()
 					} else if ((newValue === 'my-super' || newValue === 'super') && this.worldEvent === 'super') {
 						this.playSuperBgMusic()

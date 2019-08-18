@@ -16,7 +16,13 @@
 		        <div class="count-down">
 		        	倒计时 {{timeNum}}
 		        </div>
-		      </div>
+		     </div>
+		<!--      <div class="attack-list">
+		      	<div class="every-attack" v-for="(item,i) in attackList" :key="i" :style="{opacity: 1-0.2* i}">-{{item}}</div>
+		     </div>  -->
+	 <div class="shz">
+        <span v-for="(item,i) in everyAttack" :key="i">-{{item}}</span>
+      </div>
 <!-- 			<div class="blood-wrap">
 				<div class="avatar" :class="{
 					'red': dragonType === 'red',
@@ -67,6 +73,11 @@
 					return 1
 				}
 				
+			},
+			attackList() {
+				//const arr = []
+
+				return this.everyAttack.filter((item, i) => i <= 4)
 			}
 		},
 		props: {
@@ -87,11 +98,30 @@
 			},
 			timeNum: {
 				type: Number
+			},
+			everyAttack: {
+				type: {
+					type:Array
+				}
 			}
 		}
 	}
 </script>
 <style lang="less">
+@keyframes dismissAnimation{
+	from {
+    top: 0%;
+    opacity: 1;
+  }
+  to {
+    top: 80%;
+    opacity: 0;
+    display: none;
+  }
+}
+// @keyframes an1 {
+  
+// }
 @import '~less/mixin.less';
 	.hunting-dragon-wrap{
 		z-index:100;
@@ -115,6 +145,50 @@
 				.bg("pl2_cloudcloud@2x");
 				height:367rpx;
 				width:100%;
+			}
+			.shz {
+			  height: 24%;
+			  width: 10%;
+			  left: 50%;
+			  top: 50%;
+			  position: absolute;
+			  transform: translate(-50%, -50%);
+			  span {
+			    animation: an1 1.5s 1 ease;
+			    position: absolute;
+			    bottom: 0;
+			    color: #fd3231;
+			    font-size: 36px;
+			    opacity: 0;
+			  }
+			}
+			@keyframes an1 {
+			  0% {
+			    top: 0;
+			    opacity: 1;
+			  }
+			  100% {
+			    top: 80%;
+			    opacity: 0;
+			    display: none;
+			  }
+			}
+			.attack-list{
+				left:50%;
+				transform:translateX(-50%);
+				position:absolute;
+				top:450rpx;
+				.every-attack{
+					// transition:2s;
+					// opacity:1;
+				 
+					// color:red;
+					color: #fd3231;
+    				font-size: 20px;
+					// margin-bottom:10px;
+					 
+				}
+
 			}
 			.blood{
 			position: absolute;
@@ -252,6 +326,7 @@
 				font-size:9px;
 				padding-left:16px;
 			}
+			
 			.info{
 				box-sizing: border-box;
 				position: absolute;

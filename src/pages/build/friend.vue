@@ -121,6 +121,7 @@
 			.friend-list{
 				height: 830rpx;
 				overflow-y: auto;
+				-webkit-overflow-scrolling: touch;
 				.item{
 					position: relative;
 					.bg("pl2_gray_range@2x");

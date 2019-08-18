@@ -8,7 +8,7 @@
   	</CommonTop>
 <!--     <div class="main"> -->
      
-      <div class="boss" @click="attackBoss">
+      <div class="boss" @click="attackBoss"  >
       	 <div class="ellipse"></div>
       </div>
       <div class="collect-btn" @click="goCollect"></div>
@@ -18,6 +18,9 @@
         <div class="count-down">
         	倒计时 {{formTime}}
         </div>
+      </div>
+       <div class="shz" @click.stop="attackBoss">
+        <span v-for="(item,i) in everyAttack" :key="i">-{{item}}</span>
       </div>
 <!--     </div> -->
     <div class="info">
@@ -59,6 +62,7 @@ import Result from './result'
 export default {
 	data() {
 		return {
+			everyAttack: [],
 			bossBgVoice: null,
 			clickVoice: null,
 			totalblood: -1,
@@ -163,6 +167,7 @@ export default {
 
 		},
 		attackBoss() {
+			console.log(9)
 			this.huntingClickVoicePlay()
 			let totalAttack = 5
 			if (this.animal.power) totalAttack = this.animal.power
@@ -173,6 +178,14 @@ export default {
 				attackpower: this.randNum(totalAttack)
 			}
 
+			if (this.everyAttack.length>50){
+	          this.everyAttack.splice(0,40);
+	        }
+	      this.everyAttack.push(sendData.attackpower);
+	      console.log('this.everyAttack==>',this.everyAttack)
+	        // setTimeout(() => {
+	        //   this.everyAttack.pop();
+	        // }, 2000);
 
 			// this.leftblood -= sendData.attackpower * 20
 			// if (this.lefttime <=0 && this.leftblood > 0) {
@@ -305,7 +318,33 @@ export default {
 	// 	top:127px;
 	// 	position: absolute;
 	// 	height: 321px;
-		
+	.shz {
+	  height: 24%;
+	  width: 10%;
+	  left: 50%;
+	  top: 50%;
+	  position: absolute;
+	  transform: translate(-50%, -50%);
+	  span {
+	    animation: an1 1.5s 1 ease;
+	    position: absolute;
+	    bottom: 0;
+	    color: #fd3231;
+	    font-size: 36px;
+	    opacity: 0;
+	  }
+	}
+	@keyframes an1 {
+	  0% {
+	    top: 0;
+	    opacity: 1;
+	  }
+	  100% {
+	    top: 80%;
+	    opacity: 0;
+	    display: none;
+	  }
+	}	
 		.boss{
 			.bg('pl2_boss');
 			width:533rpx;
