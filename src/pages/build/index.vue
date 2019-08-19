@@ -30,7 +30,8 @@
 				}"  style="text-align: center;line-height:76rpx">   
 					<div class="build-one" v-if="index === ($index+1)"  >
 						<img class="map_img" v-if="!tentShow" :src="'http://parkiland.isxcxbackend1.cn/pl2_map1_'+buildContent.prdname+'.png'" :class="{down : imgDown, 'build-img': tend }"   />
-						<div class="tent" v-show="tentShow">
+						<div  class="tent" v-show="tentShow">
+						<!-- 	<img :src="tentImg" style="width:100%;height:100%;" /> -->
 							<div class="progress">
 								<div class="line"></div>
 							</div>
@@ -208,6 +209,8 @@ import tips from './tip'
 export default {
 	data() {
 		return {
+			tentid: 0,
+			tentTimer:null,
 			tips,
 			tip: 0,
 			tipTimer: null,
@@ -259,6 +262,16 @@ export default {
 	},
 	components: { CommonTop, Hunting, Friend, DragonBoss: Dragon, HuntingResult: Result, Success },
 	computed: {
+		tentImg() {
+			let img
+			if(this.tentid < 10) {
+				img = 'http://parkiland.isxcxbackend1.cn//pl2_tent_0'+ this.tentid +'.png'
+			} else {
+				img = 'http://parkiland.isxcxbackend1.cn//pl2_tent_'+ this.tentid +'.png'
+			}
+			console.log(img)
+			return img
+		},
 		hasBuild() {
 			const arr = this.buildList.map(item => item.location)
 		//	console.log(arr)
@@ -270,7 +283,8 @@ export default {
 		},
 	},
 	onShow() {
-		console.log('onShow')
+		this.tipTimer = setInterval(this.tipNum, 10000)
+		
 		this.$store.dispatch('getIntergral')
 		this.getData('created')
 		this.playClickMusic()
@@ -292,6 +306,13 @@ export default {
 		// wx.getShareInfo()
 	},
 	methods: {
+		tentNum() {
+			if (this.tentid >= 30 ) {
+				clearInterval(this.tentTimer);
+			} else {
+				this.tentid +=1
+			}
+		},
 		tipNum() {
 			if (this.tip >= tips.length -1 ) {
 				this.tip = 0
@@ -466,10 +487,10 @@ export default {
 		async selectDragon(type) {
 			this.clickVoicePlay()
 			clearInterval(this.timer);
-			// if (this.huntingRecord <=0 ) {
-			// 	this.$tip.toast('您今日3次狩猎机会已使用完，明天再来哦')
-			// 	return
-			// }
+			if (this.huntingRecord <=0 ) {
+				this.$tip.toast('您今日3次狩猎机会已使用完，明天再来哦')
+				return
+			}
 			const resultData = await beforeHuntingService({
 				openid: this.openid,
 				monster: type + 'dragon'
@@ -769,6 +790,8 @@ export default {
 				 this.imgDown = true
 
 				 setTimeout(()=> {
+				 	this.tentid = 0
+				 	this.tentTimer = setInterval(this.tentNum, 100)
 				 	this.tentShow = true
 				 	this.tentshowVoicePlay()
 				 }, 1000)
@@ -837,7 +860,7 @@ export default {
 	          	})
 	          });
 	        });
-	    this.tipTimer = setInterval(this.tipNum, 10000)
+	    
 	},
 	watch: {
 		storeType: {
@@ -866,6 +889,7 @@ export default {
 		wx.stopBackgroundAudio()
 		// clearInterval(this.timer)
 		clearInterval(this.tipTimer)
+		clearInterval(this.tentTimer)
 	},
 	onUnload() {
 		this.clickVoice.destroy()
@@ -879,6 +903,7 @@ export default {
 		this.buildBgVoice.destroy()
 		clearInterval(this.timer)
 		clearInterval(this.tipTimer)
+		clearInterval(this.tentTimer)
 		this.pageReset()
 		this.fadeIn = false
 		this.huntingFail()

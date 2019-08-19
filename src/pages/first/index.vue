@@ -133,7 +133,7 @@
 					const tLen = imgLen;
 				//	console.log(newValue, 'newValue',imgLen, videoLen)
 					this.percent = (newValue / tLen) * 100;
-					if(newValue >= tLen - 1) {
+					if(newValue >= tLen) {
 			        	this.percent = 100;
 			        }
 				}
