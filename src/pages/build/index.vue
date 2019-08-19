@@ -30,7 +30,7 @@
 				}"  style="text-align: center;line-height:76rpx">   
 					<div class="build-one" v-if="index === ($index+1)"  >
 						<img class="map_img" v-if="!tentShow" :src="'http://parkiland.isxcxbackend1.cn/pl2_map1_'+buildContent.prdname+'.png'" :class="{down : imgDown, 'build-img': tend }"   />
-						<div v-if="loadtent" class="tent" v-show="tentShow">
+						<div  class="tent" v-show="tentShow">
 							<div class="progress">
 								<div class="line"></div>
 							</div>
@@ -208,7 +208,6 @@ import tips from './tip'
 export default {
 	data() {
 		return {
-			loadtent: false,
 			tips,
 			tip: 0,
 			tipTimer: null,
@@ -271,7 +270,6 @@ export default {
 		},
 	},
 	onShow() {
-		this.loadtent = true
 		console.log('onShow')
 		this.$store.dispatch('getIntergral')
 		this.getData('created')
@@ -864,7 +862,6 @@ export default {
 		}
 	},
 	onHide() {
-		this.loadtent = false
 		this.listenColseSocket()
 		wx.stopBackgroundAudio()
 		// clearInterval(this.timer)

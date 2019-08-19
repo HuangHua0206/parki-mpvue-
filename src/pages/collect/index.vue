@@ -3,7 +3,7 @@
 		<div class="mask" style="z-index:80" @click="closeMask" v-if="!!which && which !== 'success' && which !== 'animal'"></div> 
 		<div class="collect-bg"></div>
 		<div class="cloud"></div>
-		<div class="stars" v-if="starsShow"></div>
+		<div class="stars"  ></div>
 		<div class="toast"  :class="{show: toast==='repeat'}"></div>
 		<Success 
 			@resetData="resetData" 
@@ -257,7 +257,6 @@
 	export default{
 		data () {
 		  return {
-		  	starsShow: false,
 		  	tips,
 			tip: 0,
 			tipTimer: null,
@@ -1016,7 +1015,6 @@
 		},
 		async onShow() {
 			console.log('onShow')
-			this.starsShow = true
 			this.playClickMusic()
 		 	// this.playBgMusic()
 		 	// 考虑从后台进入时可能存在 正在进行世界事件
@@ -1042,7 +1040,6 @@
 			this.tipTimer = setInterval(this.tipNum, 10000)
 		},
 		onHide() {
-			this.starsShow = false
 			console.log('onHideonHideonHide')
 			this.listenColseSocket()
 			clearInterval(this.timer)
