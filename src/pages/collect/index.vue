@@ -3,7 +3,7 @@
 		<div class="mask" style="z-index:80" @click="closeMask" v-if="!!which && which !== 'success' && which !== 'animal'"></div> 
 		<div class="collect-bg"></div>
 		<div class="cloud"></div>
-		<div class="stars"></div>
+		<div class="stars" v-if="starsShow"></div>
 		<div class="toast"  :class="{show: toast==='repeat'}"></div>
 		<Success 
 			@resetData="resetData" 
@@ -257,6 +257,7 @@
 	export default{
 		data () {
 		  return {
+		  	starsShow: false,
 		  	collectBg: null,
 		  	getAnimalVoice: null,
 		  	clickVoice: null,
@@ -887,7 +888,7 @@
 				});
 		    },
 		    pageReset() {
-				clearInterval(this.timer)
+				
 				
 				// this.resetData()
 				this.FIRST_EARTH = true
@@ -1004,6 +1005,7 @@
 		},
 		async onShow() {
 			console.log('onShow')
+			this.starsShow = true
 			this.playClickMusic()
 		 	this.playBgMusic()
 			this.$store.dispatch('getIntergral')
@@ -1020,6 +1022,7 @@
 			this.fadeIn = true
 		},
 		onHide() {
+			this.starsShow = false
 			console.log('onHideonHideonHide')
 			this.listenColseSocket()
 			clearInterval(this.timer)
@@ -1033,7 +1036,7 @@
 			this.plusMoneyVoice.destroy()
 			this.getAnimalVoice.destroy()
 			this.collectBg.destroy() 
-			this.pageReset()
+			 clearInterval(this.timer)
 		},
 		watch: {
 			which: {
