@@ -99,23 +99,23 @@
 			.title{
 				font-size:30px;
 				color:#f9bf2b;
-				margin:6vh auto 20px;
+				margin:15vh auto 10px;
 				text-align:center;
 			}
 			.no-animal{
 				
 				.card{
-					width: 227px;
-					height:238px;
+					width: 198px;
+					height:208px;
 					.bg("pl2_no_animal");
-					margin: 20px auto 0;
+					margin: 10px auto 0;
 				}
 			}
 			.animal{
 				.bg1{
 					width: 179px;
 					height:219px;
-					margin: 20px auto 10px;
+					margin: 10px auto 10px;
 					position:relative;
 					.bg("pl2_congratulation stay@2x");
 					.bg2{

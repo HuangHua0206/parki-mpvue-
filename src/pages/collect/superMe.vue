@@ -89,8 +89,9 @@ export default {
 				width:347px;
 				.bg('pl2_magic_energy@2x');
 				left: 50%;
-				transform:translateX(-50%);
-				bottom: 14px;
+				top:50%;
+				transform:translate(-50%, -50%);
+				// bottom: 14px;
 				z-index: 3;
 				  
 			.first-text {
