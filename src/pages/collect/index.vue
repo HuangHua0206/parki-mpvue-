@@ -3,7 +3,9 @@
 		<div class="mask" style="z-index:80" @click="closeMask" v-if="!!which && which !== 'success' && which !== 'animal'"></div> 
 		<div class="collect-bg"></div>
 		<div class="cloud"></div>
-		<div class="stars"  ></div>
+		<div class="stars"  :class="{animation: false}">
+			<img style="width:100%;height:100%" :src="starImg" />
+		</div>
 		<div class="toast"  :class="{show: toast==='repeat'}"></div>
 		<Success 
 			@resetData="resetData" 
@@ -31,7 +33,7 @@
 				</div>
 			</div>
 			
-			<div class="bracelet reward" v-if="online"  >+2</div>
+			<div class="bracelet reward" v-if="online && fadeIn"  >+2</div>
 		</div>
 		<div class="button offline-button" :class="{
 			'fade-right-in': fadeIn,
@@ -61,6 +63,7 @@
 					}"> 
 					
 				</div>
+				<div class="sunny"  ></div>
 			</div>
 			
 		</div>
@@ -257,6 +260,9 @@
 	export default{
 		data () {
 		  return {
+		  	staranimation: false,
+		  	starid: 0,
+		  	starTimer: null,
 		  	tips,
 			tip: 0,
 			tipTimer: null,
@@ -335,6 +341,14 @@
 			openid() {
 				const userinfo = storage.getStorage('userinfo') || {}
 				return userinfo.openid
+			},
+			starImg() {
+				console.log(this.starid);
+				if(this.starid < 10) {
+					return 'http://parkiland.isxcxbackend1.cn/star0'+ this.starid +'.png'
+				} else {
+					return 'http://parkiland.isxcxbackend1.cn/star'+ this.starid +'.png'
+				}
 			}
 		},
 		methods: {
@@ -343,6 +357,13 @@
 					this.tip = 0
 				} else {
 					this.tip +=1
+				}
+			},
+			starNum() {
+				if (this.starid >= 48 ) {
+					this.starid = 0
+				} else {
+					this.starid +=1
 				}
 			},
 			closeMask() {
@@ -1014,7 +1035,10 @@
 		    }
 		},
 		async onShow() {
+			this.staranimation = true
 			console.log('onShow')
+			this.tipTimer = setInterval(this.tipNum, 10000)
+			this.starTimer = setInterval(this.starNum, 40)
 			this.playClickMusic()
 		 	// this.playBgMusic()
 		 	// 考虑从后台进入时可能存在 正在进行世界事件
@@ -1037,20 +1061,23 @@
 		},
 		mounted() {
 			this.fadeIn = true
-			this.tipTimer = setInterval(this.tipNum, 10000)
+			
 		},
 		onHide() {
+			this.staranimation = false
 			console.log('onHideonHideonHide')
 			this.listenColseSocket()
 			clearInterval(this.timer)
 		    wx.stopBeaconDiscovery();
 		    // this.pageReset()
 		    // wx.stopBackgroundAudio()
+		    clearInterval(this.starTimer)
 		    clearInterval(this.tipTimer)
 		  },
 		
 		onUnload() {
 			clearInterval(this.tipTimer)
+			clearInterval(this.starTimer)
 			this.clickVoice.destroy()
 			this.plusMoneyVoice.destroy()
 			this.getAnimalVoice.destroy()
@@ -1192,9 +1219,9 @@
 		.bg("pl2_cloud@2x");
 	}
 	.stars{
-		animation: starsAnimation 2s infinite;
-		// height:100%;
-		// width:100%;
+		
+		height:100%;
+		width:100%;
 		width:150px;
 		height: 150px;
 		position:absolute;
@@ -1203,7 +1230,10 @@
 		top:110px;
 		// background: url("http://parkiland.isxcxbackend1.cn/star39.gif")  center center no-repeat;
     	background-size: 100% 100%;
- 
+ 		&.animation{
+ 			animation: starsAnimation 2s infinite;
+			animation-fill-mode:forwards;
+ 		}
 	}
 	.button{
 		transition: 1s;
@@ -1341,7 +1371,7 @@
 			height: 15px;
 			right:0;
 			overflow:hidden;
-		 
+		 	position: relative;
 			.progress{
 				// border-radius:12px;
 				transition:width 3s ease;
@@ -1390,7 +1420,17 @@
 					background:#e84dff ;
 				}
 
+
 			}
+			.sunny{
+					width:90%;
+					height: 2px;
+					background: #fff;
+					position: absolute;
+					top:2px;
+					left:50%;
+					transform: translateX(-50%);
+				}
 		}
 		
 	}
