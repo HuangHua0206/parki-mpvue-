@@ -166,7 +166,8 @@
 			.list{
 				height:60vh;
 				overflow-y:auto;
-					position: absolute;
+				-webkit-overflow-scrolling: touch;
+				position: absolute;
 				left: 14px;
 				bottom: 20px;
 			}

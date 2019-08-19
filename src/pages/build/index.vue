@@ -3,7 +3,7 @@
 		<div class="cloud"></div>
 		<div class="mask" style="z-index:80" @click="closeMask" v-if="!!which && which !== 'share-has-animal' || !!dragonResult"></div> 
 		<CommonTop 
-	  		ctxt="收集三个不同颜色的能量即可获得积分，记住是三个不同颜色哦！"
+	  		:ctxt="tips[tip]"
 	  		@rightFunc="showSharePop"
 	  		share>
   		</CommonTop>
@@ -158,6 +158,7 @@
 		<div style="opacity:0;" class="opacity0-tent"></div>
 		<div class="pop-up-right" :class="{fadeUp: !!dragon}" v-if="!dragonResult"> 
 			<DragonBoss 
+				:everyAttack="everyAttack"
 				:dragonType="dragon" 
 				:animal="animal" 
 				:online="online" 
@@ -203,10 +204,14 @@ import {
 	animalListService,
 	bandStatusService 
 } from 'services/collect'
+import tips from './tip'
 export default {
 	data() {
 		return {
 			loadtent: false,
+			tips,
+			tip: 0,
+			tipTimer: null,
 			buildBgVoice: null,
 			huntingClickVoice: null,
 			showEnergyVoice: null,
@@ -217,6 +222,7 @@ export default {
 			share: {},
 			huntingIntegral: 0,
 			monsterTotalAttack: 0,
+			everyAttack: [],
 			timeNum: 60,
 			timer: null,
 			// lastblood: 1,
@@ -270,7 +276,11 @@ export default {
 		this.$store.dispatch('getIntergral')
 		this.getData('created')
 		this.playClickMusic()
-		 this.playBgMusic()
+		if (this.which === 'hunting' && !!this.dragon) {
+		  this.playHuntingBgMusic()
+		} else {
+			this.playBgMusic()
+		}
 		this.listenSocket() // 连接socket
 	},
 	onShareAppMessage(res) {
@@ -283,12 +293,14 @@ export default {
 		
 		// wx.getShareInfo()
 	},
-	// onLoad() {
-	// 	this.playClickMusic()
-	// 	this.playBgMusic()
-		
-	// },
 	methods: {
+		tipNum() {
+			if (this.tip >= tips.length -1 ) {
+				this.tip = 0
+			} else {
+				this.tip +=1
+			}
+		},
 		closeHuntingResult() {
 			this.clickVoicePlay()
 			this.dragonResult = ''
@@ -399,8 +411,19 @@ export default {
 			let totalAttack = 5
 			if (this.animal.power) totalAttack = this.animal.power
 			if (this.online) totalAttack += 5
-
-			this.monsterTotalAttack += totalAttack
+				console.log('totalAttack', totalAttack)
+			const everyAttack = this.randNum(totalAttack) 
+		console.log(everyAttack,' everyAttack')
+			this.monsterTotalAttack += everyAttack
+				console.log(	this.monsterTotalAttack,' 	this.monsterTotalAttack')
+			  // this.everyAttack= [everyAttack, ...this.everyAttack]
+			 if (this.everyAttack.length>50){
+	          this.everyAttack.splice(0,40);
+	        }
+	      this.everyAttack.push(everyAttack);
+	        // setTimeout(() => {
+	        //   this.everyAttack.pop();
+	        // }, 2000);
 			if (this.monsterTotalAttack >= this.dragonInfo.blood) {
 				clearInterval(this.timer);
 				console.log('打怪成功结束');
@@ -445,10 +468,10 @@ export default {
 		async selectDragon(type) {
 			this.clickVoicePlay()
 			clearInterval(this.timer);
-			if (this.huntingRecord <=0 ) {
-				this.$tip.toast('您今日3次狩猎机会已使用完，明天再来哦')
-				return
-			}
+			// if (this.huntingRecord <=0 ) {
+			// 	this.$tip.toast('您今日3次狩猎机会已使用完，明天再来哦')
+			// 	return
+			// }
 			const resultData = await beforeHuntingService({
 				openid: this.openid,
 				monster: type + 'dragon'
@@ -771,7 +794,7 @@ export default {
 			})
 	    },
 	    pageReset() {
-	    //	this.fadeIn = false
+	    	this.tip = 0
 			this.positions= []
 			this.shopList = []
 			this.buildList = []
@@ -816,6 +839,7 @@ export default {
 	          	})
 	          });
 	        });
+	    this.tipTimer = setInterval(this.tipNum, 10000)
 	},
 	watch: {
 		storeType: {
@@ -843,6 +867,8 @@ export default {
 		this.loadtent = false
 		this.listenColseSocket()
 		wx.stopBackgroundAudio()
+		// clearInterval(this.timer)
+		clearInterval(this.tipTimer)
 	},
 	onUnload() {
 		this.clickVoice.destroy()
@@ -855,6 +881,7 @@ export default {
 		this.huntingFailVoice.destroy()
 		this.buildBgVoice.destroy()
 		clearInterval(this.timer)
+		clearInterval(this.tipTimer)
 		this.pageReset()
 		this.fadeIn = false
 		this.huntingFail()
@@ -1344,6 +1371,7 @@ export default {
 					// align-items:flex-start;
 					// justify-content:space-between;
 					overflow-y: auto;
+					-webkit-overflow-scrolling: touch;
 					height: 516rpx;
 					.list-item{
 						float:left;

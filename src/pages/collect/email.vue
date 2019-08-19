@@ -6,7 +6,7 @@
 			<ul class="email-list">
 				<li class="item" v-for="(item, $index) in emailList" :key="$index">
 					<i class="red-icon"></i>
-					<div class="content">恭喜你获得了手机排行第3名，奖励<span class="integral-icon"></span>{{item.intergral}}。</div>
+					<div class="content">恭喜你获得了手机排行前3名，奖励<span class="integral-icon"></span>{{item.intergral}}。</div>
 					<div class="desc">
 						<div class="time">{{item.ctime | formTime('{y}-{m}-{d}')}}</div>
 						<div class="send">发送人： PARKI系统</div>
@@ -105,6 +105,7 @@
 				width:258px;
 				margin-top: 15px;
 				overflow-y: auto;
+				-webkit-overflow-scrolling: touch;
 				overflow-x: hidden;
 				height:420px;
 		 		.item{
