@@ -219,6 +219,7 @@ const videoList = [
 	'http://parkiland.isxcxbackend1.cn/blue.mp4',
 	'http://parkiland.isxcxbackend1.cn/yellow.mp4',
 	'http://parkiland.isxcxbackend1.cn/orange.mp4',
+	'http://parkiland.isxcxbackend1.cn/super.mp4',
 ];
 
 const audioList = [
