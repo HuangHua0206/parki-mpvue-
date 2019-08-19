@@ -80,7 +80,7 @@
 			      });
 			},
 			async login(userInfo, code) {
-				console.log(userInfo, 'userInfo')
+				//console.log(userInfo, 'userInfo')
 				const resultData = await loginService({
 					nickname: userInfo.nickName,
 					avatarurl: userInfo.avatarUrl,
@@ -92,7 +92,7 @@
 						openid: resultData.openid,
 						...userInfo
 					});
-					console.log(333);
+				//	console.log(333);
 					wx.redirectTo({
 						url: '/pages/collect/main'
 					});
@@ -103,7 +103,7 @@
 				this.prenum += 1;
 			},
 			testError(e) {
-				console.log(888, e)
+				//console.log(888, e)
 				this.prenum += 1;
 			},
 			// preLoadVedio(e) {
@@ -115,7 +115,7 @@
 			// },
 			vedioEnd(e) {
 				this.prenum += 1
-				console.log('end', e)
+			//	console.log('end', e)
 			}
 			
 		},

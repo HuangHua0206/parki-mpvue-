@@ -167,7 +167,7 @@ export default {
 
 		},
 		attackBoss() {
-			console.log(9)
+			//console.log(9)
 			this.huntingClickVoicePlay()
 			let totalAttack = 5
 			if (this.animal.power) totalAttack = this.animal.power
@@ -182,7 +182,7 @@ export default {
 	          this.everyAttack.splice(0,40);
 	        }
 	      this.everyAttack.push(sendData.attackpower);
-	      console.log('this.everyAttack==>',this.everyAttack)
+	      //console.log('this.everyAttack==>',this.everyAttack)
 	        // setTimeout(() => {
 	        //   this.everyAttack.pop();
 	        // }, 2000);
@@ -199,17 +199,17 @@ export default {
 
 
 
-			console.log(sendData, 'sendData')
+		//	console.log(sendData, 'sendData')
 			this.socketTask.send({
 				data: JSON.stringify(sendData),
 				fail: err => {
-					console.log(err, 'err')
+					//console.log(err, 'err')
 				},
 				success: res => {
-					console.log(res, 'res')
+					//console.log(res, 'res')
 				},
 				complete: result => {
-					console.log(result, 'result')
+					//console.log(result, 'result')
 				},
 			})
 		},
@@ -217,7 +217,7 @@ export default {
 			const resultData = await animalListService({ openid: this.openid })
 			if (resultData && resultData.errmsg) return
 			this.animal = resultData.data.filter(item=>item.selected === 1)[0] || {}
-		console.log(this.animal)
+		//console.log(this.animal)
 		},
 		async bandStatus() {
 			const resultData = await bandStatusService({ openid: this.openid })
@@ -228,25 +228,26 @@ export default {
 		 listenSocket() {
 	      this.socketTask = getApp().globalData.socketTask;
 	      if (!this.socketTask || this.socketTask.readyState !=1){
-	        console.info("重新連接")
+	      //  console.info("重新連接")
 	        this.socketTask = wx.connectSocket({
 	         url: 'wss://www.j4ckma.cn/parki/ws?openid='+this.openid
 	        })
 	        getApp().globalData.socketTask = this.socketTask;
 	      }
-	      console.log('this.socketTask', this.socketTask)
+	      //console.log('this.socketTask', this.socketTask)
 	      this.socketTask.onMessage(res => {
-	        console.log('oooo', res);
+	      //  console.log('oooo', res);
 	        const _data = JSON.parse(res.data)
 	        this.SOCKET_INFO = _data
 	        this.socketDeal(_data)
 	      })
 	        //连接失败
 	        this.socketTask.onError(function() {
-	          console.log("websocket连接失败！");
+	        //  console.log("websocket连接失败！");
 	        });
 	    },
 		socketDeal(socket) {
+			console.log(socket)
 			if (socket.eventname === 'noticeattaktotal') {
 				this.totalKill = socket.total
 			}
@@ -267,7 +268,7 @@ export default {
 		listenColseSocket() {
 			this.socketTask.close()
 			wx.onSocketClose(function(res){
-			  console.log("WebSocket 已关闭！")
+			//  console.log("WebSocket 已关闭！")
 			})
 	    },
 	},

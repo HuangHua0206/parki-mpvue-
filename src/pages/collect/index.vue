@@ -343,7 +343,7 @@
 				return userinfo.openid
 			},
 			starImg() {
-				console.log(this.starid);
+				// console.log(this.starid);
 				if(this.starid < 10) {
 					return 'http://parkiland.isxcxbackend1.cn/star0'+ this.starid +'.png'
 				} else {
@@ -522,28 +522,29 @@
 			 listenSocket() {
 		      this.socketTask = getApp().globalData.socketTask;
 		      if (!this.socketTask || this.socketTask.readyState !=1){
-		        console.info("重新連接")
+		      //  console.info("重新連接")
 		        this.socketTask = wx.connectSocket({
 		        	//url: 'wss://www.isxcxbackend1.cn/websocket'
 		         url: 'wss://www.j4ckma.cn/parki/ws?openid='+this.openid
 		        })
 		        getApp().globalData.socketTask = this.socketTask;
 		      }
-		      console.log('this.socketTask', this.socketTask)
+		     // console.log('this.socketTask', this.socketTask)
 		      this.socketTask.onMessage(res => {
-		        console.log('oooo', res);
+		     //   console.log('oooo', res);
 		        const _data = JSON.parse(res.data)
 		        this.SOCKET_INFO = _data
 		        this.socketDeal(_data)
 		      })
 		        //连接失败
 		        this.socketTask.onError(function() {
-		          console.log("websocket连接失败！");
+		        //  console.log("websocket连接失败！");
 		          // _this_this.gsStatus = 1;
 		          // _this.isSlow = false;
 		        });
 		    },
 		    socketDeal(now) {
+		 
 		    	if (now.eventname === 'prohibitedcollectgreen') {
 		           	 	this.worldEvent = 'earth'
 		           	 	if (this.FIRST_EARTH) { // 第一次接收到服务端推送时自动弹出地震告知弹窗，以后需要用户自行点击按钮
@@ -556,11 +557,11 @@
 		           	 		this.worldEvent = 'super'
 		           	 	// 触发了神奇能量（当自己被触发神奇能量，其他人被触发神奇能量）
 		           	 	if (this.openid != now.openid) {
-		           	 		console.log('其他玩家被触发超级能量')
+		           	 	//	console.log('其他玩家被触发超级能量')
 		           	 		this.player = now.player
 		           	 		// // 其他玩家被触发超级能量
 		           	 	} else {
-		           	 		console.log('自己手环被触发超级能量')
+		           	 	//	console.log('自己手环被触发超级能量')
 		           	 		this.which= 'my-super' // 弹窗遮罩界面
 		           	 	}
 		           	 }
@@ -585,6 +586,7 @@
 		           	 }
 		           	 // 开始打怪兽
 		           	 if (now.status === 3 && now.eventname === 'startattackmonster') {
+		           	 	console.log('打怪兽', now)
 		           	 	this.worldEvent= 'boss'
 		           	 }
 		           	 // 打怪兽结束
@@ -608,10 +610,10 @@
 			},
 			async bandStatus() {
 				const resultData = await bandStatusService({ openid: this.openid })
-				console.log('band', resultData)
+			//	console.log('band', resultData)
 				if (resultData && resultData.data) {
 					this.bandid = resultData.data.bandid
-					console.log(this.bandid, 'this.bandid')
+				//	console.log(this.bandid, 'this.bandid')
 					this.reward()
 					this.online = resultData.data.bindstatus === 1
 				}
@@ -680,7 +682,7 @@
 		          wx.onBeaconUpdate(res => {
 		          	// 正在发送请求时，完成一轮收集延迟2s时，界面有弹窗出现时，禁止收集能量
 		           	 if (this.ISENDING || this.reset || !!this.which) return
-		           	 console.log(res.beacons, 'res.beacons')
+		          // 	 console.log(res.beacons, 'res.beacons')
 		           	 let beaconNearby = res.beacons.filter(item => item.accuracy > 0 && item.accuracy < 0.5)
 		           	 let amazingEnergy = null
 		           	// amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
@@ -703,10 +705,10 @@
 
 		           	 // 以下为普通能量收集
 		           	const isNearbyBracelet = !!(beaconNearby.filter(item => {
-		           		console.log(item.minor, item.major, this.bandid, 'this.bandidthis.bandidthis.bandid')
+		           	//	console.log(item.minor, item.major, this.bandid, 'this.bandidthis.bandidthis.bandid')
 		           		return item.major === 200 && item.minor.toString() === this.bandid
 		           	})[0]) // 自己的手环是否在附近
-		           	console.log('isNearbyBracelet', isNearbyBracelet)
+		           //	console.log('isNearbyBracelet', isNearbyBracelet)
 		           	const beacon = beaconNearby.filter(item => item.major !==200)[0] // 此时为普通能量收集，过滤掉手环
 		           	
 		           	 if (!beacon) return
@@ -735,7 +737,7 @@
 		    },
 		    // 超级能量收集
 		    async superEnergyCollect(energy) {
-		    	console.log(energy);
+		    //	console.log(energy);
 		    	if (this.ISENDING) return
 		    	this.ISENDING = true
 		    	const resultData = await superCollectService({ openid: this.openid })
@@ -995,7 +997,7 @@
 		    listenColseSocket() {
 		    	this.socketTask.close()
 				wx.onSocketClose(function(res){
-				  console.log("WebSocket 已关闭！")
+			//	  console.log("WebSocket 已关闭！")
 				})
 		    },
 		     resetData() {
@@ -1036,7 +1038,7 @@
 		},
 		async onShow() {
 			this.staranimation = true
-			console.log('onShow')
+			//console.log('onShow')
 			this.tipTimer = setInterval(this.tipNum, 10000)
 			this.starTimer = setInterval(this.starNum, 40)
 			this.playClickMusic()
@@ -1065,7 +1067,7 @@
 		},
 		onHide() {
 			this.staranimation = false
-			console.log('onHideonHideonHide')
+		//	console.log('onHideonHideonHide')
 			this.listenColseSocket()
 			clearInterval(this.timer)
 		    wx.stopBeaconDiscovery();
@@ -1087,9 +1089,10 @@
 		watch: {
 			which: {
 				handler(newValue, oldValue) {
-					console.log('newValue', newValue)
+				//	console.log('newValue', newValue)
 					if (newValue === 'earth' && this.worldEvent === 'earth') {
-						console.log('ea')
+					
+					//	console.log('ea')
 						this.playEarthBgMusic()
 					} else if ((newValue === 'my-super' || newValue === 'super') && this.worldEvent === 'super') {
 						this.playSuperBgMusic()
