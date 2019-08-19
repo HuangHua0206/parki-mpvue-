@@ -68,7 +68,7 @@
 		
 		.range-pop-wrap{
 			z-index:100;
-			.bg("pl2_list@2x");
+			.bg("pl2_list");
 			width:694rpx;
 			height: 1152rpx;
 			position: absolute;

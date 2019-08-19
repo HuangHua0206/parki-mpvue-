@@ -76,7 +76,7 @@ const imgList = [
 	'http://parkiland.isxcxbackend1.cn/pl2_hunting_logo.png',
 	'http://parkiland.isxcxbackend1.cn/pl2_hunting_success.png',
 	'http://parkiland.isxcxbackend1.cn/pl2_huting_red.png',
-	'http://parkiland.isxcxbackend1.cn/pl2_list@2x.png',
+	'http://parkiland.isxcxbackend1.cn/pl2_list.png',
 	'http://parkiland.isxcxbackend1.cn/pl2_magic_energy@2x.png',
 	'http://parkiland.isxcxbackend1.cn/pl2_mail@2x.png',
 	'http://parkiland.isxcxbackend1.cn/pl2_mail_2@2x.png',

@@ -1,7 +1,7 @@
 <template>
 	<div class="first-wrap">
-		<div class="title"></div>
 		<span class="yd"></span>
+		<div class="dragon" v-if="percent <100"></div>
 		<button
 		  class="get-userinfo"
 	      open-type="getUserInfo"
@@ -153,19 +153,6 @@
 		height: 100%;
 		width:100%;
 		.bg('pl2_iphone X@2x', top);
-		.title{
-
-			background: url("@{cdn}资源1.png") center center no-repeat;
-			  text-align: center;
-			  padding-top: 250px;
-			  font-size: 35px;
-			  font-weight: bold;
-			  position: absolute;
-			  top: 0;
-			  left: 0;
-			  width: 100%;
-			  z-index: 101;
-		}
 		.yd {
 			.bg("%E4%BA%91@3x", top);
   			background-size: 100% auto;
@@ -201,6 +188,16 @@
 			transform: translateX(-50%);
 			height: 26px;
 			.bg("pl2_Loadingresources@2x", top);
+		}
+		.dragon{
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+			bottom:270px;
+			width:150rpx;
+			height:87rpx;
+			 background: url("@{cdn}pl2-loading.gif") center center no-repeat;
+    		background-size: 100% 100%;
 		}
 		.process-wrap {
 			width: 80%;
