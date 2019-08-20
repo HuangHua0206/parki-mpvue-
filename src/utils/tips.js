@@ -50,14 +50,14 @@ export default class Tips {
 	 * 弹出确认取消窗口
 	 */
 	static confirm({
-									 title = '提示',
-									 content,
-									 confirmText = '确定',
-									 confirmColor = "#3c8bee",
-									 cancelText = "取消",
-									 success,
-									 fail
-								 }) {
+			 title = '提示',
+			 content,
+			 confirmText = '确定',
+			 confirmColor = "#3c8bee",
+			 cancelText = "取消",
+			 success,
+			 fail
+		 }) {
 		wx.showModal({
 			title,
 			content,

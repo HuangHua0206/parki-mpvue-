@@ -17,10 +17,10 @@
 		<div class="build-store" @click="showStore"></div>
 		<div class="build-my" @click="showMy"></div>
  		
-		<div class="cancel-sestory" v-if="deleteIndex !== -1" @click="cancelDestory"></div>
+		<div class="cancel-sestory" v-if="deleteIndex !== -1 && isBuild" @click="cancelDestory"></div>
 
  		<!-- 建造区 -->
-		<div class="area" @longpress="longTap">
+		<div class="area" >
 			<div :class="{noBg : !isBuild}" class="mark"></div>
 			<!--  建造action -->
 			<div class="action area-item item1" :class="'item' + ($index+1)"  v-for="(item, $index) in 51" :key="$index" @longpress.stop="" >
@@ -29,7 +29,7 @@
 					'activeRed': index === $index +1 && active === 'forbid'
 				}"  style="text-align: center;line-height:76rpx">   
 					<div class="build-one" v-if="index === ($index+1)"  >
-						<img class="map_img" v-if="!tentShow" :src="'http://parkiland.isxcxbackend1.cn/pl2_map1_'+buildContent.prdname+'.png'" :class="{down : imgDown, 'build-img': tend }"   />
+						<img class="map_img" v-if="!tentShow" :src="'http://parkiland.isxcxbackend1.cn/pl2_map2_'+buildContent.prdname+'.png'" :class="{down : imgDown, 'build-img': tend }"   />
 						<div  class="tent" v-show="tentShow">
 						<!-- 	<img :src="tentImg" style="width:100%;height:100%;" /> -->
 							<div class="progress">
@@ -43,14 +43,15 @@
 			</div>
 			<!-- 已建造好 -->
 			<div 
+				@longpress.stop="longTap"
 				class="area-item item1 finish-list" 
 				:class="'item' + (item.location)"  
 				v-for="(item, $index) in buildList" 
 				:key="$index" 
 				>
-				<div class="build-content" >
+				<div class="build-content"  >
 					<div class="build-one"  >
-						<img class="map_img" :src="'http://parkiland.isxcxbackend1.cn/pl2_map1_'+item.prdname+'.png'"/>
+						<img class="map_img" :src="'http://parkiland.isxcxbackend1.cn/pl2_map2_'+item.prdname+'.png'"/>
 				<!-- 		<div v-if="!tentShow" class="cancel"></div> -->
 					</div>
 					<div class="time-remaing" v-if="item.remaining > 0">{{ item.remainingShow }}</div>
@@ -603,7 +604,10 @@ export default {
 		cancelDestory() {
 			this.clickVoicePlay()
 			this.deleteIndex = -1
-			this.isBuild = false
+			if (this.index === -1) {
+				this.isBuild = false
+			}
+			
 		},
 		longTap(e) {
 			let minVal = Infinity;
@@ -616,16 +620,22 @@ export default {
 		            _index = item.index;
 		        }
 	        });
-	        this.deleteIndex = _index
-			this.isBuild = true
+	        
+	        console.log(this.buildList.filter(item => _index === item.location), 'ooo');
+	        if (this.buildList.filter(item => _index === item.location).length) {
+	        	console.log(888)
+	        	this.deleteIndex = _index
+	        	this.isBuild = true
+	        }
+			
 		},
 		cancelBuild() {
 			this.clickVoicePlay()
 			this.index = -1
 		 	this.tentShow = false
 		 	this.imgDown = false
+		 	this.isBuild = false
 		 	this.tend = false
-		 	 this.isBuild = false
 		},
 		async deleteBuild() {
 	        const resultData = await removeService({
@@ -797,7 +807,10 @@ export default {
 				 }, 1000)
 				 setTimeout(() => this.getData('add'), 3500)
 				 // setTimeout(() => , 3000)
-				 this.isBuild = false
+				 if (this.deleteIndex === -1) {
+				 	this.isBuild = false
+				 }
+				 
 				 setTimeout(() => {
 				 	this.getBuildVoicePlay()
 				 	this.index = -1

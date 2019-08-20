@@ -1,6 +1,6 @@
 <template>
 	<div class="first-wrap">
-		<span class="yd"></span>
+	<!-- 	<span class="yd"></span> -->
 		<div class="dragon" v-if="percent <100"></div>
 		<button
 		  class="get-userinfo"

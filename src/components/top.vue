@@ -10,8 +10,7 @@
 	        </div>
 	        <div v-if="share" class="right-num share" @click="$emit('rightFunc')" ></div>
 	        <div v-else class="right-num" @click="$emit('openRange')">
-	        	排行榜
-	       <!--  	{{ rightNum }} -->
+ 
 	        </div>
 	      </div>
 	    </div>
@@ -101,7 +100,7 @@
 				box-sizing: border-box;
 				padding-right: 4px;
 				margin-right: 42px;
-				.bg('pl2_Ranking@2x');
+				.bg('pl2_top_rang');
 				width:72px;
 				height: 22px;
 				text-align:center;
