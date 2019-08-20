@@ -260,7 +260,6 @@
 	export default{
 		data () {
 		  return {
-		  	staranimation: false,
 		  	starid: 0,
 		  	starTimer: null,
 		  	tips,
@@ -380,6 +379,7 @@
 				if (resultData && resultData.errmsg) return
 				this.plusMoneyVoicePlay()
 				this.$tip.toast('领取成功')
+				this.$store.dispatch('getIntergral')
 				this.getEmailList()
 			},
 			playClickMusic() {
@@ -455,12 +455,13 @@
 			openEmial() {
 				this.clickVoicePlay()
 				this.getEmailList()
-				
-				
 			},
 			async getEmailList() {
 				const resultData = await emailListService({ openid: this.openid })
-				if(resultData && resultData.errmsg) return
+				if(resultData && resultData.errmsg) {
+					this.$tip.toast(resultData.errmsg)
+					return 
+				}
 				this.emailList = resultData.emails || []
 			    this.which = 'email'
 			},
@@ -1037,7 +1038,6 @@
 		    }
 		},
 		async onShow() {
-			this.staranimation = true
 			//console.log('onShow')
 			this.tipTimer = setInterval(this.tipNum, 10000)
 			this.starTimer = setInterval(this.starNum, 40)
@@ -1066,8 +1066,6 @@
 			
 		},
 		onHide() {
-			this.staranimation = false
-		//	console.log('onHideonHideonHide')
 			this.listenColseSocket()
 			clearInterval(this.timer)
 		    wx.stopBeaconDiscovery();

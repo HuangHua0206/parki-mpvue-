@@ -251,6 +251,9 @@ export default {
 			if (socket.eventname === 'noticeattaktotal') {
 				this.totalKill = socket.total
 			}
+			if (socket.attacktype === 'monster') {
+				this.leftblood = socket.remaining
+			}
 			if (socket.eventname === 'noticemonstercountdown') {
 				this.lefttime = socket.lefttime
 				this.leftblood = socket.leftblood

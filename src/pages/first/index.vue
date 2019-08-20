@@ -119,10 +119,6 @@
 			}
 			
 		},
-		onHide() {
-			this.prenum = 0
-			wx.stopBackgroundAudio()
-		},
 		watch: {
 			prenum: {
 				handler(newValue, oldValue) {
