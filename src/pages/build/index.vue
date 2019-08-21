@@ -529,6 +529,10 @@ export default {
 		},
 		async giveEnergy(param) {
 			this.clickVoicePlay()
+			if (this.left <= 0) {
+				this.$tip.toast('您今天十个已送完，明天再来哦~')
+				return
+			}
 			const resultData = await giveEnergyService({ 
 				openid: this.openid, 
 				color: param.color,
@@ -801,7 +805,7 @@ export default {
 
 				 setTimeout(()=> {
 				 	this.tentid = 0
-				 	this.tentTimer = setInterval(this.tentNum, 100)
+				 	// this.tentTimer = setInterval(this.tentNum, 100)
 				 	this.tentShow = true
 				 	this.tentshowVoicePlay()
 				 }, 1000)
@@ -1523,6 +1527,7 @@ export default {
 							// line-height: 34rpx;
 							color: #ffad01;
 							font-size:16rpx;
+
 						}
 					}
 
@@ -1586,6 +1591,8 @@ export default {
 					.cost{
 						// line-height: 34rpx;
 						color: #ffad01;
+						// width:
+						min-width:80rpx;
 						font-size:24rpx;
 					}
 				}
