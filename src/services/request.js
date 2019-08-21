@@ -9,7 +9,13 @@ const NORMAL_BASE_URL = {
 	region: 'https://www.j4ckma.cn',
 	prod: ''
 }
- 
+
+// appname & appsecret
+const APPKEY = {
+    appname:"0xa0c942",
+    appsecret:"c2e47ff02ce249bda8eb17e5789ff90b70222b73"
+}
+
 fly.interceptors.request.use(request => {
     // md5加密 和 sha1签名
     var MD5 = crypto.createHash('md5')
@@ -27,12 +33,13 @@ fly.interceptors.request.use(request => {
     const cmd5 = request.headers['Content-MD5'] = md5.toString()
 
     // AUTHORIZATION
-    let hash = SHA1.update('c2e47ff02ce249bda8eb17e5789ff90b70222b73')
+    let hash = SHA1.update(APPKEY.appsecret)
     hash.update(cmd5)
     hash.update('application/json')
     hash.update(reqDate)
     const sig = hash.digest('hex').toString()
-    request.headers['AUTHORIZATION'] = `API-1:0xa0c942:${ sig }`
+    request.headers['AUTHORIZATION'] = `API-1:${APPKEY.appname}:${ sig }`
+
     return request
 })
 
