@@ -5,7 +5,7 @@ export function totalBloodService(data) {
 	return request({
 		testUrl: '/static/json/list.json',
 		url: '/parki/blood/query',
-		method: 'get',
+		method: 'post',
 		data
 	})
 }

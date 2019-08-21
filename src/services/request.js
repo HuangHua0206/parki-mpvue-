@@ -1,14 +1,46 @@
 import Tip from 'utils/tips'
 var Fly = require("flyio/dist/npm/wx") 
 var fly = new Fly
+var crypto = require('crypto');
+
+ 
 const NORMAL_BASE_URL = {
 	local: 'https://rv.ksoapp.com',
 	region: 'https://www.j4ckma.cn',
 	prod: ''
 }
+ 
+fly.interceptors.request.use(request => {
+    // md5加密 和 sha1签名
+    var MD5 = crypto.createHash('md5')
+    var SHA1 = crypto.createHash('sha1')
+
+    // ReqDate
+    const reqDate = request.headers['ReqDate'] = (new Date()).toUTCString()
+ 
+    // Content-Type
+    request.headers['Content-Type'] = 'application/json'
+ 
+    // Content-MD5
+    const data = MD5.update(JSON.stringify(request.body))
+    const md5 = data.digest('hex')
+    const cmd5 = request.headers['Content-MD5'] = md5.toString()
+
+    // AUTHORIZATION
+    let hash = SHA1.update('c2e47ff02ce249bda8eb17e5789ff90b70222b73')
+    hash.update(cmd5)
+    hash.update('application/json')
+    hash.update(reqDate)
+    const sig = hash.digest('hex').toString()
+    request.headers['AUTHORIZATION'] = `API-1:0xa0c942:${ sig }`
+    return request
+})
+
+
 
 fly.interceptors.response.use(
     res => {
+
         //只将请求结果的data字段返回
         // Tip.toast(JSON.stringify(response.data) + 'res')
         return res.data
@@ -23,19 +55,7 @@ fly.interceptors.response.use(
 )
 
 export default function request(config) {
-    // Tip.toast('请求发出')
-	 // console.log(config)
-	 // 本地mock情况下取testUrl字段 统一使用location.origin
-    // if (process.env.NODE_ENV === 'development' && process.env.LOCAL_TEST) {
-    //     config['method'] = 'get'
-    //     config['url'] = process.env.LOCAL_TEST_URL + config['testUrl']
-    // } else { // 非mock情况下（本地联调&线上） 部分请求origin不是同源account.wps.com
-    //    if (config['baseUrl']) {
-    //         config['url'] = config['baseUrl'] + config['url']
-    //     } else {
-    //     	config['url'] = process.env.NORMAL_BASE_URL + config['url']
-    //     }
-    // }
+    // config.headers['Content-Type'] = 'application/json'
     config.url = NORMAL_BASE_URL.region + config.url
 	return fly.request(config.url, config.data, config)
 }

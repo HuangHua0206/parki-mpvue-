@@ -33,8 +33,9 @@
 				</div>
 			</div>
 			
-			<div class="bracelet reward" v-if="online && fadeIn"  >+2</div>
+			
 		</div>
+		<div class="bracelet-plus reward" v-if="fadeIn && online"  >+2</div>
 		<div class="button offline-button" :class="{
 			'fade-right-in': fadeIn,
 			'z-index-top': !online
@@ -490,8 +491,9 @@
 					, 5000)
 			},
 			async getRangeList() {
+				console.log(888)
 				this.clickVoicePlay()
-				const resultData = await rangeService()
+				const resultData = await rangeService({ test: 'test'})
 				if (resultData && resultData.rank) {
 					this.rangeList = resultData.rank
 					this.which = 'range'
@@ -1122,10 +1124,10 @@
     to {display: block;}
 }
 @keyframes onlineAnimation{
-	0% { left:0; opacity:0;}
-    80% { left:0; opacity:0}
-    90% { left:-45px; opacity:1}
-    100% {left:-45px; opacity:0;}
+	0% { right:25px; opacity:0;}
+    80% { right:25px; opacity:0}
+    90% { right:75px; opacity:1}
+    100% {right:75px; opacity:0;}
 }
 @keyframes superNumNone{
 	from{opacity: 1;top:50%;}
@@ -1263,23 +1265,7 @@
 			right:-70px;
 			top:179px;
 			.bg("pl2_on line@2x");
-			.bracelet{
-				position:absolute;
-				
-				padding-left:15px;
-			 
-				box-sizing:border-box;
-				font-size:13px;
-				background: url("@{cdn}pl2_energy_2@2x.png") no-repeat 0 0;
-				background-size:10px 100%;
-				height:15px;
-				top:10px;
-				opacity:0;
-				color:rgb(255,173,0);
-				&.reward{
-					animation:onlineAnimation 5s infinite ease;
-				}
-			}
+			
 			.progress-mask{
 				border-radius:12px;
 				position: absolute;
@@ -1324,28 +1310,46 @@
 			}
 			
 		}
+		
 		&.offline-button{
 			right:-70px;
 			top:180px;
-			.bg("pl2_off line@2x");
-			.progress-mask{
-				border-radius:12px;
-				position: absolute;
-				width:48px;
-				height: 10px;
-				bottom:15px;
-				border:2px solid #000;
-				box-sizing:border-box;
-				background: #fff;
-				left:14px;
-				overflow:hidden;
-			}
+			.bg("pl2_unbind");
+			// .progress-mask{
+			// 	border-radius:12px;
+			// 	position: absolute;
+			// 	width:48px;
+			// 	height: 10px;
+			// 	bottom:15px;
+			// 	border:2px solid #000;
+			// 	box-sizing:border-box;
+			// 	background: #fff;
+			// 	left:14px;
+			// 	overflow:hidden;
+			// }
 		}
 		&.fade-left-in{
 			left:0;
 		}
 		&.fade-right-in{
 			right:0;
+		}
+	}
+	.bracelet-plus{
+		position:absolute;
+		top:189px;
+		padding-left:15px;
+	 
+		box-sizing:border-box;
+		font-size:13px;
+		background: url("@{cdn}pl2_energy_2@2x.png") no-repeat 0 0;
+		background-size:10px 100%;
+		height:15px;
+		// top:10px;
+		opacity:0;
+		color:rgb(255,173,0);
+		&.reward{
+			animation:onlineAnimation 5s infinite ease;
 		}
 	}
 	.line{

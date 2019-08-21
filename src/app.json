@@ -3,22 +3,12 @@
     "pages/first/main",
     "pages/collect/main",
    
-   
-   
-    
-   
-   
-     
-   
-  
-   
-   
     "pages/build/main",
-     
-    
-    "pages/boss/main"
-    
    
+   
+
+      
+    "pages/boss/main"
   ],
   "window": {
     "navigationBarTitleText": "Parki",
