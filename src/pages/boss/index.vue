@@ -103,7 +103,7 @@ export default {
 	components: { CommonTop, Range, BossResult: Result },
 	methods: {
 		async getTotalBlood() {
-			const resultData = await totalBloodService()
+			const resultData = await totalBloodService({ test: 'test'})
 			if (resultData && resultData.errmsg) return
 			this.totalblood = resultData.blood
 		},
@@ -159,7 +159,7 @@ export default {
 		},
 		async getRangeList() {
 			this.clickVoicePlay()
-			const resultData = await rangeService()
+			const resultData = await rangeService({ test: 'test'})
 			if (resultData && resultData.rank) {
 				this.rangeList = resultData.rank
 				this.which = 'range'

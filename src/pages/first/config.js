@@ -80,7 +80,7 @@ const imgList = [
 	'http://parkiland.isxcxbackend1.cn/pl2_magic_energy@2x.png',
 	'http://parkiland.isxcxbackend1.cn/pl2_mail@2x.png',
 	'http://parkiland.isxcxbackend1.cn/pl2_mail_2@2x.png',
-	'http://parkiland.isxcxbackend1.cn/pl2_mailbot@2x.png',
+	'http://parkiland.isxcxbackend1.cn/pl2_mailbot.png',
 	'http://parkiland.isxcxbackend1.cn/pl2_map2_Parki_skyline.png',
 	'http://parkiland.isxcxbackend1.cn/pl2_map2_Parki%E4%B8%80%E6%B3%A2%E4%B8%89%E6%8A%98%E5%B1%8B.png',
 	'http://parkiland.isxcxbackend1.cn/pl2_map2_Parki%E5%9C%A3%E8%AF%9E%E5%B1%8B.png',

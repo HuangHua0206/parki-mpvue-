@@ -109,6 +109,7 @@ export function reward2Service(data) {
 
 // 排名
 export function rangeService(data) {
+	console.log('777', data)
 	return request({
 		testUrl: '/static/json/list.json',
 		url: '/parki/integral/rank',

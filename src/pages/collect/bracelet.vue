@@ -2,7 +2,7 @@
 	<div class="bracelet-pop-wrap">
 <!-- 		<div class="mask" @click="$emit('closePop')"></div> -->
 		<div class="bracelet-bg">
-			<div class="logo"></div>
+<!-- 			<div class="logo"></div>
 			<div class="scan"></div>
 			
 			<div class="txt">
@@ -14,7 +14,7 @@
 			<div class="attention-first">
 				<div class="content">2:手环与收集靠近时会活的金币奖励</div>
 				<div class="desc">THE BRACELET WILL RECEIVE A GOLD COIN REWARD WHEN IT IS CLOSE TO THE PHONE</div>
-			</div>
+			</div> -->
 			<div class="band" >
 				<div class="img"  @click="openScan"></div>
 				<div class="desc">未绑定</div>
@@ -75,7 +75,7 @@
 		
 		.bracelet-pop-wrap{
 			z-index:100;
-			.bg("pl2_Bracelet_yellow@2x");
+			.bg("pl2_Bracelet_yellow");
 			width:306px;
 			height: 547px;
 			position: absolute;

@@ -92,6 +92,7 @@
 						openid: resultData.openid,
 						...userInfo
 					});
+			 
 				//	console.log(333);
 					wx.redirectTo({
 						url: '/pages/collect/main'
