@@ -11,6 +11,8 @@
 	"compileType": "miniprogram",
 	"appid": "wx4ee180b351f128c4",
 	"projectname": "parki_land",
+	"simulatorType": "wechat",
+	"simulatorPluginLibVersion": {},
 	"condition": {
 		"search": {
 			"current": -1,
