@@ -502,12 +502,12 @@
 					this.$tip.toast(resultData.errmsg)
 					return 
 				}
-				this.emailList = resultData.emails.map(item => {
+				this.emailList = !!resultData.emails ? resultData.emails.map(item => {
 					return {
 						...item,
 						ctime: this.formTime(item.ctime, '{y}-{m}-{d}')
 					}
-				}) || []
+				}) : []
 			    this.which = 'email'
 			},
 			openBracelet() {
