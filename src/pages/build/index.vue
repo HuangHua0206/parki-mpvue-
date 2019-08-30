@@ -3,6 +3,8 @@
 		<div class="cloud"></div>
 		<div class="mask" style="z-index:80" @click="closeMask" v-if="!!which && which !== 'share-has-animal' || !!dragonResult"></div> 
 		<CommonTop 
+			:hideTitle="hideTitle"
+			@avatarAction="hideTitle = !hideTitle"
 	  		:ctxt="tips[tip]"
 	  		@rightFunc="showSharePop"
 	  		share>
@@ -11,11 +13,11 @@
   			<Success @resetData="closeMask"   :pet="share"></Success>
   		</div>
   		
-  		<div @click="goCollect" class="button collect-energy" :class="{'fade-left-in': fadeIn}"  ></div>
-		<div class="button hunting-button" :class="{'fade-right-in': fadeIn}" @click="openHunting"></div>
-		<div class="button friend-button" style="z-index:60"  :class="{'fade-right-in': fadeIn}" @click="openFriend"></div>
-		<div class="build-store" @click="showStore"></div>
-		<div class="build-my" @click="showMy"></div>
+  		<div @click="goCollect" class="button collect-energy" :class="{'fade-left-in': fadeIn && !hideTitle}"  ></div>
+		<div class="button hunting-button" :class="{'fade-right-in': fadeIn && !hideTitle}" @click="openHunting"></div>
+		<div class="button friend-button" style="z-index:60"  :class="{'fade-right-in': fadeIn && !hideTitle}" @click="openFriend"></div>
+		<div class="build-store" :class="{'hade-btn-store': hideTitle}" @click="showStore"></div>
+		<div class="build-my"  :class="{'hade-btn-store': hideTitle}" @click="showMy"></div>
  		
 		<div class="cancel-sestory" v-if="deleteIndex !== -1 && isBuild" @click="cancelDestory"></div>
 
@@ -151,7 +153,7 @@
 			<Hunting   @closePop="closeMask"  @selectDragon="selectDragon" :huntingRecord="huntingRecord"/>
 		</div>
 		<div class="pop-up-right" :class="{fadeUp: which === 'friend'}"> 
-			<Friend   @closePop="closeMask"  :friendList="friendList" :left="left" @giveEnergy="giveEnergy"/>
+			<Friend   @closePop="closeMask"  :friendList="friendList" :finishColor="finishColor" :left="left" @giveEnergy="giveEnergy"/>
 		</div>
 		<div class="share-pop" v-if="which === 'share'">
 			<div class="close" @click="closeMask"></div>
@@ -210,6 +212,8 @@ import tips from './tip'
 export default {
 	data() {
 		return {
+			finishColor: {},
+			hideTitle: false,
 			tentid: 0,
 			tentTimer:null,
 			tips,
@@ -540,6 +544,9 @@ export default {
 			})
 			if (resultData && resultData.errmsg) return
 			this.left = resultData.left	
+			this.finishColor.color = param.color
+			this.finishColor.openid = param.openid
+			setTimeout(() => this.finishColor = {},500);
 			this.getFriendList()
 			this.$tip.toast('您已赠送成功')
 		},
@@ -1056,7 +1063,7 @@ export default {
 			.bg("pl2_cloud");
 		}
 		.button{
-			transition: 1s;
+			transition: 0.5s;
 			position:absolute;
 			width:67px;
 			height:57px;
@@ -1090,6 +1097,10 @@ export default {
 			bottom:13px;
 			left:80px;
 			.bg("pl2_Building_shop@2x");
+			&.hade-btn-store{
+				transition: 0.5s;
+				bottom:-100px;
+			}
 		}
 		.build-my{
 			position:absolute;
@@ -1098,6 +1109,10 @@ export default {
 			bottom:13px;
 			right:83px;
 			.bg("pl2_Warehouse@2x");
+			&.hade-btn-store{
+				transition: 0.5s;
+				bottom:-100px;
+			}
 		}
 		.cancel-sestory{
 			position: absolute;

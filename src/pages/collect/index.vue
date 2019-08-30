@@ -7,6 +7,7 @@
 			<img style="width:100%;height:100%" :src="starImg" />
 		</div>
 		<div class="toast"  :class="{show: toast==='repeat'}"></div>
+		<div class="toast green"  :class="{show: toast==='forbid-green'}"></div>
 		<Success 
 			@resetData="resetData" 
 			v-if="together" 
@@ -332,6 +333,7 @@
 		  	hasBracelet: true, //是否绑定手环
 		  	ISSAME: false, // 发现重复颜色能量
 		  	IS_SENDING: false, // 正在发送能量
+		  	GREEN_ISSAME: false, // 发现绿色能量
 		  }
 		},
 		computed: {
@@ -457,13 +459,55 @@
 				this.clickVoicePlay()
 				this.getEmailList()
 			},
+			formTime(time, cFormat) {
+					console.log(time);
+				if (arguments.length === 0) {
+				    return null
+				  }
+
+				  if ((time + '').length === 10) {
+				    time = +time * 1000
+				  }
+
+				  const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
+				  let date
+				  if (typeof time === 'object') {
+				    date = time
+				  } else {
+				    date = new Date(parseInt(time))
+				  }
+				  const formatObj = {
+				    y: date.getFullYear(),
+				    m: date.getMonth() + 1,
+				    d: date.getDate(),
+				    h: date.getHours(),
+				    i: date.getMinutes(),
+				    s: date.getSeconds(),
+				    a: date.getDay()
+				  }
+				  const time_str = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result, key) => {
+				    let value = formatObj[key]
+				    if (key === 'a') return ['一', '二', '三', '四', '五', '六', '日'][value - 1]
+				    if (result.length > 0 && value < 10) {
+				      value = '0' + value
+				    }
+				    return value || 0
+				  })
+				  console.log(time_str);
+				  return time_str
+			},
 			async getEmailList() {
 				const resultData = await emailListService({ openid: this.openid })
 				if(resultData && resultData.errmsg) {
 					this.$tip.toast(resultData.errmsg)
 					return 
 				}
-				this.emailList = resultData.emails || []
+				this.emailList = resultData.emails.map(item => {
+					return {
+						...item,
+						ctime: this.formTime(item.ctime, '{y}-{m}-{d}')
+					}
+				}) || []
 			    this.which = 'email'
 			},
 			openBracelet() {
@@ -548,7 +592,7 @@
 		    },
 		    socketDeal(now) {
 		 
-		    	if (now.eventname === 'prohibitedcollectgreen') {
+		    	    if (now.eventname === 'prohibitedcollectgreen') {
 		           	 	this.worldEvent = 'earth'
 		           	 	if (this.FIRST_EARTH) { // 第一次接收到服务端推送时自动弹出地震告知弹窗，以后需要用户自行点击按钮
 		           	 		this.which = 'earth'
@@ -688,17 +732,13 @@
 		          // 	 console.log(res.beacons, 'res.beacons')
 		           	 let beaconNearby = res.beacons.filter(item => item.accuracy > 0 && item.accuracy < 0.5)
 		           	 let amazingEnergy = null
-		           	// amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
+
 		           	 // socket处理（世界事件）
-		           	 if (this.SOCKET_INFO.eventname === 'prohibitedcollectgreen') {
-		           	 	beaconNearby = beaconNearby.filter(item => item.major !== 103)
-		           	 }
 		           	 if (this.SOCKET_INFO.eventname === 'startsuperenergy') {
 		           	 	// 触发了神奇能量（当自己被触发神奇能量，其他人被触发神奇能量）
 		           	 	if (this.openid != this.SOCKET_INFO.openid) {
 		           	 		amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
 		           	 	}
-		           	 	// amazingEnergy = beaconNearby.filter(item => item.major === 200)[0]
 		           	 }
 		         
 		           	 if (amazingEnergy) { // 神奇能量触发(神奇能量触发时，检测到神奇能量优先收集神奇能量)
@@ -711,15 +751,31 @@
 		           	//	console.log(item.minor, item.major, this.bandid, 'this.bandidthis.bandidthis.bandid')
 		           		return item.major === 200 && item.minor.toString() === this.bandid
 		           	})[0]) // 自己的手环是否在附近
-		           //	console.log('isNearbyBracelet', isNearbyBracelet)
-		           	const beacon = beaconNearby.filter(item => item.major !==200)[0] // 此时为普通能量收集，过滤掉手环
-		           	
+		            
+		           	 const beacon = beaconNearby.filter(item => item.major !==200)[0] // 此时为普通能量收集，过滤掉手环
 		           	 if (!beacon) return
+
+		           	 if (this.SOCKET_INFO.eventname === 'prohibitedcollectgreen' && beacon.major === 103) { // 地震时不可收集绿色能量，此时提示用户，且不再往下走
+		           	 	// beaconNearby = beaconNearby.filter(item => item.major !== 103)
+		           	 	
+	           	 		if (!this.GREEN_ISSAME) {
+	           	 		//	this.toast = 'forbid-green'
+		             		setTimeout(() => {
+			             		this.toast = 'forbid-green'
+			             		this.GREEN_ISSAME = false
+
+			             	}, 5000);
+			             	setTimeout(() => { this.toast = '' }, 6000)
+		             	}
+		             	this.GREEN_ISSAME = true
+		             	return 
+		           	 }
+
+		           	
 		           	 const item = ENERGY_CONFIG.filter(item => item.major === beacon.major)[0]
 		             if (this.collects.includes(item.key)) {
 		             	if (!this.ISSAME) {
 		             		setTimeout(() => {
-			             		// this.$tip.toast('不能收集重复能量')
 			             		this.toast = 'repeat'
 			             		this.ISSAME = false
 
@@ -984,6 +1040,7 @@
 			  	this.hasBracelet= true 
 			  	this.ISSAME = false 
 			  	this.IS_SENDING=false
+			  	this.GREEN_ISSAME = false
 			},
 		    async getCollect() {
 		    	this.ISENDING = true
@@ -1204,6 +1261,9 @@
     	top:30%;
     	transform:translateX(-50%);
     	.bg("tip-not-pl2-same-energy");
+    	&.green{
+    		.bg("pl2_forbid-green");
+    	}
     	&.show{
     		animation: toast 1s;
     	}

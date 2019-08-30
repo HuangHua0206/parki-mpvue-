@@ -2,18 +2,19 @@
 	<div class="first-wrap">
 	<!-- 	<span class="yd"></span> -->
 		<div class="dragon" v-if="percent <100"></div>
-		<button
+		
+
+        <div class="process-loading" v-if="percent <100"></div>
+        <div class="process-wrap" v-if="percent <100"><div  :style="{width: percent+'%'}"></div></div>
+        <button
 		  class="get-userinfo"
 	      open-type="getUserInfo"
 	      lang="zh_CN"
 	      @getuserinfo="getUserInfo"
     		v-if="percent >=100"
         ></button>
-
-        <div class="process-loading" v-else></div>
-        <div class="process-wrap"><div  :style="{width: percent+'%'}"></div></div>
          <video :src="item" v-for="(item, index) in videoList" style="opacity:0;position: absolute;bottom:-100%;"  @error="testError"  muted :key="index" autoplay @ended="vedioEnd"/>
-        <image :src="item" v-for="(item, index) in imgList" v-show="false" @load="preLoadImg" @error="testError" :key="index" />
+        <img :src="item" v-for="(item, index) in imgList" v-show="false" @load="preLoadImg" @error="testError" :key="index" />
       
 	 
 	</div>
@@ -92,7 +93,7 @@
 						openid: resultData.openid,
 						...userInfo
 					});
-			 
+
 				//	console.log(333);
 					wx.redirectTo({
 						url: '/pages/collect/main'
@@ -179,7 +180,7 @@
 		}
 		.process-loading {
 			position: absolute;
-			bottom: 250px;
+			bottom: 150px;
 			left: 50%;
 			width: 116px;
 			transform: translateX(-50%);
@@ -190,7 +191,7 @@
 			position: absolute;
 			left: 50%;
 			transform: translateX(-50%);
-			bottom:270px;
+			bottom:170px;
 			width:150rpx;
 			height:87rpx;
 			 background: url("@{cdn}pl2-loading.gif") center center no-repeat;
@@ -199,7 +200,7 @@
 		.process-wrap {
 			width: 80%;
 			position: absolute;
-			bottom: 230px;
+			bottom: 130px;
 			overflow:hidden;
 			left: 50%;
 			padding:3px 2px 5px;

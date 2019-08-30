@@ -103,7 +103,7 @@ export default {
 	components: { CommonTop, Range, BossResult: Result },
 	methods: {
 		async getTotalBlood() {
-			const resultData = await totalBloodService({ test: 'test'})
+			const resultData = await totalBloodService({})
 			if (resultData && resultData.errmsg) return
 			this.totalblood = resultData.blood
 		},

@@ -28,7 +28,9 @@
 				     		<div class="ball blue" @click="$emit('giveEnergy', {
 				     			color: '3',
 				     			...item
-				     		})"></div>
+				     		})">
+				     			<div class="ball blue hide" :class="{'show': finishColor.color === '3' && item.openid === finishColor.openid}"></div>
+				     		</div>
 				     		<div class="ball orange" @click="$emit('giveEnergy', {
 				     			color: '1',
 				     			...item
@@ -52,12 +54,20 @@
 </template>
 <script>
 	export default{
+		// data() {
+		// 	return {
+		// 		finishColor: ''
+		// 	}
+		// },
 		props: {
 			friendList: {
 				type: Array
 			},
 			left: {
 				type: Number
+			},
+			finishColor: {
+				type: Object
 			}
 		}
 	} 
@@ -193,7 +203,7 @@
 							height: 50rpx;
 							border-radius:50%;
 							
-							
+							position: relative;
 							&.get{
 								.bg('pl2_friend_get');
 							}
@@ -208,6 +218,19 @@
 							}
 							&.orange{
 								.bg("pl2_ball_orange@2x");
+							}
+							&.hide{
+								position: absolute;
+								top:0;
+								left:0;
+							 
+								opacity: 1;
+							}
+							&.show{
+					 
+								top: -60rpx;
+								transition: 0.5s;
+								opacity: 0
 							}
 						}
 					}

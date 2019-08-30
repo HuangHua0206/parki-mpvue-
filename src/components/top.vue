@@ -1,20 +1,20 @@
 <template>
 	<div class="common-top">
 		<div class="top">
-	      <div class="avatar">
+	      <div class="avatar" @click="$emit('avatarAction')">
 	        <img :src="userAvatar" />
 	      </div>
-	      <div class="nums">
+	      <div class="nums" v-if="!hideTitle">
 	        <div class="left-num">
 	        	{{ integral }}
 	        </div>
-	        <div v-if="share" class="right-num share" @click="$emit('rightFunc')" ></div>
-	        <div v-else class="right-num" @click="$emit('openRange')">
+	        <div v-if="!hideTitle &&  share" class="right-num share" @click="$emit('rightFunc')" ></div>
+	        <div  class="right-num" @click="$emit('openRange')" v-if="!share">
  
 	        </div>
 	      </div>
 	    </div>
-	    <div class="attention">
+	    <div class="attention" v-if="!hideTitle">
 	       {{ctxt}}
 	    </div>
 	</div>
@@ -31,6 +31,9 @@
 			}
 		},
 		props: {
+			hideTitle: {
+				type: Boolean
+			},
 			ctxt: {
 				type: String,
 				rquired: true

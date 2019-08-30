@@ -1,14 +1,11 @@
 {
   "pages": [
     "pages/first/main",
-    "pages/collect/main",
-   
     "pages/build/main",
-   
-   
+    
+      "pages/boss/main",
+      "pages/collect/main"
 
-      
-    "pages/boss/main"
   ],
   "window": {
     "navigationBarTitleText": "Parki",

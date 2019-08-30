@@ -7,7 +7,7 @@ var crypto = require('crypto');
 const NORMAL_BASE_URL = {
 	local: 'https://rv.ksoapp.com',
 	region: 'https://www.j4ckma.cn',
-	prod: ''
+	prod: 'https://www.isxcxbackend1.cn/parki2/'
 }
 
 // appname & appsecret
