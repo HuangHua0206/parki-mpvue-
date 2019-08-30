@@ -9,6 +9,7 @@ var MpvuePlugin = require('webpack-mpvue-asset-plugin')
 var glob = require('glob')
 var CopyWebpackPlugin = require('copy-webpack-plugin')
 var relative = require('relative')
+var oAlais = require('./alias')
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -44,10 +45,7 @@ let baseWebpackConfig = {
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
-    alias: {
-      'vue': 'mpvue',
-      '@': resolve('src')
-    },
+    alias: oAlais,
     symlinks: false,
     aliasFields: ['mpvue', 'weapp', 'browser'],
     mainFields: ['browser', 'module', 'main']

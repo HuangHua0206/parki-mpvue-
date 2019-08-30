@@ -1,0 +1,13 @@
+@cdn: "http://parkiland.isxcxbackend1.cn/";
+.bg(@url, @horizontal:center, @vertical:center){
+ 	background: url("@{cdn}@{url}.png")  @vertical @horizontal no-repeat;
+    background-size: 100% 100%;
+}
+.mask{
+	left:0;
+	top:0;
+	position: absolute;
+	.bg("pl2_blackhalf@2x");
+	width:100%;
+	height: 100%;
+}

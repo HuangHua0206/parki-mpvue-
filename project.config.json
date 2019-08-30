@@ -5,12 +5,22 @@
 		"es6": false,
 		"postcss": true,
 		"minified": true,
-		"newFeature": true
+		"newFeature": true,
+		"coverView": true,
+		"autoAudits": false,
+		"checkInvalidKey": true,
+		"checkSiteMap": true,
+		"uploadWithSourceMap": true,
+		"babelSetting": {
+			"ignore": [],
+			"disablePlugins": [],
+			"outputPath": ""
+		}
 	},
 	"miniprogramRoot": "dist/wx/",
 	"compileType": "miniprogram",
-	"appid": "wx4ee180b351f128c4",
-	"projectname": "parki_land",
+	"appid": "wx2034d038de6a5e59",
+	"projectname": "ParkiLand",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
 	"condition": {
